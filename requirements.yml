@@ -6,5 +6,5 @@ collections:
     version: '3.6.0'
   - name: kubernetes.core
     version: '2.0.0'
-  - name: community.gcp 
+  - name: google.cloud 
     version: '1.0.2'
