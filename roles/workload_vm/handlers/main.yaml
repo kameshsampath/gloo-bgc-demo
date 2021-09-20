@@ -1,0 +1,18 @@
+- name: "Restart ipsec service"
+  become: yes
+  service:
+    name: ipsec
+    state: restarted
+
+- name: "Restart Istio"
+  become: yes
+  service:
+    name: istio
+    state: restarted
+
+- name: "Restart tunnel heartbeat service"
+  become: yes
+  service:
+    name: tunnel-heartbeat
+    state: restarted
+

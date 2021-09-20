@@ -1,0 +1,17 @@
+
+gcp_cred_kind: serviceaccount
+
+# VPC
+gcp_create_vpc: yes
+gcp_delete_vpc: no
+gcp_vpc_name: kameshs-k8s-vpc
+gcp_vpn_name: kameshs-site-to-site-vpn
+
+# VPN
+gcp_create_vpn: no
+gcp_delete_vpn: no
+gcp_vpn_vpc: kameshs-k8s-vpc
+
+# 
+left_subnet: 192.168.0.0/16
+right_subnet: 172.25.0.0/16

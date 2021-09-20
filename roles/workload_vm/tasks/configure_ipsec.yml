@@ -1,0 +1,67 @@
+- name: "Enable and Start ipsec service"
+  become: yes
+  service:
+    enabled: true
+    name: ipsec
+    state: started
+
+- name: "Configure ipsec Connection"
+  become: yes
+  ansible.builtin.template:
+    dest: "/etc/ipsec.d/{{ ipsec_connection_name }}.conf"
+    src: ipsec/connection.conf.j2
+  notify:
+    - "Restart ipsec service"
+
+- name: "Configure ipsec Connection Secret"
+  become: yes
+  ansible.builtin.template:
+    dest: "/etc/ipsec.d/{{ ipsec_connection_name }}.secrets"
+    src: ipsec/connection.secret.j2
+  notify:
+    - "Restart ipsec service"
+
+- name: "Add Tunnel Heartbeat Script"
+  become: yes
+  ansible.builtin.template:
+    dest: "/usr/local/bin/tunnel-heartbeat.sh"
+    src: "ipsec/heartbeat.sh.j2"
+    mode: "0755"
+
+- name: "Add Tunnel systemd Service"
+  become: yes
+  ansible.builtin.template:
+    dest: "/etc/systemd/system/tunnel-heartbeat.service"
+    src: "ipsec/tunnel-hearbeat.service.j2"
+  notify:
+    - "Restart tunnel heartbeat service"
+
+- name: "Restart tunnel heartbeat service"
+  become: yes
+  service:
+    name: tunnel-heartbeat
+    enabled: yes
+
+# Set sysctl net.ipv4.conf.default.accept_redirects to 0
+- name: "Disable default accept_redirects"
+  become: yes
+  ansible.posix.sysctl:
+    name: net.ipv4.conf.default.accept_redirects
+    value: '0'
+    state: present
+
+# Set sysctl net.ipv4.conf.default.send_redirects to 0
+- name: "Disable default send_redirects"
+  become: yes
+  ansible.posix.sysctl:
+    name: net.ipv4.conf.default.send_redirects
+    value: '0'
+    state: present
+
+- name: "Verify ipsec Settings"
+  become: yes
+  ansible.builtin.command:
+    argv:
+      - ipsec
+      - verify
+  register: ipsec_verify

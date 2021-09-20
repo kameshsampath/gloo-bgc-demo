@@ -1,0 +1,131 @@
+- name: "Get my Public IP"
+  community.general.ipify_facts:
+  register: my_ipify_facts
+
+- name: "Lookup Gateway Address Info"
+  gcp_compute_address_info:
+    filters:
+    - name = "{{ gcp_vpn_name }}-ip"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    region: "{{ gcp_region }}"
+  register: cloud_vpn_gw_ip
+  
+- name: "Lookup VPC {{ gcp_vpn_vpc }} for VPN"
+  google.cloud.gcp_compute_network_info:
+    filters:
+    - name = "{{ gcp_vpn_vpc  }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+  register: vpn_vpc_networks
+
+- name: "Lookup Target VPN Gateway {{ gcp_vpn_vpc }}"
+  google.cloud.gcp_compute_target_vpn_gateway_info:
+    filters:
+    - name = "{{ gcp_vpn_name  }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    region: "{{ gcp_region  }}"
+    service_account_file: "{{ gcp_cred_file }}"
+  register: vpn_target_gw_info
+
+- name: "Set VPN Deletion facts"
+  set_fact:
+    my_public_ip: "{{ my_ipify_facts.ansible_facts.ipify_public_ip}}"
+    target_gw_url: "{{ vpn_target_gw_info.resources[0].selfLink }}"
+    vpn_vpc_network: "{{ vpn_vpc_networks.resources[0] }}"
+    vpn_gw_address: "{{ cloud_vpn_gw_ip.resources[0].address }}"
+
+- name: "Delete Route to Local Network via Tunnel"
+  google.cloud.gcp_compute_route:
+    name: "{{ gcp_vpn_name }}-tunnel-1-route-1"
+    network: "{{ vpn_vpc_network }}"
+    next_hop_vpn_tunnel: "{{ vpn_tunnel }}"
+    dest_range: "{{ left_subnet }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: absent
+
+- name: "Delete VPN Tunnel"
+  google.cloud.gcp_compute_vpn_tunnel:
+    name: "{{ gcp_vpn_name }}-tunnel-1"
+    shared_secret: "{{ ikev_secret }}"
+    peer_ip: "{{ my_public_ip }}"
+    local_traffic_selector: 
+     - "{{ left_subnet }}"
+    remote_traffic_selector:
+      - "{{ right_subnet }}"
+    peer_external_gateway: "{{ external_vpn_gateway }}"
+    target_vpn_gateway: "{{ target_vpn_gateway }}"
+    region: "{{ gcp_region }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: absent
+
+- name: "Delete External VPN Gateway"
+  google.cloud.gcp_compute_external_vpn_gateway:
+    name: "{{ gcp_vpn_name }}-to-home-gw"
+    redundancy_type: SINGLE_IP_INTERNALLY_REDUNDANT
+    description: An externally managed VPN gateway to do site to site
+    interfaces:
+    - id: 0
+      ip_address: "{{ my_public_ip }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: absent
+
+- name: "Delete ESP Forwarding Rule"
+  google.cloud.gcp_compute_forwarding_rule:
+    name: "{{ gcp_vpn_name }}-rule-esp"
+    region: "{{ gcp_region }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    ip_address: "{{ vpn_gw_address }}"
+    load_balancing_scheme: EXTERNAL
+    ip_protocol: ESP
+    target: "{{ target_gw_url }}"
+    state: absent
+
+- name: "VPN Forward Rule udp/500"
+  google.cloud.gcp_compute_forwarding_rule:
+    name: "{{ gcp_vpn_name }}-rule-udp500"
+    region: "{{ gcp_region }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    ip_address: "{{ vpn_gw_address }}"
+    ip_protocol: UDP
+    load_balancing_scheme: EXTERNAL
+    port_range: 500-500
+    target: "{{ target_gw_url }}"
+    state: absent
+
+- name: "VPN Forward Rule udp/4500"
+  google.cloud.gcp_compute_forwarding_rule:
+    name: kameshs-vpn-rule-udp500
+    region: "{{ gcp_region }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    ip_address: "{{ vpn_gw_address }}"
+    ip_protocol: UDP
+    load_balancing_scheme: EXTERNAL
+    port_range: 4500-4500
+    target: "{{ target_gw_url}}"
+    state: absent
+
+- name: "Delete Cloud VPN(Target) Gateway"
+  google.cloud.gcp_compute_target_vpn_gateway:
+    name: "{{ gcp_vpn_name }}"
+    network: "{{ vpn_vpc_network }}"
+    region: "{{ gcp_region }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: absent

@@ -1,0 +1,11 @@
+- include: network/vpc.yml
+  when: gcp_create_vpc
+
+- include: network/vpn.yml
+  when: gcp_create_vpn
+
+- include: network/vpn_rollback.yml
+  when: not gcp_create_vpn and gcp_delete_vpn
+
+- include: network/vpc_rollback.yml
+  when: not gcp_create_vpc and gcp_delete_vpc

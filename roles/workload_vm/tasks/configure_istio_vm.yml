@@ -1,0 +1,196 @@
+- name: "Download Istio"
+  get_url:
+    url: "https://github.com/istio/istio/releases/download/{{ istio_version }}/istio-{{ istio_version }}-linux-amd64.tar.gz"
+    checksum: "sha256:fbd4d8bba838203c0f3631fb3699955ed3bd27802b0ab9ceb109c1fe337fa6d2"
+    dest: "/tmp"
+    
+- name: "Extract Istio {{ istio_version }}"
+  unarchive:
+    src: "/tmp/istio-{{ istio_version }}-linux-amd64.tar.gz"
+    dest: "{{ ansible_env.HOME }}"
+    remote_src: yes
+  register: istio_install
+
+- name: "Update .bashrc"
+  ansible.builtin.blockinfile:
+    marker: "# {mark} ANSIBLE MANAGED BLOCK Istio {{ istio_version }}"
+    block: |
+      PATH=~/istio-{{ istio_version }}/bin:$PATH
+    dest: "{{ ansible_env.HOME }}/.bashrc"
+  when: istio_install
+
+
+- name: "Create Istio Work Dir"
+  file:
+    path: "{{ istio_vm_workdir }}"
+    recurse: True
+    state: directory
+
+- name: "Create workload YAML"
+  template:
+    dest: "{{ istio_vm_workdir }}/workload-group.yaml"
+    src: "istio/workload-group.yaml.j2"
+
+- name: "Generate Workload Files"
+  ansible.builtin.command:
+    argv:
+      - "{{ ansible_env.HOME }}/istio-{{ istio_version }}/bin/istioctl"
+      - "--context"
+      - "{{ istio_cluster }}"
+      - x
+      - workload
+      - entry
+      - configure
+      - "--file"
+      - "{{ istio_vm_workdir }}/workload-group.yaml"
+      - "--output"
+      - "{{ istio_vm_workdir }}"
+      - "--clusterID"
+      - "{{ istio_cluster }}"
+      - "--kubeconfig"
+      - "{{ ansible_env.HOME }}/.kube/config"
+      - "--context"
+      - "{{ k8s_context }}"
+  register: workload_entry_create
+
+- name: "Install Istio Sidecar(Debian)"
+  become: yes
+  ansible.builtin.apt:
+    deb: "https://storage.googleapis.com/istio-release/releases/{{ istio_version }}/deb/istio-sidecar.deb"
+  when: ansible_os_family == "Debian"
+
+- name: "Install Istio Sidecar(Red Hat)"
+  become: yes
+  ansible.builtin.dnf:
+    name: "https://storage.googleapis.com/istio-release/releases/{{ istio_version }}/rpm/istio-sidecar.rpm"
+    disable_gpg_check: yes
+  when: ansible_os_family == "RedHat"
+
+- name: "Enable Istio"
+  become: yes
+  service:
+    name: istio
+    enabled: true
+
+- name: "Create Required Directories"
+  become: yes
+  file:
+    state: directory
+    path: "{{ item }}"
+  with_items:
+    - /etc/certs
+    - /var/run/secrets/tokens
+    - /etc/istio/proxy
+
+- name: "Set ISTIO_SVC_IP"
+  become: yes
+  lineinfile:
+    backup: yes
+    path: /etc/istio/envoy/sidecar.env
+    regexp: "^# ISTIO_SVC_IP=.*$"
+    line: "ISTIO_SVC_IP={{ ansible_default_ipv4.address  | ansible.netcommon.ipv4('address')}}"
+
+- name: "Lookup Istio Ingress Gateway"
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Service
+    namespace: istio-system
+    name: istio-ingressgateway
+    context: "{{ k8s_context }}"
+  register: istio_ingress_gw_result
+
+- name: "Get LoadBalancer Address"
+  set_fact:
+    ingress_gw_lb_addr: "{{ istio_ingress_gw_result.resources[0] | community.general.json_query('status.loadBalancer.ingress[*]')}}"
+
+# - debug:
+#     var: ingress_gw_lb_addr
+
+- name: "A record (IPV4 address) lookup for LoadBalancer"
+  set_fact:
+    lb_ips: "{{ lookup('community.general.dig',ingress_gw_lb_addr[0].hostname) | split(',') }}"
+  when: ingress_gw_lb_addr | length > 0 and ingress_gw_lb_addr[0].hostname
+
+# - debug:
+#     var: lb_ips
+
+# TODO handle LB as IPS
+
+- name: "Add entries to hosts file"
+  become: yes
+  blockinfile:
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    path: "/etc/hosts"
+    block: |
+      {{ lb_ips[0] }}   istiod.istio-system.svc istiod.istio-system.svc.cluster.local
+      {{ lb_ips[1] | default(lb_ips[0]) }}   istiod.istio-system.svc istiod.istio-system.svc.cluster.local
+  notify:
+  - "Restart Istio"
+
+- name: "Install the root certificate root-cert.pem"
+  become: yes
+  copy:
+    src: "{{ istio_vm_workdir }}/root-cert.pem"
+    dest: /etc/certs/root-cert.pem
+    remote_src: yes
+  notify:
+  - "Restart Istio"
+
+- name: "Install the token istio-token"
+  become: yes
+  copy:
+    src: "{{ istio_vm_workdir }}/istio-token"
+    dest: /var/run/secrets/tokens/istio-token
+    remote_src: yes
+  notify:
+  - "Restart Istio"
+
+- name: "Install cluster.env"
+  become: yes
+  copy:
+    src: "{{ istio_vm_workdir }}/cluster.env"
+    dest: /var/lib/istio/envoy/cluster.env
+    remote_src: yes
+  notify:
+  - "Restart Istio"
+
+- name: "Install the Mesh Config"
+  become: yes
+  copy:
+    src: "{{ istio_vm_workdir }}/mesh.yaml"
+    dest: /etc/istio/config/mesh
+    remote_src: yes
+  notify:
+  - "Restart Istio"
+
+- name: "Set Right Ownership on file {{ item }}"
+  become: yes
+  file:
+    dest: "{{ item }}"
+    owner: "istio-proxy"
+  with_items:
+    - /etc/certs/root-cert.pem
+  loop_control:
+    label: "{{ item }}"
+
+- name: "Set Right Ownership on {{ item }} directories"
+  become: yes
+  file:
+    dest: "{{ item }}"
+    recurse: yes
+    owner: "istio-proxy"
+  with_items:
+    - /var/lib/istio
+    - /etc/certs
+    - /etc/istio/proxy
+    - /etc/istio/config
+    - /var/run/secrets
+  loop_control:
+    label: "{{ item }}"
+
+- name: "Copy Envoy kill script"
+  become: yes
+  copy:
+    src: "killEnvoy.sh"
+    dest: "/usr/local/bin/killEnvoy.sh"
+    mode: 755

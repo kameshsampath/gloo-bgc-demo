@@ -1,0 +1,173 @@
+- name: "Get my Public IP"
+  community.general.ipify_facts:
+  register: my_ipify_facts
+
+- name: "Lookup VPC {{ gcp_vpn_vpc }} for VPN"
+  google.cloud.gcp_compute_network_info:
+    filters:
+    - name = "{{ gcp_vpn_vpc  }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+  register: vpn_vpc_networks
+
+# - name: "Debug VPC Info"
+#   debug: 
+#     var: vpn_vpc_networks
+
+- name: "Fail if VPN VPC not found"
+  fail:
+    msg: "VPC {{ gcp_vpn_vpc }} not found "
+  when: vpn_vpc_networks is not defined or vpn_vpc_networks.resources | length == 0
+
+- name: "Set VPN Creation facts"
+  set_fact: 
+    my_public_ip: "{{ my_ipify_facts.ansible_facts.ipify_public_ip}}"
+    vpn_vpc_network: "{{ vpn_vpc_networks.resources | first }}"
+
+################################################################
+# START - TARGET VPN GATEWAY
+################################################################
+- name: "Create Target VPN Gateway IP"
+  google.cloud.gcp_compute_address:
+    name: "{{ gcp_vpn_name }}-ip"
+    region: "{{ gcp_region }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: present
+  register: cloud_vpn_gw_ip
+
+- name: "Create Cloud VPN(Target) Gateway"
+  google.cloud.gcp_compute_target_vpn_gateway:
+    name: "{{ gcp_vpn_name }}"
+    network: "{{ vpn_vpc_network }}"
+    region: "{{ gcp_region }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: present
+  register: target_vpn_gateway
+  
+- name: "Create ESP Forwarding Rule"
+  google.cloud.gcp_compute_forwarding_rule:
+    name: "{{ gcp_vpn_name }}-rule-esp"
+    region: "{{ gcp_region }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    ip_address: "{{ cloud_vpn_gw_ip.address }}"
+    load_balancing_scheme: EXTERNAL
+    ip_protocol: ESP
+    target: "{{ target_vpn_gateway.selfLink }}"
+    state: present
+
+- name: "VPN Forward Rule udp/500"
+  google.cloud.gcp_compute_forwarding_rule:
+    name: "{{ gcp_vpn_name }}-rule-udp500"
+    region: "{{ gcp_region }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    ip_address: "{{ cloud_vpn_gw_ip.address }}"
+    ip_protocol: UDP
+    load_balancing_scheme: EXTERNAL
+    port_range: 500-500
+    target: "{{ target_vpn_gateway.selfLink }}"
+    state: present
+  register: udp_fw_result
+
+- name: "VPN Forward Rule udp/4500"
+  google.cloud.gcp_compute_forwarding_rule:
+    name: kameshs-vpn-rule-udp500
+    region: "{{ gcp_region }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    ip_address: "{{ cloud_vpn_gw_ip.address }}"
+    ip_protocol: UDP
+    load_balancing_scheme: EXTERNAL
+    port_range: 4500-4500
+    target: "{{ target_vpn_gateway.selfLink }}"
+    state: present
+
+- name: "Lookup VPN Gateway {{ gcp_vpn_name }} "
+  gcp_compute_target_vpn_gateway_info:
+    filters:
+    - name = "{{ gcp_vpn_name }}"
+    region: "{{ gcp_region }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+  register: target_vpn_info
+
+# - debug:
+#     var:  target_vpn_info
+
+################################################################
+# END - TARGET VPN GATEWAY 
+################################################################
+
+################################################################
+# START - VPN TUNNEL
+################################################################
+
+- name: "Create External VPN Gateway"
+  google.cloud.gcp_compute_external_vpn_gateway:
+    name: "{{ gcp_vpn_name }}-to-home-gw"
+    redundancy_type: SINGLE_IP_INTERNALLY_REDUNDANT
+    description: An externally managed VPN gateway to do site to site
+    interfaces:
+    - id: 0
+      ip_address: "{{ my_public_ip }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: present
+  register: external_vpn_gateway
+
+- name: "Create VPN Tunnel"
+  google.cloud.gcp_compute_vpn_tunnel:
+    name: "{{ gcp_vpn_name }}-tunnel-1"
+    shared_secret: "{{ ikev_secret }}"
+    peer_ip: "{{ my_public_ip }}"
+    local_traffic_selector: 
+     - "{{ left_subnet }}"
+    remote_traffic_selector:
+      - "{{ right_subnet }}"
+    peer_external_gateway: "{{ external_vpn_gateway }}"
+    target_vpn_gateway: "{{ target_vpn_gateway }}"
+    region: "{{ gcp_region }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: present
+  register: vpn_tunnel
+
+
+# - debug: 
+#     var: vpn_tunnel
+    
+################################################################
+# END - VPN TUNNEL
+################################################################
+
+################################################################
+# START - ROUTES
+################################################################
+
+- name: "Create Route to Local Network via Tunnel"
+  google.cloud.gcp_compute_route:
+    name: "{{ vpn_tunnel.name }}-route-1"
+    network: "{{ vpn_vpc_network }}"
+    next_hop_vpn_tunnel: "{{ vpn_tunnel }}"
+    dest_range: "{{ left_subnet }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: present
+  register: vpn_tunnel
+
+################################################################
+# NETWORK - ROUTES
+################################################################

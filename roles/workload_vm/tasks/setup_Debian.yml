@@ -1,0 +1,54 @@
+- name: "Install Packages"
+  become: yes
+  ansible.builtin.apt:
+    update_cache: yes
+    pkg:
+      - python3-pip
+      - git
+      - wget
+      - curl
+      - gnupg2
+      - vim
+      - net-tools
+      - arping
+      - jq
+      - traceroute
+      - unzip
+      - libreswan
+
+- name: "Check if Node v14.x"
+  ansible.builtin.command:
+    argv:
+      - node
+      - "--version" 
+  register: node_version_result
+  ignore_errors: true
+
+
+- name: "Set Node Version"
+  set_fact:
+    node_version: "{{ node_version_result.stdout | regex_replace('^v(.*)$', '\\1') }}"
+  when: node_version_result.rc == 0
+
+- name: "Add NodeSource repo"
+  become: yes
+  shell: |
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+  register: add_nodesource_repo 
+  when: node_version is not defined and not (node_version is version('14.0.0','ge',version_type='semver'))
+
+- name: "Install nodejs"
+  become: yes
+  ansible.builtin.apt:
+    update_cache: yes
+    pkg:
+      - nodejs
+    state: latest
+  when: add_nodesource_repo.rc is defined and add_nodesource_repo.rc == 0
+
+- name: "Install kubectl"
+  become: yes
+  community.general.snap:
+    classic: yes
+    name: 
+      - kubectl
