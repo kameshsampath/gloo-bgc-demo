@@ -112,30 +112,31 @@
 # START - VPN TUNNEL
 ################################################################
 
-- name: "Create External VPN Gateway"
-  google.cloud.gcp_compute_external_vpn_gateway:
-    name: "{{ gcp_vpn_name }}-to-home-gw"
-    redundancy_type: SINGLE_IP_INTERNALLY_REDUNDANT
-    description: An externally managed VPN gateway to do site to site
-    interfaces:
-    - id: 0
-      ip_address: "{{ my_public_ip }}"
-    project: "{{ gcp_project }}"
-    auth_kind: "{{ gcp_cred_kind }}"
-    service_account_file: "{{ gcp_cred_file }}"
-    state: present
-  register: external_vpn_gateway
+# - name: "Create External VPN Gateway"
+#   google.cloud.gcp_compute_external_vpn_gateway:
+#     name: "{{ gcp_vpn_name }}-to-home-gw"
+#     redundancy_type: SINGLE_IP_INTERNALLY_REDUNDANT
+#     description: An externally managed VPN gateway to do site to site
+#     interfaces:
+#     - id: 0
+#       ip_address: "{{ my_public_ip }}"
+#     project: "{{ gcp_project }}"
+#     auth_kind: "{{ gcp_cred_kind }}"
+#     service_account_file: "{{ gcp_cred_file }}"
+#     state: present
+#   register: external_vpn_gateway
 
 - name: "Create VPN Tunnel"
   google.cloud.gcp_compute_vpn_tunnel:
     name: "{{ gcp_vpn_name }}-tunnel-1"
     shared_secret: "{{ ikev_secret }}"
     peer_ip: "{{ my_public_ip }}"
+    # GCP Local Network Traffic Selector
     local_traffic_selector: 
-     - "{{ left_subnet }}"
+     - "{{ right_subnet }}"
+    # On-Premise Local Network Traffic Selector
     remote_traffic_selector:
-      - "{{ right_subnet }}"
-    peer_external_gateway: "{{ external_vpn_gateway }}"
+      - "{{ left_subnet }}"
     target_vpn_gateway: "{{ target_vpn_gateway }}"
     region: "{{ gcp_region }}"
     project: "{{ gcp_project }}"

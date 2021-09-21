@@ -1,3 +1,5 @@
 *password*
 .venv
 kubeconfig*
+.vagrant
+local.gcp.conf

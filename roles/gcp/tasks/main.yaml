@@ -1,8 +1,42 @@
+- name: "Create GCP Credentials folder"
+  file:
+    path: "{{ ansible_env.HOME }}/.config/gcloud"
+    recurse: yes
+    state: directory
+    mode: "0744"
+  when: create_gcp_credentials_file
+
+- name: "Save GCP Credentials"
+  copy:
+    dest: "{{ ansible_env.HOME }}/.config/gcloud/credentials"
+    content: |
+      {{ lookup('file',lookup('env','GOOGLE_APPLICATION_CREDENTIALS')) }}
+    mode: "0744"
+  when: create_gcp_credentials_file
+
 - include: network/vpc.yml
   when: gcp_create_vpc
 
+- name: "Generate Pre Shared Key"
+  ansible.builtin.shell: |
+    head -c 4096 /dev/urandom | sha256sum | cut -b1-32
+  register: psk_out
+
+- debug:
+    var: psk_out
+
+- name: "Set PSK Fact"
+  set_fact:
+    ikev_secret: "{{ psk_out.stdout }}"
+
+- debug:
+    var: ikev_secret
+
 - include: network/vpn.yml
   when: gcp_create_vpn
+
+- include: network/ipsec.yml
+  when: enable_ipsec
 
 - include: network/vpn_rollback.yml
   when: not gcp_create_vpn and gcp_delete_vpn

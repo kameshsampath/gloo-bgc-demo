@@ -1,0 +1,5 @@
+- name: "Restart swanctl service"
+  become: yes
+  service:
+    name: strongswan
+    state: restarted

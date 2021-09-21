@@ -1,9 +1,6 @@
 istio_version: "1.10.4"
-ipsec_connection_name: gloo-demos
-is_ikev2: "no"
 coredns_version: "1.8.4"
 coredns_config_dir: /etc/coredns
-create_aws_credentials_file: true
 dns_enabled: yes
 core_dns_use_k8s: no
 force_app_install: no

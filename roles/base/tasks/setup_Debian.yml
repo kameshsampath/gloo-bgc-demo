@@ -14,7 +14,9 @@
       - jq
       - traceroute
       - unzip
-      - libreswan
+      - strongswan
+      - apt-transport-https
+      - ca-certificates
 
 - name: "Check if Node v14.x"
   ansible.builtin.command:

@@ -1,0 +1,43 @@
+- name: "Download AWS CLI"
+  become: yes
+  get_url:
+    url: "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+    dest: "/tmp/awscliv2.zip"
+
+- name: "Extract AWS CLI"
+  unarchive:
+    src: "/tmp/awscliv2.zip"
+    dest: "/tmp"
+    remote_src: yes
+
+- name: "Install AWS CLI"
+  become: yes
+  ansible.builtin.shell:
+    cmd: ./install --bin-dir /usr/bin --update
+    chdir: /tmp/aws
+
+- name: "Download AWS IAM Authenticator"
+  become: yes
+  get_url:
+    url: "https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/aws-iam-authenticator"
+    checksum: "sha256:fe958eff955bea1499015b45dc53392a33f737630efd841cd574559cc0f41800"
+    mode: "755"
+    dest: "/usr/bin/aws-iam-authenticator"
+
+- name: "Create AWS Credentials folder"
+  file:
+    path: "{{ ansible_env.HOME }}/.aws"
+    state: directory
+    mode: "0744"
+  when: create_aws_credentials_file
+
+- name: Save AWS Credentials
+  copy:
+    dest: "{{ ansible_env.HOME }}/.aws/credentials"
+    content: |
+      [default]
+      aws_access_key_id     = {{ aws_access_key_id }}
+      aws_secret_access_key = {{ aws_secret_access_key }}
+    mode: "0744"
+  when: create_aws_credentials_file
+

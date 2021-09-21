@@ -1,0 +1,57 @@
+- name: "Lookup Gateway Address Info"
+  gcp_compute_address_info:
+    filters:
+    - name = "{{ gcp_vpn_name }}-ip"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    region: "{{ gcp_region }}"
+  register: cloud_vpn_gw_ip
+
+- name: "Fail if Gateway IP found"
+  fail:
+    msg: "VPC {{ gcp_vpn_name }}-ip not found "
+  when: cloud_vpn_gw_ip is not defined or cloud_vpn_gw_ip.resources | length == 0
+
+- name: "Set IPSec Configuration facts"
+  set_fact:
+    right: "{{ cloud_vpn_gw_ip.resources[0].address }}"
+
+# Set sysctl net.ipv4.ip_forward to 1
+- name: "Enable IP Forward"
+  become: yes
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    state: present
+
+# Set sysctl net.ipv4.conf.default.accept_redirects to 0
+- name: "Disable default accept_redirects"
+  become: yes
+  ansible.posix.sysctl:
+    name: net.ipv4.conf.default.accept_redirects
+    value: '0'
+    state: present
+
+# Set sysctl net.ipv4.conf.default.send_redirects to 0
+- name: "Disable default send_redirects"
+  become: yes
+  ansible.posix.sysctl:
+    name: net.ipv4.conf.default.send_redirects
+    value: '0'
+    state: present
+
+- name: "Configure Site-to-Site Connection"
+  become: yes
+  ansible.builtin.template:
+    dest: "/etc/strongswan/swanctl/conf.d/{{ ipsec_connection_name }}.conf"
+    src: ipsec/swanctl.conf.j2
+  notify:
+    - "Restart swanctl service"
+
+- name: "Enable and Start strongswan service"
+  become: yes
+  service:
+    enabled: true
+    name: strongswan
+    state: started

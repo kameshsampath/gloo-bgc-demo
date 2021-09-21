@@ -1,5 +1,6 @@
 
 gcp_cred_kind: serviceaccount
+create_gcp_credentials_file: yes
 
 # VPC
 gcp_create_vpc: yes
@@ -15,3 +16,8 @@ gcp_vpn_vpc: kameshs-k8s-vpc
 # 
 left_subnet: 192.168.0.0/16
 right_subnet: 172.25.0.0/16
+
+# IPSec
+enable_ipsec: false
+ipsec_connection_name: gcp-gloo-demos
+is_ikev2: "no"

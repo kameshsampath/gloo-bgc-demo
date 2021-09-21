@@ -1,18 +1,11 @@
-- name: "Restart ipsec service"
+- name: "Kill Envoy"
   become: yes
-  service:
-    name: ipsec
-    state: restarted
-
-- name: "Restart Istio"
+  shell: "/usr/local/bin/killEnvoy.sh"
+  register: kill_envoy_result
+  
+- name: "Restart Istio "
   become: yes
   service:
     name: istio
-    state: restarted
-
-- name: "Restart tunnel heartbeat service"
-  become: yes
-  service:
-    name: tunnel-heartbeat
     state: restarted
 

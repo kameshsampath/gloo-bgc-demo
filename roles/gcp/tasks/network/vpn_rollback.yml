@@ -92,7 +92,7 @@
     target: "{{ target_gw_url }}"
     state: absent
 
-- name: "VPN Forward Rule udp/500"
+- name: "Delete VPN Forward Rule udp/500"
   google.cloud.gcp_compute_forwarding_rule:
     name: "{{ gcp_vpn_name }}-rule-udp500"
     region: "{{ gcp_region }}"
@@ -106,7 +106,7 @@
     target: "{{ target_gw_url }}"
     state: absent
 
-- name: "VPN Forward Rule udp/4500"
+- name: "Delete VPN Forward Rule udp/4500"
   google.cloud.gcp_compute_forwarding_rule:
     name: kameshs-vpn-rule-udp500
     region: "{{ gcp_region }}"

@@ -1,42 +1,5 @@
-- include: setup_RedHat.yml
-  when: ansible_os_family == "RedHat"
-
-- include: setup_Debian.yml
-  when: ansible_os_family == "Debian"
-
-- name: "Install Python Packages"
-  ansible.builtin.pip:
-    name: 
-    - kubernetes>=12.0.0
-
 - name: "Install blue-green-canary application"
   include: app.yml
-
-- name: "Download AWS CLI"
-  become: yes
-  get_url:
-    url: "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
-    dest: "/tmp/awscliv2.zip"
-
-- name: "Extract AWS CLI"
-  unarchive:
-    src: "/tmp/awscliv2.zip"
-    dest: "/tmp"
-    remote_src: yes
-
-- name: "Install AWS CLI"
-  become: yes
-  ansible.builtin.shell:
-    cmd: ./install --bin-dir /usr/bin --update
-    chdir: /tmp/aws
-
-- name: "Download AWS IAM Authenticator"
-  become: yes
-  get_url:
-    url: "https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/aws-iam-authenticator"
-    checksum: "sha256:fe958eff955bea1499015b45dc53392a33f737630efd841cd574559cc0f41800"
-    mode: "755"
-    dest: "/usr/bin/aws-iam-authenticator"
 
 - name: "Update .vimrc"
   ansible.builtin.copy:
@@ -49,23 +12,14 @@
       set ruler
       set number
     dest: "{{ ansible_env.HOME }}/.vimrc"
-    
-- name: "Create AWS Credentials folder"
-  file:
-    path: "{{ ansible_env.HOME }}/.aws"
-    state: directory
-    mode: "0744"
-  when: create_aws_credentials_file
 
-- name: Save AWS Credentials
+- name: "Copy .vimrc to root home"
+  become: yes
   copy:
-    dest: "{{ ansible_env.HOME }}/.aws/credentials"
-    content: |
-      [default]
-      aws_access_key_id     = {{ aws_access_key_id }}
-      aws_secret_access_key = {{ aws_secret_access_key }}
-    mode: "0744"
-  when: create_aws_credentials_file
+    remote_src: true
+    src: "{{ ansible_env.HOME }}/.vimrc"
+    dest: "/root/.vimrc"
+    mode: 0644
 
 - name: "Create Kubeconfig folder"
   file:
@@ -83,9 +37,6 @@
 - name: "Configure DNS"
   include: dns.yml
   when: dns_enabled
-
-- name: "Setup ipsec"
-  include: configure_ipsec.yml
 
 - name: "Setup Istio VM"
   include: configure_istio_vm.yml

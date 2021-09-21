@@ -1,0 +1,45 @@
+connections {
+   
+   gw-gw {
+   
+    local_addrs  = {{ ansible_default_ipv4.address }}
+    remote_addrs = {{ right }}
+    
+    local {
+      auth = psk
+    }
+    
+    remote {
+      auth = psk
+    }
+    
+    children {
+    
+         home-gcp {
+            local_ts  = {{ left_subnet }}
+            remote_ts = {{ right_subnet }}
+            rekey_time = 5400
+            rekey_bytes = 500000000
+            rekey_packets = 1000000
+            esp_proposals = aes256gcm16-sha512-modp8192
+            start_action = trap
+            dpd_action = restart
+         }
+    }
+      
+      version = 2
+      mobike = no
+      reauth_time = 10800
+      proposals = aes256gcm16-sha512-modp4096
+    
+  }
+    
+}
+
+secrets {
+   ike-1 {
+      id-1 = {{ ansible_default_ipv4.address }}
+      id-2 = {{ right }}
+      secret = {{ ikev_secret }}
+   }
+}

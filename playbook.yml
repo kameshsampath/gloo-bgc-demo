@@ -1,8 +1,16 @@
-- hosts: localhost
+- hosts: all
 
   vars_files:
     - vars.yml
     
   roles:
-    - gcp
-  #  - workload_vm
+    - role: base
+      tags:
+        - base
+    - role: gcp
+      tags:
+        - cloud
+        - gcp
+    - role: workload_vm
+      tags:
+        - workload
