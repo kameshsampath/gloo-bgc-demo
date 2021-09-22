@@ -131,10 +131,10 @@
     name: "{{ gcp_vpn_name }}-tunnel-1"
     shared_secret: "{{ ikev_secret }}"
     peer_ip: "{{ my_public_ip }}"
-    # GCP Local Network Traffic Selector
     local_traffic_selector: 
-     - "{{ right_subnet }}"
-    # On-Premise Local Network Traffic Selector
+      - "{{ k8s_subnet_cidr }}"
+      - "{{ k8s_pods_ip_range }}"
+      - "{{ k8s_services_ip_range }}"
     remote_traffic_selector:
       - "{{ left_subnet }}"
     target_vpn_gateway: "{{ target_vpn_gateway }}"

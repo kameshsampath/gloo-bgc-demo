@@ -1,0 +1,14 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: green
+spec:
+  selector:
+    matchLabels:
+      app: blue-green-canary
+      version: green
+  template:
+    metadata:
+      labels:
+        app: blue-green-canary
+        version: green

@@ -1,0 +1,19 @@
+namespace: blue-green-canary
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+configMapGenerator:
+  - name: ui-config
+    files:
+      - .env
+
+resources:
+- ../base
+
+patches:
+- path: blue.yaml
+  target:
+    kind: Deployment
+  options:
+    allowNameChange: true

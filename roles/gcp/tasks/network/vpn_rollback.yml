@@ -55,9 +55,11 @@
     shared_secret: "{{ ikev_secret }}"
     peer_ip: "{{ my_public_ip }}"
     local_traffic_selector: 
-     - "{{ left_subnet }}"
+      - "{{ k8s_subnet_cidr }}"
+      - "{{ k8s_pods_ip_range }}"
+      - "{{ k8s_services_ip_range }}"
     remote_traffic_selector:
-      - "{{ right_subnet }}"
+      - "{{ left_subnet }}"
     peer_external_gateway: "{{ external_vpn_gateway }}"
     target_vpn_gateway: "{{ target_vpn_gateway }}"
     region: "{{ gcp_region }}"

@@ -1,0 +1,71 @@
+- name: "Create VPC"
+  amazon.aws.ec2_vpc_net:
+    name: "{{ aws_vpc_name }}"
+    cidr_block: "{{ aws_vpc_cidr }}"
+    region: "{{ aws_region }}"
+    tags:
+      usedby: eks
+  register: eks_k8s_vpc
+
+# - debug: 
+#     var: eks_k8s_vpc
+
+- name: "Create Private Subnet EKS"
+  amazon.aws.ec2_vpc_subnet:
+    state: present
+    vpc_id: "{{ eks_k8s_vpc.vpc.id }}"
+    az: "{{ aws_private_cidr_block_item.zone }}"
+    cidr: "{{ aws_private_cidr_block_item.cidr_block }}"
+    tags:
+      Name: "{{ aws_vpc_name }}-k8s-private-{{ aws_private_cidr_block_item_idx }}"
+    region: "{{ aws_region }}"
+  loop: "{{ eks_private_subnet_cidr_blocks }}"
+  loop_control:
+    loop_var: aws_private_cidr_block_item
+    index_var: aws_private_cidr_block_item_idx
+  register: k8s_private_subnets
+
+- name: "Create Private Subnet EKS"
+  amazon.aws.ec2_vpc_subnet:
+    state: present
+    vpc_id: "{{ eks_k8s_vpc.vpc.id }}"
+    az: "{{ aws_public_cidr_block_item.zone }}"
+    cidr: "{{ aws_public_cidr_block_item.cidr_block }}"
+    tags:
+      Name: "{{ aws_vpc_name }}-k8s-public-{{ aws_public_cidr_block_item_idx }}"
+    region: "{{ aws_region }}"
+  loop: "{{ eks_public_subnet_cidr_blocks }}"
+  loop_control:
+    loop_var: aws_public_cidr_block_item
+    index_var: aws_public_cidr_block_item_idx
+  register: k8s_public_subnets
+
+- name: "List Private Subnets"
+  debug:
+   var: k8s_private_subnets
+
+- name: "List Public Subnets"
+  debug:
+   var: k8s_public_subnets
+
+- name: "Allow Gloo Mesh and Istio EKS Common Ports"
+  amazon.aws.ec2_group:
+    name: "{{ aws_vpc_name }}-gloo-eks"
+    description: Rule to allow common Istio/Gloo Mesh ports
+    region: "{{ aws_region }}"
+    vpc_id: "{{ eks_k8s_vpc.vpc.id }}"
+    rules:
+      - proto: tcp
+        ports:
+        - 80
+        - 443
+        - 8080
+        - 8443
+        - 9900
+        - 15021
+        - 15443
+        - 15012
+        - 15017
+        cidr_ip: 0.0.0.0/0
+        rule_desc: allow common gloo mesh and istio ports from world
+  register: eks_gloo_mesh_sg

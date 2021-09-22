@@ -3,7 +3,7 @@
   shell: "/usr/local/bin/killEnvoy.sh"
   register: kill_envoy_result
   
-- name: "Restart Istio "
+- name: "Restart Istio"
   become: yes
   service:
     name: istio

@@ -1,0 +1,138 @@
+= Blue, Green, Canary Deployments
+
+With Tekton pipeline builds
+
+With Istio 
+
+
+== OpenShift Only Instructions
+
+----
+# 16 cores available in worker nodes
+
+Install Istio 
+
+https://docs.openshift.com/container-platform/4.3/service_mesh/service_mesh_install/installing-ossm.html
+
+Install Tekton
+
+https://openshift.github.io/pipelines-docs/docs/0.10.5/proc_installing-pipelines-operator-in-web-console.html
+
+or
+
+https://redhat-developer-demos.github.io/tekton-tutorial/tekton-tutorial/setup.html#deploy-tekton
+
+Verify Istio Installation
+
+kubectl api-resources --api-group='networking.istio.io'
+
+kubectl get pods -n istio-system
+NAME                                      READY   STATUS    RESTARTS   AGE
+grafana-b67df64b6-fzqzb                   2/2     Running   0          4m48s
+istio-citadel-79979464d-g2h6p             1/1     Running   0          9m5s
+istio-egressgateway-7d897695c4-bn6tz      1/1     Running   0          5m32s
+istio-galley-6bb46858c5-5mrvq             1/1     Running   0          7m37s
+istio-ingressgateway-8465bbf788-2vhcv     1/1     Running   0          5m31s
+istio-pilot-7cb87486f-8rlkx               2/2     Running   0          6m22s
+istio-policy-5fc74b8697-7gt2q             2/2     Running   0          7m11s
+istio-sidecar-injector-65cd4c8c6f-j27wc   1/1     Running   0          5m18s
+istio-telemetry-78644647c9-qr8k7          2/2     Running   0          7m10s
+jaeger-57776787bc-sstwj                   2/2     Running   0          7m41s
+kiali-6d6f9cf658-299v5                    1/1     Running   0          3m38s
+prometheus-b8bdc6b77-wgp6d                2/2     Running   0          8m44s
+
+kubectl get pods -n openshift-pipelines
+NAME                                           READY   STATUS    RESTARTS   AGE
+tekton-pipelines-controller-7b6648dc8d-kfnqt   1/1     Running   0          8m40s
+tekton-pipelines-webhook-65856dff6c-x4mbj      1/1     Running   0          8m40s
+tekton-triggers-controller-6bcdd9d5df-m8lnr    1/1     Running   0          8m14s
+tekton-triggers-webhook-5cf995778d-tqrnk       1/1     Running   0          8m11s
+
+
+oc new-project one
+
+# Add the project to Istio Servicemesh Member Roll
+kubectl create -n one src/main/istio/servicemesh-member.yaml
+
+----
+
+=== Pipelines Tekton
+----
+oc api-resources --api-group='tekton.dev'
+
+oc get pods -n openshift-pipelines
+
+oc new-project rhd-workshop-infra
+oc new-app sonatype/nexus -n rhd-workshop-infra
+watch oc get pods -n rhd-workshop-infra
+
+git clone https://github.com/redhat-developer-demos/blue-green-canary
+
+oc project one (make sure this project is in Istio SMMR)
+./4_service.sh
+
+# Declare Resources
+# make sure to update the resources to point to the righ project in OpenShift
+# image-registry.openshift-image-registry.svc:5000/<!!!! This need to be your project!!!>/blue-green-canary
+kubectl apply -f src/main/tekton/pipeline-resources.yml
+
+tkn res ls
+NAME               TYPE    DETAILS
+bgc-git-source     git     url: https://github.com/redhat-developer-demos/blue-green-canary
+bgc-image-blue     image   url: image-registry.openshift-image-registry.svc:5000/one/blue-green-canary
+
+# Declare Tasks
+# yq & kubectl apply
+kubectl apply -f src/main/tekton/task-yq-deploy.yml
+# mvn & buildah
+kubectl apply -f src/main/tekton/task-mvn-buildah.yml
+
+tkn task ls
+NAME               AGE
+mvn-buildah        4 seconds ago
+yq-deploy          28 seconds ago
+
+# Declare Pipelines
+kubectl apply -f src/main/tekton/pipeline.yml
+
+tkn pipeline ls
+NAME               AGE             LAST RUN   STARTED   DURATION   STATUS
+bgc-build-deploy   5 seconds ago   ---        ---       ---        ---
+
+# Check APIResource.java for Aloha/blue
+
+https://github.com/burrsutter/blue-green-canary/blob/master/src/main/java/com/burrsutter/bluegreencanary/APIResource.java
+
+# Start the pipeline(Blue)
+./5_start_pipeline_blue.sh
+
+# Start the pipeline(Green)
+./5_start_pipeline_green.sh
+
+# Start the pipeline(Canary)
+./5_start_pipeline_canary.sh
+
+# Use list_containers.sh 
+
+./6_deploy_gateway.sh
+
+watch kubectl get pods
+
+To get the URL for end-users UI
+kubectl get route istio-ingressgateway -n istio-system --output 'jsonpath={.status.ingress[].host}'
+
+
+./poll_bgc_ocp4_gateway.sh
+
+# Should be alternating across blue/green/canary
+
+# the URL for your browser
+URL=$(kubectl get route istio-ingressgateway -n istio-system --output 'jsonpath={.status.ingress[].host}')/bgc
+
+# everybody blue
+kubectl replace -f src/main/istio/Virtual_service_blue.yml
+
+# everybody green
+kubectl replace -f src/main/istio/Virtual_service_green.yml
+
+----

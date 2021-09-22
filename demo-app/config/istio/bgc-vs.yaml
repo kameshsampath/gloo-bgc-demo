@@ -1,0 +1,32 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: blue-green-canary
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - bgc-gateway
+  http:
+  # Route to UI
+  - name: "bgc-ui-route"
+    match:
+    - uri:
+        prefix: /bgc
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: blue-green-canary
+        port:
+          number: 8080
+  # Route to API
+  - name: "bgc-api-route"
+    match:
+    - uri:
+        exact: /api
+    route:
+    - destination:
+        host: blue-green-canary
+        port:
+          number: 8080

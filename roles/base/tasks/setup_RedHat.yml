@@ -37,3 +37,4 @@
       - google-cloud-sdk
       - "@nodejs:14/default"
       - strongswan
+      - httpie

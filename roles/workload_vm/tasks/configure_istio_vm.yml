@@ -89,6 +89,15 @@
   tags:
    - istio
 
+- name: "Copy Envoy kill script"
+  become: yes
+  copy:
+    src: "killEnvoy.sh"
+    dest: "/usr/local/bin/killEnvoy.sh"
+    mode: 755
+  tags:
+   - istio
+
 - name: "Create Required Directories"
   become: yes
   file:
@@ -134,14 +143,20 @@
 - name: "A record (IPV4 address) lookup for LoadBalancer"
   set_fact:
     lb_ips: "{{ lookup('community.general.dig',ingress_gw_lb_addr[0].hostname) | split(',') }}"
-  when: ingress_gw_lb_addr | length > 0 and ingress_gw_lb_addr[0].hostname
+  when: ingress_gw_lb_addr[0].hostname is defined and ingress_gw_lb_addr | length > 0  
   tags:
    - istio
 
-# - debug:
-#     var: lb_ips
+- name: "Set LoadBalancer IP"
+  set_fact:
+    lb_ips: "{{ ingress_gw_lb_addr[0].ip }}"
+  when: ingress_gw_lb_addr[0].ip is defined and ingress_gw_lb_addr | length > 0
+  tags:
+   - istio
 
-# TODO handle LB as IPS
+- name: "Debug Istio Ingress LB IPs"
+  debug:
+    var: lb_ips
 
 - name: "Add entries to hosts file"
   become: yes
@@ -149,9 +164,14 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
     path: "/etc/hosts"
     block: |
+      {%if lb_ips | length > 1 %}
       {{ lb_ips[0] }}   istiod.istio-system.svc istiod.istio-system.svc.cluster.local
-      {{ lb_ips[1] | default(lb_ips[0]) }}   istiod.istio-system.svc istiod.istio-system.svc.cluster.local
+      {{ lb_ips[1] }}   istiod.istio-system.svc istiod.istio-system.svc.cluster.local
+      {% else %}
+      {{ lb_ips }}   istiod.istio-system.svc istiod.istio-system.svc.cluster.local      
+      {% endif %}
   notify:
+  - "Kill Envoy"
   - "Restart Istio"
   tags:
    - istio
@@ -163,6 +183,7 @@
     dest: /etc/certs/root-cert.pem
     remote_src: yes
   notify:
+  - "Kill Envoy"
   - "Restart Istio"
   tags:
    - istio
@@ -174,6 +195,7 @@
     dest: /var/run/secrets/tokens/istio-token
     remote_src: yes
   notify:
+  - "Kill Envoy"
   - "Restart Istio"
   tags:
    - istio
@@ -185,6 +207,7 @@
     dest: /var/lib/istio/envoy/cluster.env
     remote_src: yes
   notify:
+  - "Kill Envoy"
   - "Restart Istio"
   tags:
    - istio
@@ -196,6 +219,7 @@
     dest: /etc/istio/config/mesh
     remote_src: yes
   notify:
+  - "Kill Envoy"
   - "Restart Istio"
   tags:
    - istio
@@ -226,14 +250,5 @@
     - /var/run/secrets
   loop_control:
     label: "{{ item }}"
-  tags:
-   - istio
-
-- name: "Copy Envoy kill script"
-  become: yes
-  copy:
-    src: "killEnvoy.sh"
-    dest: "/usr/local/bin/killEnvoy.sh"
-    mode: 755
   tags:
    - istio

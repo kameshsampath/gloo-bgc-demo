@@ -9,13 +9,16 @@
     src: "/tmp/awscliv2.zip"
     dest: "/tmp"
     remote_src: yes
+    creates: /usr/bin/aws
+  register: download_cli
 
 - name: "Install AWS CLI"
   become: yes
   ansible.builtin.shell:
-    cmd: ./install --bin-dir /usr/bin --update
+    cmd: ./install --bin-dir /usr/bin
     chdir: /tmp/aws
-
+  when: download_cli.changed
+  
 - name: "Download AWS IAM Authenticator"
   become: yes
   get_url:
@@ -24,6 +27,22 @@
     mode: "755"
     dest: "/usr/bin/aws-iam-authenticator"
 
+- name: "Download eksctl"
+  become: yes
+  get_url:
+    url: "https://github.com/weaveworks/eksctl/releases/download/v0.67.0/eksctl_Linux_amd64.tar.gz"
+    checksum: "sha256:b885c8f1b66598c12886791a5f141f8ef9b2fa1854486903fd9750b76f9917fb"
+    mode: "755"
+    dest: "/tmp"
+
+- name: "Extract eksctl"
+  become: yes
+  unarchive:
+    src: "/tmp/eksctl_Linux_amd64.tar.gz"
+    dest: "/usr/local/bin"
+    mode: "755"
+    remote_src: yes
+
 - name: "Create AWS Credentials folder"
   file:
     path: "{{ ansible_env.HOME }}/.aws"
@@ -31,7 +50,7 @@
     mode: "0744"
   when: create_aws_credentials_file
 
-- name: Save AWS Credentials
+- name: "Save AWS Credentials"
   copy:
     dest: "{{ ansible_env.HOME }}/.aws/credentials"
     content: |
@@ -41,3 +60,18 @@
     mode: "0744"
   when: create_aws_credentials_file
 
+- name: "Configure AWS Profile"
+  copy:
+    dest: "{{ ansible_env.HOME }}/.aws/config"
+    content: |
+      [default]
+      region     = {{ aws_region }}
+      output     = json
+    mode: "0744"
+  when: create_aws_credentials_file
+
+- include: k8s/eks_cluster.yml
+  when: eks_create and not eks_delete
+
+- include: k8s/eks_cluster_rollback.yml
+  when: not eks_create and eks_delete

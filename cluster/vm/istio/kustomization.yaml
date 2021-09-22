@@ -1,0 +1,10 @@
+namespace: istio-system
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+resources:
+- istiod-gateway.yaml
+- istiod-destination-rule.yaml
+- cross-network-gateway.yaml
+- istiod-vs.yaml

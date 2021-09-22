@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blue-green-canary
+spec:
+  selector:
+    matchLabels:
+      app: blue-green-canary
+  template:
+    metadata:
+      labels:
+        app: blue-green-canary
+    spec:
+      serviceAccountName: blue-green-canary
+      volumes:
+        - name: ui-config
+          configMap:
+            name: ui-config
+            items:
+              - key: .env
+                path: .env
+      containers:
+      - name: blue-green-canary
+        image: ghcr.io/kameshsampath/blue-green-canary
+        env:
+          - name: MY_POD
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+          - mountPath: /app/.env
+            name: ui-config
+            subPath: .env
+

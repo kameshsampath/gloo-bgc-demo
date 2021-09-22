@@ -1,0 +1,13 @@
+namespace: blue-green-canary
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+commonLabels:
+  app: blue-green-canary
+
+resources:
+- namespace.yaml
+- sa.yaml
+- service.yaml
+- deployment.yaml

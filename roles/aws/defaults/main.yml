@@ -1,1 +1,26 @@
-create_aws_credentials_file: false
+create_aws_credentials_file: yes
+aws_profile: default
+
+aws_create_vpc: yes
+aws_delete_vpc: no
+eks_create: yes
+eks_delete: no
+
+eks_cluster_name: kameshs-gloo-demos
+eks_cluster_node_size: 3
+eks_cluster_node_instance_type: m5.xlarge
+aws_vpc_name: kameshs-gloo-demos
+aws_vpc_cidr: 172.25.0.0/16
+aws_profile: default
+aws_region: ap-south-1
+kubernetes_version: "1.20"
+
+eks_private_subnet_cidr_blocks:
+- {zone: "{{ aws_region }}a",cidr_block: 172.25.1.0/24 }
+- {zone: "{{ aws_region }}b",cidr_block: 172.25.2.0/24 }
+- {zone: "{{ aws_region }}c",cidr_block: 172.25.3.0/24 }
+
+eks_public_subnet_cidr_blocks:
+- {zone: "{{ aws_region }}a",cidr_block: 172.25.5.0/24 }
+- {zone: "{{ aws_region }}b",cidr_block: 172.25.6.0/24 }
+- {zone: "{{ aws_region }}c",cidr_block: 172.25.7.0/24 }

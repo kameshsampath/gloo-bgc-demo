@@ -11,6 +11,10 @@
       tags:
         - cloud
         - gcp
+    - role: aws
+      tags:
+        - cloud
+        - aws
     - role: workload_vm
       tags:
         - workload

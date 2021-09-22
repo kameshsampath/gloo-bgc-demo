@@ -30,7 +30,7 @@
 - name: "Copy kubeconfig"
   become: yes
   copy:
-    src: "{{ playbook_dir }}/kubeconfig"
+    src: "{{ playbook_dir }}/work/.kube/config"
     dest: "{{ ansible_env.HOME }}/.kube/config"
     mode: "0744"
 

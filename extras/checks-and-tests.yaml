@@ -1,0 +1,67 @@
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: checks-and-tests
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: network-utils
+spec:
+  selector:
+    matchLabels:
+      app: network-utils
+  template:
+    metadata:
+      labels:
+        app: network-utils
+    spec:
+      serviceAccount: checks-and-tests
+      containers:
+      - name: network-utils
+        args:
+        - /bin/sh
+        - -c
+        - tail -f /dev/null
+        image: ghcr.io/kameshsampath/network-utils
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webserver
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    run: webserver
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      serviceAccount: checks-and-tests
+      containers:
+      - name: nginx
+        image: docker.io/nginx
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+

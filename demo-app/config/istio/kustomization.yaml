@@ -1,0 +1,8 @@
+namespace: blue-green-canary
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+resources:
+- bgc-gateway.yaml
+- bgc-vs.yaml
