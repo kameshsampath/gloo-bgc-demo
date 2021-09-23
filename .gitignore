@@ -65,5 +65,5 @@ workload-group.yaml
 kubeconfig*
 .vagrant
 local.gcp.conf
-vars.yml
+.local.vars.yml
 *.url

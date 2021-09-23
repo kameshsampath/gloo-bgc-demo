@@ -16,7 +16,7 @@ RUN yarn build
 # Production image, copy all the files and run next
 FROM node:14-alpine AS runner
 
-LABEL org.opencontainers.image.source https://github.com/kameshsampath/gloo-hybrid-demo
+LABEL org.opencontainers.image.source https://github.com/kameshsampath/gloo-hybrid-cloud-demo
 
 WORKDIR /app
 
