@@ -1,0 +1,772 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="canonical" href="https://kameshsampath.github.com/gloo-bgc-demo/access-policies/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.3.0">
+    
+    
+      
+        <title>Access Policies - Gloo Blue Green Canary Demo</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.8b42a75e.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ensure-environment" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Gloo Blue Green Canary Demo" class="md-header__button md-logo" aria-label="Gloo Blue Green Canary Demo" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Gloo Blue Green Canary Demo
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Access Policies
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Gloo Blue Green Canary Demo" class="md-nav__button md-logo" aria-label="Gloo Blue Green Canary Demo" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Gloo Blue Green Canary Demo
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools-and-sources/" class="md-nav__link">
+        Tools and Sources
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../setup/" class="md-nav__link">
+        Setup
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../site-site-vpn/" class="md-nav__link">
+        Site to Site VPN
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mesh/" class="md-nav__link">
+        Mesh
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          Deploy Microservices
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Deploy Microservices" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Deploy Microservices
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-blue/" class="md-nav__link">
+        Deploy Blue
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-green/" class="md-nav__link">
+        Deploy Green
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-canary/" class="md-nav__link">
+        Deploy Canary
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../traffic/" class="md-nav__link">
+        Traffic Management
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Access Policies
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Access Policies
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ensure-environment" class="md-nav__link">
+    Ensure environment
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enable-global-access-policy" class="md-nav__link">
+    Enable Global Access Policy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enable-ingress-traffic-via-istio" class="md-nav__link">
+    Enable Ingress Traffic via Istio
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#allow-traffic-to-vm" class="md-nav__link">
+    Allow Traffic to VM
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#access-service-from-vm" class="md-nav__link">
+    Access service from VM
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        Troubleshooting
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ensure-environment" class="md-nav__link">
+    Ensure environment
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enable-global-access-policy" class="md-nav__link">
+    Enable Global Access Policy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enable-ingress-traffic-via-istio" class="md-nav__link">
+    Enable Ingress Traffic via Istio
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#allow-traffic-to-vm" class="md-nav__link">
+    Allow Traffic to VM
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#access-service-from-vm" class="md-nav__link">
+    Access service from VM
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  <h1>Access Policies</h1>
+                
+                <p>In this chapter we will create and apply access policies that will restrict access to services in Gloo Mesh Clusters and VM.</p>
+<h2 id="ensure-environment">Ensure environment<a class="headerlink" href="#ensure-environment" title="Permanent link">&para;</a></h2>
+<p>Set cluster environment variables</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">MGMT</span><span class="o">=</span><span class="k">$(</span><span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/mgmt/kubeconfig <span class="o">&amp;&amp;</span> kubectl config get-contexts -o name <span class="p">|</span> tr -d <span class="s1">&#39;\n\r&#39;</span><span class="k">)</span>
+<span class="nb">export</span> <span class="nv">CLUSTER1</span><span class="o">=</span><span class="k">$(</span><span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/cluster-1/kubeconfig <span class="o">&amp;&amp;</span> kubectl config get-contexts -o name <span class="p">|</span> tr -d <span class="s1">&#39;\n\r&#39;</span><span class="k">)</span>
+<span class="nb">export</span> <span class="nv">CLUSTER2</span><span class="o">=</span><span class="k">$(</span><span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/cluster-2/kubeconfig <span class="o">&amp;&amp;</span> kubectl config get-contexts -o name <span class="p">|</span> tr -d <span class="s1">&#39;\n\r&#39;</span><span class="k">)</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+</div>
+<p>It will be a nice convinience to have a merged kubeconfig to easier context switch. To merge kube config run the following command,</p>
+<div class="highlight"><pre><span></span><code>   mkdir -p <span class="nv">$TUTORIAL_HOME</span>/work/.kube
+   <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/mgmt/kubeconfig:<span class="nv">$TUTORIAL_HOME</span>/work/cluster-1/kubeconfig:<span class="nv">$TUTORIAL_HOME</span>/work/cluster-2/kubeconfig<span class="p">;</span> kubectl config view --flatten &gt; <span class="nv">$TUTORIAL_HOME</span>/work/.kube/config
+   <span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/.kube/config
+</code></pre></div>
+<p>Check if you are still in the <code>work/mgmt</code> folder,</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="nv">$TUTORIAL_HOME</span>/work/mgmt
+</code></pre></div>
+<h2 id="enable-global-access-policy">Enable Global Access Policy<a class="headerlink" href="#enable-global-access-policy" title="Permanent link">&para;</a></h2>
+<p>The Virtual Mesh that we crated in earlier as the <code>globalAccessPolicy</code> disabled,</p>
+<div class="highlight"><pre><span></span><code> kubectl get virtualmeshes.networking.mesh.gloo.solo.io -n gloo-mesh bgc-virtual-mesh -o json <span class="p">|</span> jq <span class="s1">&#39;.spec.globalAccessPolicy&#39;</span>
+</code></pre></div>
+<p>The command should return <strong>DISABLED</strong></p>
+<p>Now lets enable the <code>globalAccessPolicy</code>,</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/17_toggle_mesh_access_policy.sh
+</code></pre></div>
+<p>Lets verify if we are able to access the service,</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/call_bgc_service.sh <span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+<p>The command should show an output like:</p>
+<div class="highlight"><pre><span></span><code>###################################################
+
+Polling Service URL 35.244.63.221/api
+
+###################################################
+RBAC: access denied
+</code></pre></div>
+<p>By default the moment we enable <code>globalAccessPolicy</code> the Gloo Mesh create allowNone with out any access policy associated with the resource, hence you the <code>RBAC: access denied</code> as output when calling the service.</p>
+<h2 id="enable-ingress-traffic-via-istio">Enable Ingress Traffic via Istio<a class="headerlink" href="#enable-ingress-traffic-via-istio" title="Permanent link">&para;</a></h2>
+<p>Let us now allow the traffic via Istio Ingress Gateway,</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/18_enable_access_via_ingress.sh
+</code></pre></div>
+<p>Let us try polling the service,</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/poll_bgc_service.sh <span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+<p>The command should show the output from the service:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">###################################################</span>
+
+Polling Service URL <span class="m">35</span>.244.63.221/api
+
+<span class="c1">###################################################</span>
+<span class="o">{</span>
+    <span class="s2">&quot;color&quot;</span>: <span class="s2">&quot;blue&quot;</span>,
+    <span class="s2">&quot;count&quot;</span>: <span class="m">476</span>,
+    <span class="s2">&quot;greeting&quot;</span>: <span class="s2">&quot;Namaste 🙏🏽&quot;</span>,
+    <span class="s2">&quot;pod&quot;</span>: <span class="s2">&quot;blue-98db67777-797t7&quot;</span>,
+    <span class="s2">&quot;textColor&quot;</span>: <span class="s2">&quot;whitesmoke&quot;</span>,
+    <span class="s2">&quot;userAgent&quot;</span>: <span class="s2">&quot;HTTPie/2.5.0&quot;</span>
+<span class="o">}</span>
+
+
+
+<span class="o">{</span>
+    <span class="s2">&quot;color&quot;</span>: <span class="s2">&quot;blue&quot;</span>,
+    <span class="s2">&quot;count&quot;</span>: <span class="m">477</span>,
+    <span class="s2">&quot;greeting&quot;</span>: <span class="s2">&quot;Namaste 🙏🏽&quot;</span>,
+    <span class="s2">&quot;pod&quot;</span>: <span class="s2">&quot;blue-98db67777-797t7&quot;</span>,
+    <span class="s2">&quot;textColor&quot;</span>: <span class="s2">&quot;whitesmoke&quot;</span>,
+    <span class="s2">&quot;userAgent&quot;</span>: <span class="s2">&quot;HTTPie/2.5.0&quot;</span>
+<span class="o">}</span>
+
+
+
+<mark class="critic"> RBAC: access denied </mark>
+
+
+
+<span class="o">{</span>
+    <span class="s2">&quot;color&quot;</span>: <span class="s2">&quot;green&quot;</span>,
+    <span class="s2">&quot;count&quot;</span>: <span class="m">2173</span>,
+    <span class="s2">&quot;greeting&quot;</span>: <span class="s2">&quot;Bonjour 👋🏽&quot;</span>,
+    <span class="s2">&quot;pod&quot;</span>: <span class="s2">&quot;green-7d9f5f4b47-rcb76&quot;</span>,
+    <span class="s2">&quot;textColor&quot;</span>: <span class="s2">&quot;whitesmoke&quot;</span>,
+    <span class="s2">&quot;userAgent&quot;</span>: <span class="s2">&quot;HTTPie/2.5.0&quot;</span>
+<span class="o">}</span>
+
+
+
+<span class="o">{</span>
+    <span class="s2">&quot;color&quot;</span>: <span class="s2">&quot;green&quot;</span>,
+    <span class="s2">&quot;count&quot;</span>: <span class="m">2174</span>,
+    <span class="s2">&quot;greeting&quot;</span>: <span class="s2">&quot;Bonjour 👋🏽&quot;</span>,
+    <span class="s2">&quot;pod&quot;</span>: <span class="s2">&quot;green-7d9f5f4b47-rcb76&quot;</span>,
+    <span class="s2">&quot;textColor&quot;</span>: <span class="s2">&quot;whitesmoke&quot;</span>,
+    <span class="s2">&quot;userAgent&quot;</span>: <span class="s2">&quot;HTTPie/2.5.0&quot;</span>
+<span class="o">}</span>
+</code></pre></div>
+<p>As you noticed the command shows one <code>RBAC: access denied</code>, that is from the VM Canary service. What we did right now is allowing traffic from the Gloo Mesh Clusters and the traffic from and to vm is still blocked.</p>
+<h2 id="allow-traffic-to-vm">Allow Traffic to VM<a class="headerlink" href="#allow-traffic-to-vm" title="Permanent link">&para;</a></h2>
+<p>Let us now apply the Access policy that will allow the traffic to the VM,</p>
+<p>Let us now allow the traffic via Istio Ingress Gateway,</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/19_enable_access_to_vm.sh
+</code></pre></div>
+<p>Let us try polling the service,</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/poll_bgc_service.sh <span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+<p>The command should now include the output from the <em>Canary(VM)</em> service as well,</p>
+<div class="highlight"><pre><span></span><code><span class="c1">###################################################</span>
+
+Polling Service URL <span class="m">35</span>.244.63.221/api
+
+<span class="c1">###################################################</span>
+<span class="o">{</span>
+    <span class="s2">&quot;color&quot;</span>: <span class="s2">&quot;green&quot;</span>,
+    <span class="s2">&quot;count&quot;</span>: <span class="m">2175</span>,
+    <span class="s2">&quot;greeting&quot;</span>: <span class="s2">&quot;Bonjour 👋🏽&quot;</span>,
+    <span class="s2">&quot;pod&quot;</span>: <span class="s2">&quot;green-7d9f5f4b47-rcb76&quot;</span>,
+    <span class="s2">&quot;textColor&quot;</span>: <span class="s2">&quot;whitesmoke&quot;</span>,
+    <span class="s2">&quot;userAgent&quot;</span>: <span class="s2">&quot;HTTPie/2.5.0&quot;</span>
+<span class="o">}</span>
+
+
+
+<span class="o">{</span>
+    <span class="s2">&quot;color&quot;</span>: <span class="s2">&quot;blue&quot;</span>,
+    <span class="s2">&quot;count&quot;</span>: <span class="m">478</span>,
+    <span class="s2">&quot;greeting&quot;</span>: <span class="s2">&quot;Namaste 🙏🏽&quot;</span>,
+    <span class="s2">&quot;pod&quot;</span>: <span class="s2">&quot;blue-98db67777-797t7&quot;</span>,
+    <span class="s2">&quot;textColor&quot;</span>: <span class="s2">&quot;whitesmoke&quot;</span>,
+    <span class="s2">&quot;userAgent&quot;</span>: <span class="s2">&quot;HTTPie/2.5.0&quot;</span>
+<span class="o">}</span>
+
+...
+
+<span class="o">{</span>
+    <span class="s2">&quot;color&quot;</span>: <span class="s2">&quot;yellow&quot;</span>,
+    <span class="s2">&quot;count&quot;</span>: <span class="m">197</span>,
+    <span class="s2">&quot;greeting&quot;</span>: <span class="s2">&quot;Hola ✋🏽&quot;</span>,
+    <span class="s2">&quot;pod&quot;</span>: <span class="s2">&quot;vm-192.168.68.114&quot;</span>,
+    <span class="s2">&quot;textColor&quot;</span>: <span class="s2">&quot;black&quot;</span>,
+    <span class="s2">&quot;userAgent&quot;</span>: <span class="s2">&quot;HTTPie/2.5.0&quot;</span>
+<span class="o">}</span>
+</code></pre></div>
+<h2 id="access-service-from-vm">Access service from VM<a class="headerlink" href="#access-service-from-vm" title="Permanent link">&para;</a></h2>
+<p>Let us now check if we are able to access the service from the VM,</p>
+<div class="highlight"><pre><span></span><code>vagrant ssh -c <span class="s2">&quot;http blue-green-canary.blue-green-canary.svc.cluster.local:8080/api&quot;</span>
+</code></pre></div>
+<p>As expected we got <code>RBAC: access denied</code> as we are yet to allow the traffic from the VM to the cluster,</p>
+<div class="highlight"><pre><span></span><code>HTTP/1.1 403 Forbidden
+content-length: 19
+content-type: text/plain
+date: Thu, 23 Sep 2021 16:29:22 GMT
+server: envoy
+x-envoy-upstream-service-time: 269
+
+RBAC: access denied
+</code></pre></div>
+<p>Let us allow the VM to access the services on the Cluster,</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/20_enable_access_from_vm.sh
+</code></pre></div>
+<p>Now trying again to access the service from VM should show a successful response,</p>
+<div class="highlight"><pre><span></span><code>$ vagrant ssh -c <span class="s2">&quot;http blue-green-canary.blue-green-canary.svc.cluster.local:8080/api&quot;</span>
+HTTP/1.1 <span class="m">200</span> OK
+content-length: <span class="m">129</span>
+content-type: application/json<span class="p">;</span> <span class="nv">charset</span><span class="o">=</span>utf-8
+date: Thu, <span class="m">23</span> Sep <span class="m">2021</span> <span class="m">16</span>:32:22 GMT
+etag: <span class="s2">&quot;81-44uxFMXdXGKizzXNw4AXYnD7xj0&quot;</span>
+server: envoy
+vary: Accept-Encoding
+x-envoy-upstream-service-time: <span class="m">285</span>
+
+<span class="o">{</span>
+    <span class="s2">&quot;color&quot;</span>: <span class="s2">&quot;yellow&quot;</span>,
+    <span class="s2">&quot;count&quot;</span>: <span class="m">198</span>,
+    <span class="s2">&quot;greeting&quot;</span>: <span class="s2">&quot;Hola ✋🏽&quot;</span>,
+    <span class="s2">&quot;pod&quot;</span>: <span class="s2">&quot;vm-192.168.68.114&quot;</span>,
+    <span class="s2">&quot;textColor&quot;</span>: <span class="s2">&quot;black&quot;</span>,
+    <span class="s2">&quot;userAgent&quot;</span>: <span class="s2">&quot;HTTPie/2.5.0&quot;</span>
+<span class="o">}</span>
+</code></pre></div>
+<p>Volià! We have successfully enabled the Access Policies on our Gloo Mesh cluster.</p>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../traffic/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Traffic Management" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Traffic Management
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../troubleshooting/" class="md-footer__link md-footer__link--next" aria-label="Next: Troubleshooting" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Troubleshooting
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        
+          Made with
+          <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+            Material for MkDocs
+          </a>
+        
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "content.tabs.link"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.f8263e09.min.js", "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      
+    
+  </body>
+</html>
