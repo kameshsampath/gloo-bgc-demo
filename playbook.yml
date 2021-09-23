@@ -3,19 +3,18 @@
   vars_files:
     - vars.yml
   
-  tasks:
-  # roles:
-  #   - role: base
-  #     tags:
-  #       - base
-  #   - role: gcp
-  #     tags:
-  #       - cloud
-  #       - gcp
-  #   - role: aws
-  #     tags:
-  #       - cloud
-  #       - aws
-  #   - role: workload_vm
-  #     tags:
-  #       - workload
+  roles:
+    - role: base
+      tags:
+        - base
+    - role: gcp
+      tags:
+        - cloud
+        - gcp
+    - role: aws
+      tags:
+        - cloud
+        - aws
+    - role: workload_vm
+      tags:
+        - workload
