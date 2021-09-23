@@ -9,7 +9,7 @@ date: 2021-09-03
 Navigate to $CLUSTER2 work folder
 
 ```bash
-cd $TUTORIAL_HOME/work/cluster-2
+cd $TUTORIAL_HOME/work/mgmt
 ```
 
 ## Deploy Green Application

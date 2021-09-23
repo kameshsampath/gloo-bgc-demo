@@ -25,6 +25,10 @@
   tags:
    - istio
 
+- name: "Clean existing Istio VM files"
+  include: clean_istio_vm_files.yml
+  when: clean_istio_vm_files 
+
 - name: "Create Istio Work Dir"
   file:
     path: "{{ istio_vm_workdir }}"

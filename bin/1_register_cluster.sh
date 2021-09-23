@@ -24,7 +24,7 @@ fi
 
 printf "####################################################################"
 printf "\n Registering cluster '%s' as '%s'\n" "$1" "$2"
-printf "####################################################################"
+printf "####################################################################\n"
 
 RELAY_ADDRESS="$(kubectl --context "${MGMT}" -n gloo-mesh get svc enterprise-networking -o jsonpath='{.status.loadBalancer.ingress[0].*}'):9900"
 CLUSTER_DOMAIN=cluster.local

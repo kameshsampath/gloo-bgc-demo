@@ -16,12 +16,14 @@ nav:
   - 'Overview': "index.md"
   - 'Tools and Sources': "tools-and-sources.md"
   - 'Setup': "setup.md"
+  - 'Site to Site VPN': "site-site-vpn.md"
   - "Mesh": "mesh.md"
   - "Deploy Microservices":
       - "Deploy Blue": "deploy-blue.md"
       - "Deploy Green": "deploy-green.md"
       - "Deploy Canary": "deploy-canary.md"
   - "Traffic Management": "traffic.md"
+  - "Access Policies": "access-policies.md"
   - "Troubleshooting": "troubleshooting.md"
 
 markdown_extensions:

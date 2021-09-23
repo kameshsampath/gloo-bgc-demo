@@ -30,7 +30,7 @@ We will create Virtual Gateway, Host and RouteTable to route requests to the ser
     If you have installed the test gateway and virtual service, make sure to delete from the clusters before proceeding further
 
 ```bash
-$TUTORIAL_HOME/bin/6_deploy_gateway.sh
+$TUTORIAL_HOME/bin/7_deploy_gateway.sh
 ```
 
 Let us verify if Gateway and Virtual Services are created on both the clusters that are part of the mesh,
@@ -57,97 +57,52 @@ NAMESPACE      NAME                                                           GA
 istio-system   virtualservice.networking.istio.io/istiod-vs                   ["istiod-gateway"]                                         ["istiod.istio-system.svc.cluster.local"]   37h
 ```
 
-Let's try accesing the application via browser you can use either of the Istio Gateway Ingress Addresses from Cluster1 or Cluster2:
+## Calling Service
 
-```bash
-$TUTORIAL_HOME/bin/browse_bgc_service.sh "${CLUSTER1}"
-```
-
-(OR)
-
-```bash
-$TUTORIAL_HOME/bin/browse_bgc_service.sh "${CLUSTER2}"
-```
-
-The browser should now alternate between Blue and Green versions,
-
-![blue and green](https://www.screencast.com/users/KameshS/folders/Snagit/media/1854757a-50b3-4802-99df-29bde2ebfa7d/embed){ align=center }
-
-You can also poll the service via CLI:
-
-```bash
-$TUTORIAL_HOME/bin/poll_bgc_service.sh "${CLUSTER1}"
-```
-
-(OR)
-
-```bash
-$TUTORIAL_HOME/bin/poll_bgc_service.sh "${CLUSTER2}"
-```
-
-<script id="asciicast-435817" src="https://asciinema.org/a/435817.js" async></script>
+---8<--- "includes/call-service.md"
 
 ## Traffic Policy
 
-As we have unified the mesh and defined the access policy, we are good to distribute traffic amongst them.
-
-### Blue
-
-Let's try to split the traffic (blue),
-
-```bash
-kubectl --context=${MGMT} apply -f $TUTORIAL_HOME/mesh-files/blue-traffic-policy.yaml
-```
+As we have unified the mesh we are good to distribute traffic amongst them. As part of the next section we will apply various traffic policies to distribute traffic amongst the `blue`, `green` and `canary` services.
 
 ### Green
 
-### Blue <--> Green
-
-Let's try to split the traffic (green),
+As we already have traffic sent to *blue*, let use try sending all the traffic to *green*
 
 ```bash
-kubectl --context=${MGMT} apply -f $TUTORIAL_HOME/mesh-files/green-traffic-policy.yaml
+$TUTORIAL_HOME/bin/8_green.sh
 ```
 
-Check if the access control has been applied by accessing the service,
+Now if you try to call the service via browser or cli as [described](traffic.md#calling-service) it should return response from *green* service.
 
-Poll the service using the script,
+### Canary
 
-### Poll Cluster 1
+Let us now try sending all the traffic to *canary* service on the VM,
 
 ```bash
-$TUTORIAL_HOME/bin/poll_bgc_service.sh "${CLUSTER1}"
+$TUTORIAL_HOME/bin/9_canary.sh
 ```
 
-After few seconds you should start to get response like,
+Now if you try to call the service via browser or cli as [described](traffic.md#calling-service) it should return response from *canary* service.
 
-```text
-{
-    "color": "blue",
-    "count": 2,
-    "greeting": "Namaste 🙏🏽",
-    "pod": "localhost",
-    "userAgent": "HTTPie/2.5.0"
-}
-```
+### Blue <-- --> Green
 
-### Poll Cluster 2
+Let's try to split the traffic between *blue*(`50%`) and *green*(`50%`),
 
 ```bash
-$TUTORIAL_HOME/bin/poll_bgc_service.sh "${CLUSTER2}"
+$TUTORIAL_HOME/bin/11_blue-green.sh
 ```
 
-After few seconds you should start to get response like,
+If you try check your browser you should see an alternating blue-green traffic.
 
-```text
-{
-    "color": "green",
-    "count": 4,
-    "greeting": "Bonjour 👋🏽",
-    "pod": "localhost",
-    "userAgent": "HTTPie/2.5.0"
-}
+## Blue,Green and Canary
+
+Finally let's try to split the traffic between *blue*(`40%`),*green*(`40%`) and *canary*(`20%`),
+
+```bash
+$TUTORIAL_HOME/bin/12_blue-green-canary.sh
 ```
+
+If you try check your browser you should see almost equal traffic to *blue* and *green* and few requests to *canary*.
 
 ---8<--- "includes/abbrevations.md"
-

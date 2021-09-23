@@ -63,7 +63,18 @@ We will deploy istio to all our workload clusters, in our setup AWS and GCP are 
 
 ```bash
 cd $TUTORIAL_HOME/work/mgmt
-$TUTORIAL_HOME/bin/install_istio.sh
+```
+
+Install Istio on `cluster-1`:
+
+```bash
+$TUTORIAL_HOME/bin/install_istio.sh "$CLUSTER1"
+```
+
+Install Istio on `cluster-2`:
+
+```bash
+$TUTORIAL_HOME/bin/install_istio.sh "$CLUSTER2"
 ```
 
 ## Ensure Environment

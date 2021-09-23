@@ -29,9 +29,13 @@ envsubst < "$TUTORIAL_HOME/cluster/istio/istio-cr.yaml" | kubectl --context "${1
 
 printf "Waiting for the Istio Deployments to be created...\n"
 
-sleep 10
+sleep 30
 
 kubectl --context="${1}" rollout status deploy/istiod -n istio-system --timeout=120s
 kubectl --context="${1}" rollout status deploy/istio-ingressgateway -n istio-system --timeout=120s
+
+printf "Enable mTLS n \n"
+
+kubectl --context="${1}" apply -f "$TUTORIAL_HOME/mesh-files/peer-auth.yaml" 
 
 exit 0;

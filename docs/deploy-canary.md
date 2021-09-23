@@ -20,7 +20,7 @@ Set cluster environment variables
 ---8<--- "includes/env.md"
 
 ```bash
-cd $TUTORIAL_HOME/work/vm
+cd $TUTORIAL_HOME/work/mgmt
 ```
 
 ## Prepare Istio to Integrate VM Resources
@@ -84,55 +84,41 @@ envsubst < $TUTORIAL_HOME/mesh-files/vm/service-workload-entry.yaml | kubectl --
 
 {== Placeholder to check TP with VM when its avaiable ==}
 
-
 ### From VM
 
-With existing acess policy when you try to access the Cluster service from the ClustVM you should see `RABC: access denied` as shown, 
+With `globalAccessPolicy` disabled in the virtual mesh, calling a Istio service from VM should go through successfully,
 
 ```text
 [vagrant@fedora ~]$ http blue-green-canary.blue-green-canary.svc.cluster.local:8080/api
-HTTP/1.1 403 Forbidden
-content-length: 19
-content-type: text/plain
-date: Wed, 22 Sep 2021 14:12:34 GMT
+HTTP/1.1 200 OK
+content-length: 137
+content-type: application/json; charset=utf-8
+date: Thu, 23 Sep 2021 14:06:46 GMT
+etag: "89-coTFNpCn3MGCfccrhUII0cS8+hw"
 server: envoy
-x-envoy-upstream-service-time: 176
+vary: Accept-Encoding
+x-envoy-upstream-service-time: 179
 
-RBAC: access denied
-```
-
-Let us allow the traffic from VM to Cluster by applying the AccessPolicy,
-
-```bash
-kubectl --context=$MGMT apply -f $TUTORIAL_HOME/mesh-files/policy/from-vm-access-policy.yaml
-```
-
-Now trying to do acccess the cluster service from vm,
-
-```bash
-http blue-green-canary.blue-green-canary.svc.cluster.local:8080/api
-```
-
-Will show an output like
-
-```text
-
+{
+    "color": "blue",
+    "count": 0,
+    "greeting": "Namaste 🙏🏽",
+    "pod": "blue-98db67777-797t7",
+    "textColor": "whitesmoke",
+    "userAgent": "HTTPie/2.5.0"
+}
 ```
 
 ### To VM
 
-With existing acess policy when you try to access the VM service from the Cluster you should see access denied,
+We should also be able to access the VM from the cluster as shown,
 
 ```bash
-
+kubectl exec -c network-utils -it $(kubectl get pods -lapp=network-utils --no-headers | awk '{print $1}')  -- curl blue-green-canary.vm-blue-green-canary.svc.cluster.local:8080/api
 ```
 
-```bash
-kubectl --context=$MGMT apply -k $TUTORIAL_HOME/mesh-files/policy
-```
+The command should show an output like,
 
-No uncomment the `from-vm-access.policy.yaml` in `$TUTORIAL_HOME/mesh-files/policy/kustomization.yaml` and reapply the policy to allow access from VM,
-
-```bash
-kubectl --context=$MGMT apply -f $TUTORIAL_HOME/mesh-files/policy/
+```json
+{"greeting":"Hola ✋🏽","count":1,"pod":"vm-192.168.68.114","color":"yellow","textColor":"black","userAgent":"curl/7.78.0"}
 ```

@@ -47,16 +47,4 @@ Virtual Mesh allows seamless communication between meshes,
 kubectl --context=${MGMT} apply -f $TUTORIAL_HOME/mesh-files/bgc-virtual-mesh.yaml
 ```
 
-## Apply Access Policy
-
-As the mesh is enabled with Strict Access Policy, we need to setup the policy to allow Istio Ingress Service Account to access the service,
-
-```bash
-kubectl --context=${MGMT} apply -f $TUTORIAL_HOME/mesh-files/policy/bgc-access-policy.yaml
-```
-
-And now when call or poll the service you should see traffic distributed among the the services allowed by the policy,
-
----8<--- "includes/call-service.md"
-
 ---8<--- "includes/abbrevations.md"

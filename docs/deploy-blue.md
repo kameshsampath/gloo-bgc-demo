@@ -9,7 +9,7 @@ date: 2021-09-03
 ## Ensure environment
 
 ```bash
-cd $TUTORIAL_HOME/work/cluster-1
+cd $TUTORIAL_HOME/work/mgmt
 ```
 
 ## Deploy Blue Application
