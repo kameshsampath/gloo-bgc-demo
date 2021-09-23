@@ -10,14 +10,17 @@ clean:
 lint:	
 	@ansible-lint --force-color
 
-encrypt-vars:
-	ansible-vault encrypt --vault-password-file=$(VAULT_FILE) vars.yml
+.local.vars.yml:	
+	cp vars.yml.example .local.vars.yml
+
+encrypt-vars:	.local.vars.yml
+	ansible-vault encrypt --vault-password-file=$(VAULT_FILE) .local.vars.yml
 
 edit-vars:
-	ansible-vault edit --vault-password-file=$(VAULT_FILE) vars.yml
+	ansible-vault edit --vault-password-file=$(VAULT_FILE) .local.vars.yml
 
 view-vars:
-	ansible-vault view --vault-password-file=$(VAULT_FILE) vars.yml
+	ansible-vault view --vault-password-file=$(VAULT_FILE) .local.vars.yml
 
 cloud-run:
 	@poetry shell
