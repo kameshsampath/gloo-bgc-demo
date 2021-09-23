@@ -19,5 +19,3 @@ spec:
       clusters:
         - cluster1
         - cluster2
-      labels:
-        app: blue-green-canary

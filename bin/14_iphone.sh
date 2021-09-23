@@ -6,5 +6,4 @@ source "$SCRIPT_DIR/currentEnv.sh"
 
 source "$SCRIPT_DIR/helpers.sh"
 
-kustomize build "$TUTORIAL_HOME/mesh-files/networking" \
-  | envsubst | kubectl --context="${MGMT}" apply -f -
+kubectl --context="${MGMT}" apply -f  "$TUTORIAL_HOME/mesh-files/traffic/iphone-traffic-policy.yaml"

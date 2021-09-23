@@ -12,7 +12,7 @@ spec:
   federation:
     selectors:
     - {}
-  globalAccessPolicy: DISABLED
+  globalAccessPolicy: ENABLED
   meshes:
   - name: istiod-istio-system-cluster1
     namespace: gloo-mesh

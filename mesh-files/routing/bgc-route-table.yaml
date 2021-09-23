@@ -7,19 +7,15 @@ spec:
   routes:
   - matchers:
     - uri:
+      # TODO
+      #  prefix: /bgc
         prefix: /
     name: blue-green-canary
     routeAction:
+      # TODO
+      # pathRewrite: /
       destinations:
       - kubeService:
           clusterName: cluster1
           name: blue-green-canary
           namespace: blue-green-canary
-      # - kubeService:
-      #     clusterName: cluster2
-      #     name: blue-green-canary
-      #     namespace: blue-green-canary
-      # - kubeService:
-      #     clusterName: cluster1
-      #     name: blue-green-canary
-      #     namespace: vm-blue-green-canary

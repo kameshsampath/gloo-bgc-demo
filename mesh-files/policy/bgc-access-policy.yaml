@@ -1,7 +1,7 @@
 apiVersion: networking.mesh.gloo.solo.io/v1
 kind: AccessPolicy
 metadata:
-  name: istio-ingressgateway
+  name: bgc
   namespace: gloo-mesh
 spec:
   sourceSelector:
@@ -19,3 +19,4 @@ spec:
       - blue-green-canary
       labels:
         app: blue-green-canary
+      

@@ -6,4 +6,4 @@ source "$SCRIPT_DIR/currentEnv.sh"
 
 source "$SCRIPT_DIR/helpers.sh"
 
-kubectl --context="${MGMT}" apply -f  "$TUTORIAL_HOME/mesh-files/blue-traffic-policy.yaml"
+kubectl --context="${MGMT}" apply -f  "$TUTORIAL_HOME/mesh-files/traffic/blue-green-canary-traffic-policy.yaml"
