@@ -66,3 +66,4 @@ kubeconfig*
 .vagrant
 local.gcp.conf
 vars.yml
+*.url
