@@ -25,9 +25,5 @@ cd gloo-bgc-demo
 For convinience, we will refer the clone demo sources folder as `$TUTORIAL_HOME`,
 
 ```shell
-export PROFILE_NAME="gloo-bgc-demo"
 export TUTORIAL_HOME="$PWD"
-export MGMT="mgmt"
-export CLUSTER1="cluster-1"
 ```
-
