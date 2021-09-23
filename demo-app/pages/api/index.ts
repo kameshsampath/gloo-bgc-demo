@@ -14,6 +14,7 @@ export default function handler(
     count: msgCount++,
     pod: process.env.MY_POD || 'localhost',
     color: process.env.BLUE_GREEN_CANARY_COLOR || 'blue',
+    textColor: process.env.TEXT_COLOR || 'whitesmoke',
     userAgent: req.headers['user-agent'] || 'unknown'
   };
   res.status(200).json(responseMessage);

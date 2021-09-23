@@ -3,6 +3,7 @@ export type Data = {
   count: number,
   greeting: string,
   pod: string,
+  textColor: string,
   userAgent: string,
 }
 

@@ -32,7 +32,7 @@ const BGC: NextPage<Props> = ({message}) => {
       <Text 
         fontSize="xl" 
         fontWeight="bold" 
-        color="whitesmoke" 
+        color={message?.textColor}
         background={message?.color}
         align="center">
         {message?.greeting}

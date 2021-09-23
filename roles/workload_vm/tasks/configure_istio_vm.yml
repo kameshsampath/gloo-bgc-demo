@@ -143,6 +143,7 @@
 - name: "A record (IPV4 address) lookup for LoadBalancer"
   set_fact:
     lb_ips: "{{ lookup('community.general.dig',ingress_gw_lb_addr[0].hostname) | split(',') }}"
+    multi_lb: True
   when: ingress_gw_lb_addr[0].hostname is defined and ingress_gw_lb_addr | length > 0  
   tags:
    - istio
@@ -150,6 +151,7 @@
 - name: "Set LoadBalancer IP"
   set_fact:
     lb_ips: "{{ ingress_gw_lb_addr[0].ip }}"
+    one_lb: True
   when: ingress_gw_lb_addr[0].ip is defined and ingress_gw_lb_addr | length > 0
   tags:
    - istio
@@ -164,11 +166,11 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
     path: "/etc/hosts"
     block: |
-      {%if lb_ips | length > 1 %}
+      {%if one_lb %}
+      {{ lb_ips }}   istiod.istio-system.svc istiod.istio-system.svc.cluster.local      
+      {% elif multi_lb %}
       {{ lb_ips[0] }}   istiod.istio-system.svc istiod.istio-system.svc.cluster.local
       {{ lb_ips[1] }}   istiod.istio-system.svc istiod.istio-system.svc.cluster.local
-      {% else %}
-      {{ lb_ips }}   istiod.istio-system.svc istiod.istio-system.svc.cluster.local      
       {% endif %}
   notify:
   - "Kill Envoy"

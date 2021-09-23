@@ -9,4 +9,5 @@
     name: 
     - kubernetes>=12.0.0
     - boto
+    - botocore
     - boto3
