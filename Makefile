@@ -13,18 +13,29 @@ lint:
 .local.vars.yml:	
 	cp vars.yml.example .local.vars.yml
 
-encrypt-vars:	.local.vars.yml
+encrypt-vars:	.local.vars.yml	
+	@poetry shell
 	ansible-vault encrypt --vault-password-file=$(VAULT_FILE) .local.vars.yml
 
 edit-vars:
+	@poetry shell
 	ansible-vault edit --vault-password-file=$(VAULT_FILE) .local.vars.yml
 
 view-vars:
+	@poetry shell
 	ansible-vault view --vault-password-file=$(VAULT_FILE) .local.vars.yml
+
+base-run:
+	@poetry shell
+	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base" playbook.yml 
 
 cloud-run:
 	@poetry shell
 	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,cloud" playbook.yml 
+
+cloud-civo-run:
+	@poetry shell
+	ansible-playbook --tags "base,civo" --vault-password-file=$(VAULT_FILE) playbook.yml 
 
 cloud-gcp-run:
 	@poetry shell
@@ -48,7 +59,11 @@ workload-run:
 
 vm-up:
 	@poetry shell
-	@vagrant up
+	vagrant up
 
 vm-destroy:
-	@vagrant destroy --force
+	vagrant destroy --force
+
+test:
+	@poetry shell
+	ansible-playbook --vault-password-file=$(VAULT_FILE) test.yml
