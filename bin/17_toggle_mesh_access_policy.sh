@@ -13,7 +13,7 @@ if [ "ENABLED" == "$CURRENT_ACCESS_POLICY" ];
 then
   printf "\n Purging existing Access policies..\n"
   
-  kubectl --context="${MGMT}" delete -f  "$TUTORIAL_HOME/mesh-files/policy"  || true
+  # kubectl --context="${MGMT}" delete -f  "$TUTORIAL_HOME/mesh-files/policy"  || true
   
   printf "\n Global Access Policy is currently enabled, disabling it. \n"
 

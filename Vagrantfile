@@ -3,7 +3,7 @@
 
 Vagrant.configure("2") do |config|
 
-  config.vm.box = "fedora/34-cloud-base"
+  config.vm.box = "#{ ENV['VAGRANT_BOX'] || 'fedora/34-cloud-base' }"
 
   config.vm.network "public_network",
      bridge: [

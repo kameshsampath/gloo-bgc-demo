@@ -258,3 +258,17 @@
     label: "{{ item }}"
   tags:
    - istio
+
+- name: "Create or Update VM Workload Service in Cluster"
+  kubernetes.core.k8s:
+    state: present
+    context: "{{ k8s_context }}"
+    template:
+      path: 'istio/service.yaml.j2'
+
+- name: "Create or Update VM Workload Entry in Cluster"
+  kubernetes.core.k8s:
+    state: present
+    context: "{{ k8s_context }}"
+    template:
+      path: 'istio/workload-entry.yaml.j2'

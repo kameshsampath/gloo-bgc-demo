@@ -7,7 +7,7 @@
   rewrite name suffix .svc. .svc.cluster.local answer auto
 
   kubernetes  cluster.local in-addr.arpa ip6.arpa {
-    endpoint "{{ k8s_endpoint_ip }}" 
+    endpoint "{{ k8s_endpoint_url | default("") }}" 
     kubeconfig "/vagrant/kubeconfig" "{{ k8s_context }}"
     pods verified
     fallthrough in-addr.arpa ip6.arpa

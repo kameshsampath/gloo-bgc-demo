@@ -12,35 +12,55 @@ At the end of this chapter you would have,
 - [x] The VM on local environment
 - [x] Installed Gloo Mesh Enterprise
 
-## Kubernetes Cluster Setup
+## Demo Environment
 
-The demo requires us to have 3 Kubernetes clusters one that will act as Gloo Mesh Management and two as Workload clusters and other as pure workload cluster.
+The demo requires us to have three Kubernetes clusters and one Virtual Machine. The following tables shows the environment to component matrix.
 
-For this demo we will use three clouds,
+| Components  | GCP | AWS | CIVO | VM
+| ----------- | --- | --- | ---- | --
+| Gloo Mesh Management | :material-close: | :material-close: | :material-check: | :material-close:
+| Gloo Mesh Agent | :material-check: | :material-check: | :material-close: | :material-close:
+| Kubernetes | :material-check: | :material-check: | :material-check: | :material-close:
+| Istio | :material-check: | :material-check: | :material-close: | :material-check:
+| Blue-Green-Canary Service | :material-check: | :material-check: | :material-close: | :material-check:
 
-{== TODO table with responsiblities ==}
-
-1. AWS (Cluster-1)
-2. GCP (Cluster-2)
-3. CVIO (Management)
-
-Copy the Ansible variable template file,
+Navigate to the `$TUTORIAL_HOME`,
 
 ```bash
-cp $TUTORIAL_HOME/vars.yml.example $TUTORIAL_HOME/vars.yml
+cd $TUTORIAL_HOME
 ```
 
-Update the values of the file as per your environment
-
-As the `vars.yml` will hold sensitive values please encrypt the file using the command
+Create the Ansible variables file,
 
 ```bash
 make encrypt-vars
 ```
 
-## Workload VM Setup
+!!!note
+  As we will having sensitive keys in the Ansible variables, its highly recommended to create an encrypted variables file.
 
-We will use [Vagrant](http://vagrantup.com) to run and configure our workload VM. The terraform apply will create a file called `local_vpn_vars.yml` file in `$TUTORIAL_HOME/cloud/private`. Validate the values before running the command to generate the workload vm
+The following table shows the ansible variables used, do update the values of the file as per your environment.
+
+| Variable               | Description              | Default
+| ---------------------- | ------------------------ | -----------|
+|`gcp_vpc_name`| The name of the VPC that will be created. Same VPC will be used with GKE Cluster| kameshs-k8s-vpc
+|`gcp_vpn_name`| The name of the VPN that will be created | kameshs-site-to-site-vpn
+|`gcp_cred_file`| The SA JSON file to be copied to VM | "$HOME/.config/gcloud/credentials" from the Ansible controller  machine
+|`gcp_project`| The GCP project to use |
+|`gcp_region`| The GCP region to use| asia-south-1
+|`aws_access_key_id`| The AWS Acess Key|
+|`aws_secret_access_key`| The AWS Secret Key|
+|`aws_region`| The AWS Region to use | ap-south-1
+|`eks_cluster_name`| The AWS EKS cluster name | kameshs-gloo-demos
+|`aws_vpc_name`| The AWS VPC name. The same VPC will be used with EKS cluster | kameshs-gloo-demos
+|`civo_api_key`| The CIVO Cloud API Key |
+|`force_app_install`| Force install application on VM| no
+|`clean_istio_vm_files`| Clean the generated Istio VM files | no
+|`k8s_context`| The kubernetes context that will be used to query Istio resources |
+
+## VM Setup
+
+We will use [Vagrant](http://vagrantup.com) to run and configure our workload VM.  The Workload VM also serves as our Ansible target host to run the ansible playbooks.
 
 ```bash
 make vm-up
@@ -48,7 +68,9 @@ make vm-up
 
 Once the vm is up run the following command to setup create the cloud ressources,
 
-### Create Kubernetes Clusters
+### Cloud Setup
+
+The cloud setup will setup the Clouds and create Kubernetes clusters on them. On GCP the setup will also create VPN to connect your local network to Google Cloud VPC.
 
 ```bash
 make cloud-run

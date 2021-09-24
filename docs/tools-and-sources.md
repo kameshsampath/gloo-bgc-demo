@@ -8,6 +8,24 @@ date: 2021-09-03
 
 At the end of this chapter you will have the required tools and enviroment ready for running the demo.
 
+## Pre-requsites
+
+- Access to Google Cloud with Service Account that can create/update/delete,
+    
+    * VPC
+    * VPN
+    * Compute
+    * Kubernetes Clusters
+
+- Access to Google Cloud AWS with permissions to create/update/delete,
+
+    * VPC
+    * VPN
+    * Compute
+    * Kubernetes Clusters
+
+- CIVO Cloud Account with Access Token
+  
 ---8<--- "includes/tools.md"
 
 !!! important

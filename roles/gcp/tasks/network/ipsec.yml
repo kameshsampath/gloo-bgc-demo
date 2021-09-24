@@ -41,13 +41,31 @@
     value: '0'
     state: present
 
-- name: "Configure Site-to-Site Connection"
+- name: "Configure Site-to-Site Connection(Debian)"
+  become: yes
+  ansible.builtin.template:
+    dest: "/etc/swanctl/conf.d/{{ ipsec_connection_name }}.conf"
+    src: ipsec/swanctl.conf.j2
+  notify:
+    - "Restart swanctl service"
+  when: ansible_os_family == "Debian"
+
+- name: "Configure Site-to-Site Connection(RedHat)"
   become: yes
   ansible.builtin.template:
     dest: "/etc/strongswan/swanctl/conf.d/{{ ipsec_connection_name }}.conf"
     src: ipsec/swanctl.conf.j2
   notify:
     - "Restart swanctl service"
+  when: ansible_os_family == "RedHat"
+
+- name: "Disable and Start strongswan-starter service(Debian)"
+  become: yes
+  service:
+    enabled: false
+    name: strongswan-starter
+    state: stopped
+  when: ansible_os_family == "Debian"
 
 - name: "Enable and Start strongswan service"
   become: yes

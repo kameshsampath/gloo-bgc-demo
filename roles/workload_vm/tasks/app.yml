@@ -31,7 +31,7 @@
   tags:
    - app
 
-- name: "Export blue-green-vanary app to tarball"
+- name: "Export blue-green-canary app to tarball"
   become: yes
   ansible.builtin.command:
     argv:
@@ -85,6 +85,16 @@
   notify:
    - "Restart Blue Green Canary"
 
+- name: "Enable and start blue-green-canary.service service"
+  become: yes
+  ansible.builtin.systemd:
+    enabled: true
+    daemon_reload: true
+    state: started
+    name: blue-green-canary.service
+  tags:
+   - app
+
 - name: "Update Service Port"
   lineinfile:
     backrefs: yes
@@ -95,12 +105,3 @@
    - app
   notify:
    - "Restart Blue Green Canary"
-  
-- name: "Enable blue-green-canary.service service"
-  become: yes
-  ansible.builtin.systemd:
-    enabled: true
-    daemon_reload: true
-    name: blue-green-canary.service
-  tags:
-   - app

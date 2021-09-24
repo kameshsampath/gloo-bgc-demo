@@ -15,7 +15,7 @@ theme:
 nav:
   - 'Overview': "index.md"
   - 'Tools and Sources': "tools-and-sources.md"
-  - 'Setup': "setup.md"
+  - 'Environment Setup': "env-setup.md"
   - 'Site to Site VPN': "site-site-vpn.md"
   - "Mesh": "mesh.md"
   - "Deploy Microservices":

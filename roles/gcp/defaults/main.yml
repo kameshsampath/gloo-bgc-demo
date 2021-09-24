@@ -1,6 +1,7 @@
 
 gcp_cred_kind: serviceaccount
 create_gcp_credentials_file: yes
+gcp_cred_file: "{{ ansible_env.HOME }}/.config/gcloud/credentials"
 
 # VPC
 gcp_create_vpc: yes
@@ -15,9 +16,9 @@ gke_cluster_name: kameshs-gloo-demos
 gke_node_count: 3
 
 # VPN
-gcp_create_vpn: no
+gcp_create_vpn: yes
 gcp_delete_vpn: no
-gcp_vpn_vpc: kameshs-k8s-vpc
+gcp_vpn_vpc: "{{ gcp_vpc_name }}"
 gke_cluster_node_type: n1-standard-4
 gke_cluster_node_disk_size: 500
 gke_cluster_location: asia-south1-c

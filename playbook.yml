@@ -7,6 +7,10 @@
     - role: base
       tags:
         - base
+    - role: civo
+      tags:
+        - cloud
+        - civo
     - role: gcp
       tags:
         - cloud

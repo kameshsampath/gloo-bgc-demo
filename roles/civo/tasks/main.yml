@@ -1,0 +1,92 @@
+- name: "Install civo cli(Debian)"
+  become: yes
+  ansible.builtin.apt:
+    deb: "https://github.com/civo/cli/releases/download/{{ civo_cli_version }}/civo_amd64.deb"
+  when: ansible_os_family == "Debian"
+  tags:
+   - cloud
+   - civo
+
+- name: "Install civo cli(Red Hat)"
+  become: yes
+  ansible.builtin.dnf:
+    name: "https://github.com/civo/cli/releases/download/{{ civo_cli_version }}/civo_amd64.rpm"
+    disable_gpg_check: yes
+  when: ansible_os_family == "RedHat"
+  tags:
+   - cloud
+   - civo
+
+- name: "Save Civo Credentials"
+  ansible.builtin.command:
+    argv:
+      - civo
+      - apikey
+      - save 
+      - default
+      - "{{ civo_api_key }}"
+  when: create_civo_credentials_file
+  tags:
+   - cloud
+   - civo
+
+- name: "Set Default civo API Key"
+  ansible.builtin.command:
+    argv:
+      - civo
+      - apikey
+      - current 
+      - default
+  when: create_civo_credentials_file
+  tags:
+   - cloud
+   - civo
+
+- name: "Check if cluster exists"
+  ansible.builtin.command:
+    argv:
+     - civo
+     - k3s
+     - ls
+     - --region={{ civo_region }}
+     - -ojson
+  register: civo_cluster_ls
+
+- name: "Set Civo Clusters Fact"
+  set_fact: 
+      civo_clusters: "{{ civo_cluster_ls.stdout | from_json | json_query('[*].name') | list }}"
+
+- name: "Create Civo Cluster"
+  ansible.builtin.command:
+    argv:
+     - civo
+     - k3s
+     - create
+     - cluster
+     - "{{ civo_k3s_cluster_name }}"
+     - -r="Traefik"
+     - --create-firewall="{{ civo_firewall_ports }}"
+     - --size='{{ civo_k3s_cluster_size }}'
+     - --nodes={{ civo_k3s_cluster_nodes }}
+     - --region='{{ civo_region }}'
+     - --version='{{ civo_kubernetes_version }}'
+     - --wait
+  when: civo_clusters is defined and civo_k3s_cluster_name not in civo_clusters
+
+- name: "Ensure .kube config dir"
+  file:
+    state: directory
+    path: "{{ ansible_env.HOME }}/.kube"
+
+- name: "Get civo cluster kubeconfig"
+  ansible.builtin.command:
+    argv:
+     - civo
+     - k3s
+     - config
+     - "{{ civo_k3s_cluster_name }}"
+     - "--region={{ civo_region }}"
+     - "-ocustom=kubeconfig"
+     - "--local-path={{ ansible_env.HOME }}/.kube/{{ civo_k3s_cluster_name }}_kubeconfig"
+    creates: "{{ ansible_env.HOME }}/.kube/{{ civo_k3s_cluster_name }}_kubeconfig"
+     
