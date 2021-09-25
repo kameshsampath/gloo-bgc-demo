@@ -12,16 +12,16 @@
     content: |
       {{ lookup('file',lookup('env','GOOGLE_APPLICATION_CREDENTIALS')) }}
     mode: "0744"
-  when: create_gcp_credentials_file
+  when: create_gcp_credentials_file | bool
 
 - include: network/vpc.yml
-  when: gcp_create_vpc or gke_create
+  when: ( gcp_create_vpc | bool ) or ( gke_create | bool)
 
 - include: k8s/gke_cluster.yml
-  when: gke_create
+  when: ( gke_create | bool )
 
 - include: k8s/gke_cluster_rollback.yml
-  when: gke_delete and not gke_create
+  when: ( gke_delete | bool ) and not ( gke_create | bool )
 
 - name: "Generate Pre Shared Key"
   ansible.builtin.shell: |
@@ -39,13 +39,13 @@
 #     var: ikev_secret
 
 - include: network/vpn.yml
-  when: gcp_create_vpn
+  when: gcp_create_vpn  | bool
 
 - include: network/ipsec.yml
-  when: enable_ipsec
+  when: enable_ipsec  | bool
 
 - include: network/vpn_rollback.yml
-  when: not gcp_create_vpn and gcp_delete_vpn
+  when: not ( gcp_create_vpn | bool ) and ( gcp_delete_vpn | bool )
 
 - include: network/vpc_rollback.yml
-  when: not gcp_create_vpc and gcp_delete_vpc
+  when: not ( gcp_create_vpc | bool ) and ( gcp_delete_vpc | bool )

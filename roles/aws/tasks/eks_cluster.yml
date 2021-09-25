@@ -1,0 +1,64 @@
+- name: "Create EKS VPC"
+  amazon.aws.cloudformation:
+    stack_name: "{{ eks_cluster_name }}-vpc"
+    disable_rollback: false
+    region: "{{ aws_region }}"
+    template: "{{ ansible_env.HOME }}/aws/cloudformation/vpc.yaml"
+    template_parameters:
+      Name: "{{ aws_vpc_name }}"
+      Region: "{{ aws_region }}"
+      VpcCidr: "{{ aws_vpc_cidr }}"
+      SubnetRegiona: "{{ eks_public_subnet_cidr_blocks.a }}"
+      SubnetRegionb: "{{ eks_public_subnet_cidr_blocks.b }}"
+      SubnetRegionc: "{{ eks_public_subnet_cidr_blocks.c }}"
+    tags:
+      usedFor: "{{ eks_cluster_name  }}-cluster"
+      stack: "{{ eks_cluster_name }}-vpc"
+      application: gloo-mesh
+  register: vpc_info
+
+- name: Add to stack_outputs.
+  set_fact:
+    stack_outputs: "{{ stack_outputs | combine(vpc_info['stack_outputs']) }}"
+
+- name: "Debug VPC Stack Output"
+  debug:
+    var: stack_outputs
+
+- name: "Create EKS Cluster"
+  amazon.aws.cloudformation:
+    stack_name: "{{ eks_cluster_name }}-cluster"
+    disable_rollback: false
+    region: "{{ aws_region }}"
+    template: "{{ ansible_env.HOME }}/aws/cloudformation/eks_cluster.yaml"
+    template_parameters:
+      ClusterName:  "{{ eks_cluster_name }}"
+      VpcId: "{{ stack_outputs.VpcId }}"
+      Subnets: "{{ stack_outputs.Subnets }}"
+      KubernetesVersion: "{{ kubernetes_version }}"
+    tags:
+      stack: "{{ eks_cluster_name }}-cluster"
+      application: gloo-mesh
+  register: eks_cluster_info
+
+- name: "Create EKS Node Group"
+  amazon.aws.cloudformation:
+    stack_name: "{{ eks_cluster_name }}-nodegroup"
+    state: present
+    region: "{{ aws_region }}"
+    disable_rollback: false
+    template: "{{ ansible_env.HOME }}/aws/cloudformation/eks_nodegroup.yaml"
+    template_parameters:
+      ClusterName: "{{ eks_cluster_name }}"
+      NodeGroupName: "{{ eks_nodegroup_name }}"
+      NodeGroupDesiredCapacity: "{{ eks_nodegroup_cluster_size }}"
+      NodeInstanceType: "{{ eks_cluster_node_instance_type }}"
+      Subnets: "{{ stack_outputs.Subnets }}"
+    tags:
+      stack: "{{ eks_cluster_name }}-nodegroup"
+      application: gloo-mesh
+  register: eks_nodegroup_info
+
+- name: "EKS Stack Output"
+  debug:
+    var: stack_outputs

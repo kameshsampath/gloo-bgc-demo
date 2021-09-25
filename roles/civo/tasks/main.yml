@@ -25,7 +25,7 @@
       - save 
       - default
       - "{{ civo_api_key }}"
-  when: create_civo_credentials_file
+  when: create_civo_credentials_file  | bool
   tags:
    - cloud
    - civo
@@ -37,7 +37,7 @@
       - apikey
       - current 
       - default
-  when: create_civo_credentials_file
+  when: create_civo_credentials_file  | bool
   tags:
    - cloud
    - civo

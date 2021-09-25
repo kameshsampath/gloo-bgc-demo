@@ -7,24 +7,9 @@
    civo_cluster_name: gloo-mgmt
 
   tasks:
-   - name: "Check if cluster exists"
-     ansible.builtin.command:
-        argv:
-        - civo
-        - k3s
-        - ls
-        - --region={{ civo_region }}
-        - -ojson
-     register: civo_cluster_ls
-    
-   - set_fact: 
-      civo_clusters: "{{ civo_cluster_ls.stdout | from_json | json_query('[*].name') | list }}"
-   
-   - debug:
-      msg: "Cluster Exists"
-     when: civo_clusters is defined and civo_cluster_name in civo_clusters
-
-   - debug:
-      msg: "Jai Guru"
-     when: civo_clusters is defined and civo_cluster_name not in civo_clusters
-   
+    - debug:
+        msg: "{{ eks_create | bool  }}"
+    - debug:
+        msg: "{{ eks_delete | bool  }}"       
+    - debug:
+        msg: "Delete ? {{ (eks_delete | bool) and not (eks_create | bool ) }}"

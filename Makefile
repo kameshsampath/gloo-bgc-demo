@@ -27,35 +27,35 @@ view-vars:
 
 base-run:
 	@poetry shell
-	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base" playbook.yml 
+	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base" playbook.yml  $(EXTRA_ARGS)
 
 cloud-run:
 	@poetry shell
-	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,cloud" playbook.yml 
+	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,cloud" playbook.yml  $(EXTRA_ARGS)
 
 cloud-civo-run:
 	@poetry shell
-	ansible-playbook --tags "base,civo" --vault-password-file=$(VAULT_FILE) playbook.yml 
+	ansible-playbook --tags "base,civo" --vault-password-file=$(VAULT_FILE) playbook.yml  $(EXTRA_ARGS)
 
 cloud-gcp-run:
 	@poetry shell
-	ansible-playbook --tags "base,gcp" --vault-password-file=$(VAULT_FILE) playbook.yml 
+	ansible-playbook --tags "base,gcp" --vault-password-file=$(VAULT_FILE) playbook.yml  $(EXTRA_ARGS)
 		
 cloud-aws-run:
 	@poetry shell
-	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,aws" playbook.yml
+	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,aws" playbook.yml $(EXTRA_ARGS)
 
 app-run:
 	@poetry shell
-	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "workload,app" playbook.yml
+	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "workload,app" playbook.yml $(EXTRA_ARGS)
 
 istio-run:
 	@poetry shell
-	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "workload,istio" playbook.yml
+	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "workload,istio" playbook.yml $(EXTRA_ARGS)
 
 workload-run:
 	@poetry shell
-	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,workload,app,istio" playbook.yml
+	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,workload,app,istio" playbook.yml $(EXTRA_ARGS)
 
 vm-up:
 	@poetry shell
@@ -66,4 +66,4 @@ vm-destroy:
 
 test:
 	@poetry shell
-	ansible-playbook --vault-password-file=$(VAULT_FILE) test.yml
+	ansible-playbook --vault-password-file=$(VAULT_FILE) test.yml  $(EXTRA_ARGS)

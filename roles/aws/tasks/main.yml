@@ -27,22 +27,6 @@
     mode: "755"
     dest: "/usr/bin/aws-iam-authenticator"
 
-- name: "Download eksctl"
-  become: yes
-  get_url:
-    url: "https://github.com/weaveworks/eksctl/releases/download/v0.67.0/eksctl_Linux_amd64.tar.gz"
-    checksum: "sha256:b885c8f1b66598c12886791a5f141f8ef9b2fa1854486903fd9750b76f9917fb"
-    mode: "755"
-    dest: "/tmp"
-
-- name: "Extract eksctl"
-  become: yes
-  unarchive:
-    src: "/tmp/eksctl_Linux_amd64.tar.gz"
-    dest: "/usr/local/bin"
-    mode: "755"
-    remote_src: yes
-
 - name: "Create AWS Credentials folder"
   file:
     path: "{{ ansible_env.HOME }}/.aws"
@@ -70,8 +54,18 @@
     mode: "0744"
   when: create_aws_credentials_file
 
-- include: k8s/eks_cluster.yml
-  when: eks_create and not eks_delete
+- name: "Make CloudFormation Template Dir"
+  file:
+    path: "{{ ansible_env.HOME }}/aws"
+    state: directory
 
-- include: k8s/eks_cluster_rollback.yml
-  when: not eks_create and eks_delete
+- name: "Copy CloudFormation Template Files"
+  copy:
+    src: "files/cloudformation"
+    dest: "{{ ansible_env.HOME }}/aws"
+
+- include: eks_cluster.yml
+  when: ( eks_create | bool ) and not ( eks_delete | bool)
+
+- include: eks_cluster_rollback.yml
+  when: ( eks_delete | bool ) and not ( eks_create | bool)

@@ -1,0 +1,17 @@
+- name: "Remove EKS Cluster via Cloud Formation"
+  amazon.aws.cloudformation:
+    stack_name: "{{ eks_cluster_name }}-eks"
+    state: absent
+    region: "{{ aws_region }}"
+
+- name: "Remove EKS NodeGroup via Cloud Formation"
+  amazon.aws.cloudformation:
+    stack_name: "{{ eks_cluster_name }}-nodegroup"
+    state: absent
+    region: "{{ aws_region }}"
+
+- name: "Remove EKS VPC via Cloud Formation"
+  amazon.aws.cloudformation:
+    stack_name: "{{ aws_vpc_name }}-cloudformation"
+    state: absent
+    region: "{{ aws_region }}"
