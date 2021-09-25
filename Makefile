@@ -3,7 +3,7 @@ ENV_FILE := .envrc
 include ${ENV_FILE}
 CURRENT_DIR = $(shell pwd)
 
-.PHONY:	clean	lint	edit-vars	rekey-vars	run
+.PHONY:	clean	lint	edit-vars	rekey-vars	run	encrypt-vars	view-vars	base-run	cloud-run	cloud-civo-run	cloud-gcp-run	cloud-aws-run	app-run	istio-run	istio-run	workload-run	vm-up	vm-destroy	test
 
 clean:
 	

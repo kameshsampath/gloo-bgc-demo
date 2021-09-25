@@ -1,14 +1,15 @@
 ---
-title: Access Policies
-summary: Apply access policies to control the access to services
+title: Site to Site VPN
+summary: Site to Site VPN
 authors:
   - Kamesh Sampath
 date: 2021-09-22
 ---
 
-In this chapter we will setup site-to-site VPN on Google Cloud that will allow the VM on your laptop to communicate with Istio on Google Cloud,
+## Demo Architecture
 
-```bash
-```
+![Demo Architecture](./images/architecture.png){align=center}
+
+
 
 ---8<--- "includes/abbrevations.md"

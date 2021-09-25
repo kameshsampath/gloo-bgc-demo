@@ -12,12 +12,35 @@ At the end of this chapter you would have,
 - [x] The VM on local environment
 - [x] Installed Gloo Mesh Enterprise
 
+## Ensure Enviroment
+
+For easier setup and convinience setup the following enviroment variables before starting the setup:
+
+```bash
+# the Tutorial home directory
+export TUTORIAL_HOME="$(realpath -m "$PWD/../..")"
+# this is not available at this point but will be useful later
+export KUBECONFIG=$TUTORIAL_HOME/work/.kube/config
+export GOOGLE_APPLICATION_CREDENTIALS=<your google SA JSON FILE>
+export GOOGLE_PROJECT_ID=<your GCP test project>
+# The password file where your Ansible valut password will be stored
+export VAULT_FILE=.password_file
+# the vagrant vm provider
+export VAGRANT_DEFAULT_PROVIDER=virtualbox
+# Vagrant base box ubuntu/focal64, fedora/34-cloud-base
+export VAGRANT_BOX=ubuntu/focal64
+```
+
+!!! tip
+    A vary handy tool to work with environment and variables [direnv](https://direnv.net)
+
 ## Demo Environment
 
 The demo requires us to have three Kubernetes clusters and one Virtual Machine. The following tables shows the environment to component matrix.
 
 | Components  | GCP | AWS | CIVO | VM
 | ----------- | --- | --- | ---- | --
+| Cluster Name| cluster-1| cluster-2 | mgmt |
 | Gloo Mesh Management | :material-close: | :material-close: | :material-check: | :material-close:
 | Gloo Mesh Agent | :material-check: | :material-check: | :material-close: | :material-close:
 | Kubernetes | :material-check: | :material-check: | :material-check: | :material-close:
@@ -54,6 +77,7 @@ The following table shows the ansible variables used, do update the values of th
 |`eks_cluster_name`| The AWS EKS cluster name | kameshs-gloo-demos
 |`aws_vpc_name`| The AWS VPC name. The same VPC will be used with EKS cluster | kameshs-gloo-demos
 |`civo_api_key`| The CIVO Cloud API Key |
+|`civo_k3s_cluster_name`| The CIVO Kubernetes cluster Name | gloo-mgmt
 |`force_app_install`| Force install application on VM| no
 |`clean_istio_vm_files`| Clean the generated Istio VM files | no
 |`k8s_context`| The kubernetes context that will be used to query Istio resources |
@@ -66,14 +90,34 @@ We will use [Vagrant](http://vagrantup.com) to run and configure our workload VM
 make vm-up
 ```
 
-Once the vm is up run the following command to setup create the cloud ressources,
+The `make vm-up` will bring up the vagrant VM with with base packages installed.
 
 ### Cloud Setup
 
-The cloud setup will setup the Clouds and create Kubernetes clusters on them. On GCP the setup will also create VPN to connect your local network to Google Cloud VPC.
+The cloud setup will setup the Clouds and create Kubernetes clusters on them.
+
+#### Google Cloud
+
+The following command will run setup Google Cloud with VPC, VPN and setup Kubernetes using the VPC. This task will also setup a site-to-site VPN using [strongswan](https:/strongswan.org) which will allow communication between on-premise(VM) to the GKE.
 
 ```bash
-make cloud-run
+make cloud-gcp-run
+```
+
+#### Civo Cloud
+
+The following command will setup a Kubernetes Cluster on Civo cloud,
+
+```bash
+make cloud-civo-run
+```
+
+#### Amzon Cloud
+
+The following command will setup a Kubernetes Cluster(EKS) on AWS cloud,
+
+```bash
+make cloud-civo-run
 ```
 
 !!! note

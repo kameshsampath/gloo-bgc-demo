@@ -2,6 +2,9 @@
 gcp_vpc_name: <your vpc name>
 gcp_vpn_name: <your vpn name>
 
+# CIVO key
+civo_api_key: <your civo api key>
+
 # GCP SA JSON file
 gcp_project: <your gcp project>
 gcp_region: <gcp region to use>
