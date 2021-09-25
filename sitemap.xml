@@ -2,57 +2,57 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://kameshsampath.github.com/gloo-bgc-demo/</loc>
-         <lastmod>2021-09-23</lastmod>
+         <lastmod>2021-09-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://kameshsampath.github.com/gloo-bgc-demo/access-policies/</loc>
-         <lastmod>2021-09-23</lastmod>
+         <lastmod>2021-09-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://kameshsampath.github.com/gloo-bgc-demo/deploy-blue/</loc>
-         <lastmod>2021-09-23</lastmod>
+         <lastmod>2021-09-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://kameshsampath.github.com/gloo-bgc-demo/deploy-canary/</loc>
-         <lastmod>2021-09-23</lastmod>
+         <lastmod>2021-09-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://kameshsampath.github.com/gloo-bgc-demo/deploy-green/</loc>
-         <lastmod>2021-09-23</lastmod>
+         <lastmod>2021-09-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://kameshsampath.github.com/gloo-bgc-demo/env-setup/</loc>
+         <lastmod>2021-09-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://kameshsampath.github.com/gloo-bgc-demo/mesh/</loc>
-         <lastmod>2021-09-23</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://kameshsampath.github.com/gloo-bgc-demo/setup/</loc>
-         <lastmod>2021-09-23</lastmod>
+         <lastmod>2021-09-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://kameshsampath.github.com/gloo-bgc-demo/site-site-vpn/</loc>
-         <lastmod>2021-09-23</lastmod>
+         <lastmod>2021-09-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://kameshsampath.github.com/gloo-bgc-demo/tools-and-sources/</loc>
-         <lastmod>2021-09-23</lastmod>
+         <lastmod>2021-09-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://kameshsampath.github.com/gloo-bgc-demo/traffic/</loc>
-         <lastmod>2021-09-23</lastmod>
+         <lastmod>2021-09-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://kameshsampath.github.com/gloo-bgc-demo/troubleshooting/</loc>
-         <lastmod>2021-09-23</lastmod>
+         <lastmod>2021-09-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

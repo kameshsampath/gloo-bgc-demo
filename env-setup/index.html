@@ -9,7 +9,7 @@
       
       
       
-        <link rel="canonical" href="https://kameshsampath.github.com/gloo-bgc-demo/setup/">
+        <link rel="canonical" href="https://kameshsampath.github.com/gloo-bgc-demo/env-setup/">
       
       <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.3.0">
@@ -63,7 +63,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#kubernetes-cluster-setup" class="md-skip">
+        <a href="#ensure-enviroment" class="md-skip">
           Skip to content
         </a>
       
@@ -220,12 +220,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Setup
+          Environment Setup
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Setup
+        Environment Setup
       </a>
       
         
@@ -241,24 +241,58 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kubernetes-cluster-setup" class="md-nav__link">
-    Kubernetes Cluster Setup
+  <a href="#ensure-enviroment" class="md-nav__link">
+    Ensure Enviroment
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#workload-vm-setup" class="md-nav__link">
-    Workload VM Setup
+  <a href="#demo-environment" class="md-nav__link">
+    Demo Environment
   </a>
   
-    <nav class="md-nav" aria-label="Workload VM Setup">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vm-setup" class="md-nav__link">
+    VM Setup
+  </a>
+  
+    <nav class="md-nav" aria-label="VM Setup">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#create-kubernetes-clusters" class="md-nav__link">
-    Create Kubernetes Clusters
+  <a href="#cloud-setup" class="md-nav__link">
+    Cloud Setup
   </a>
+  
+    <nav class="md-nav" aria-label="Cloud Setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#google-cloud" class="md-nav__link">
+    Google Cloud
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#civo-cloud" class="md-nav__link">
+    Civo Cloud
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amzon-cloud" class="md-nav__link">
+    Amzon Cloud
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -499,24 +533,58 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kubernetes-cluster-setup" class="md-nav__link">
-    Kubernetes Cluster Setup
+  <a href="#ensure-enviroment" class="md-nav__link">
+    Ensure Enviroment
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#workload-vm-setup" class="md-nav__link">
-    Workload VM Setup
+  <a href="#demo-environment" class="md-nav__link">
+    Demo Environment
   </a>
   
-    <nav class="md-nav" aria-label="Workload VM Setup">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vm-setup" class="md-nav__link">
+    VM Setup
+  </a>
+  
+    <nav class="md-nav" aria-label="VM Setup">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#create-kubernetes-clusters" class="md-nav__link">
-    Create Kubernetes Clusters
+  <a href="#cloud-setup" class="md-nav__link">
+    Cloud Setup
   </a>
+  
+    <nav class="md-nav" aria-label="Cloud Setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#google-cloud" class="md-nav__link">
+    Google Cloud
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#civo-cloud" class="md-nav__link">
+    Civo Cloud
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amzon-cloud" class="md-nav__link">
+    Amzon Cloud
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -587,7 +655,7 @@
               
                 
                 
-                  <h1>Setup</h1>
+                  <h1>Environment Setup</h1>
                 
                 <p>At the end of this chapter you would have,</p>
 <ul class="task-list">
@@ -595,29 +663,197 @@
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> The VM on local environment</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Installed Gloo Mesh Enterprise</li>
 </ul>
-<h2 id="kubernetes-cluster-setup">Kubernetes Cluster Setup<a class="headerlink" href="#kubernetes-cluster-setup" title="Permanent link">&para;</a></h2>
-<p>The demo requires us to have 3 Kubernetes clusters one that will act as Gloo Mesh Management and two as Workload clusters and other as pure workload cluster.</p>
-<p>For this demo we will use three clouds,</p>
-<p><mark class="critic"> TODO table with responsiblities </mark></p>
-<ol>
-<li>AWS (Cluster-1)</li>
-<li>GCP (Cluster-2)</li>
-<li>CVIO (Management)</li>
-</ol>
-<p>Copy the Ansible variable template file,</p>
-<div class="highlight"><pre><span></span><code>cp <span class="nv">$TUTORIAL_HOME</span>/vars.yml.example <span class="nv">$TUTORIAL_HOME</span>/vars.yml
+<h2 id="ensure-enviroment">Ensure Enviroment<a class="headerlink" href="#ensure-enviroment" title="Permanent link">&para;</a></h2>
+<p>For easier setup and convinience setup the following enviroment variables before starting the setup:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># the Tutorial home directory</span>
+<span class="nb">export</span> <span class="nv">TUTORIAL_HOME</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>realpath -m <span class="s2">&quot;</span><span class="nv">$PWD</span><span class="s2">/../..&quot;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="c1"># this is not available at this point but will be useful later</span>
+<span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/.kube/config
+<span class="nb">export</span> <span class="nv">GOOGLE_APPLICATION_CREDENTIALS</span><span class="o">=</span>&lt;your google SA JSON FILE&gt;
+<span class="nb">export</span> <span class="nv">GOOGLE_PROJECT_ID</span><span class="o">=</span>&lt;your GCP <span class="nb">test</span> project&gt;
+<span class="c1"># The password file where your Ansible valut password will be stored</span>
+<span class="nb">export</span> <span class="nv">VAULT_FILE</span><span class="o">=</span>.password_file
+<span class="c1"># the vagrant vm provider</span>
+<span class="nb">export</span> <span class="nv">VAGRANT_DEFAULT_PROVIDER</span><span class="o">=</span>virtualbox
+<span class="c1"># Vagrant base box ubuntu/focal64, fedora/34-cloud-base</span>
+<span class="nb">export</span> <span class="nv">VAGRANT_BOX</span><span class="o">=</span>ubuntu/focal64
 </code></pre></div>
-<p>Update the values of the file as per your environment</p>
-<p>As the <code>vars.yml</code> will hold sensitive values please encrypt the file using the command</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>A vary handy tool to work with environment and variables <a href="https://direnv.net">direnv</a></p>
+</div>
+<h2 id="demo-environment">Demo Environment<a class="headerlink" href="#demo-environment" title="Permanent link">&para;</a></h2>
+<p>The demo requires us to have three Kubernetes clusters and one Virtual Machine. The following tables shows the environment to component matrix.</p>
+<table>
+<thead>
+<tr>
+<th>Components</th>
+<th>GCP</th>
+<th>AWS</th>
+<th>CIVO</th>
+<th>VM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cluster Name</td>
+<td>cluster-1</td>
+<td>cluster-2</td>
+<td>mgmt</td>
+<td></td>
+</tr>
+<tr>
+<td>Gloo Mesh Management</td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg></span></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg></span></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59 21 7z"/></svg></span></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg></span></td>
+</tr>
+<tr>
+<td>Gloo Mesh Agent</td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59 21 7z"/></svg></span></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59 21 7z"/></svg></span></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg></span></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg></span></td>
+</tr>
+<tr>
+<td>Kubernetes</td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59 21 7z"/></svg></span></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59 21 7z"/></svg></span></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59 21 7z"/></svg></span></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg></span></td>
+</tr>
+<tr>
+<td>Istio</td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59 21 7z"/></svg></span></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59 21 7z"/></svg></span></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg></span></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59 21 7z"/></svg></span></td>
+</tr>
+<tr>
+<td>Blue-Green-Canary Service</td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59 21 7z"/></svg></span></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59 21 7z"/></svg></span></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg></span></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59 21 7z"/></svg></span></td>
+</tr>
+</tbody>
+</table>
+<p>Navigate to the <code>$TUTORIAL_HOME</code>,</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="nv">$TUTORIAL_HOME</span>
+</code></pre></div>
+<p>Create the Ansible variables file,</p>
 <div class="highlight"><pre><span></span><code>make encrypt-vars
 </code></pre></div>
-<h2 id="workload-vm-setup">Workload VM Setup<a class="headerlink" href="#workload-vm-setup" title="Permanent link">&para;</a></h2>
-<p>We will use <a href="http://vagrantup.com">Vagrant</a> to run and configure our workload VM. The terraform apply will create a file called <code>local_vpn_vars.yml</code> file in <code>$TUTORIAL_HOME/cloud/private</code>. Validate the values before running the command to generate the workload vm</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+</div>
+<p>As we will having sensitive keys in the Ansible variables, its highly recommended to create an encrypted variables file.</p>
+<p>The following table shows the ansible variables used, do update the values of the file as per your environment.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gcp_vpc_name</code></td>
+<td>The name of the VPC that will be created. Same VPC will be used with GKE Cluster</td>
+<td>kameshs-k8s-vpc</td>
+</tr>
+<tr>
+<td><code>gcp_vpn_name</code></td>
+<td>The name of the VPN that will be created</td>
+<td>kameshs-site-to-site-vpn</td>
+</tr>
+<tr>
+<td><code>gcp_cred_file</code></td>
+<td>The SA JSON file to be copied to VM</td>
+<td>&ldquo;$HOME/.config/gcloud/credentials&rdquo; from the Ansible controller  machine</td>
+</tr>
+<tr>
+<td><code>gcp_project</code></td>
+<td>The GCP project to use</td>
+<td></td>
+</tr>
+<tr>
+<td><code>gcp_region</code></td>
+<td>The GCP region to use</td>
+<td>asia-south-1</td>
+</tr>
+<tr>
+<td><code>aws_access_key_id</code></td>
+<td>The AWS Acess Key</td>
+<td></td>
+</tr>
+<tr>
+<td><code>aws_secret_access_key</code></td>
+<td>The AWS Secret Key</td>
+<td></td>
+</tr>
+<tr>
+<td><code>aws_region</code></td>
+<td>The AWS Region to use</td>
+<td>ap-south-1</td>
+</tr>
+<tr>
+<td><code>eks_cluster_name</code></td>
+<td>The AWS EKS cluster name</td>
+<td>kameshs-gloo-demos</td>
+</tr>
+<tr>
+<td><code>aws_vpc_name</code></td>
+<td>The AWS VPC name. The same VPC will be used with EKS cluster</td>
+<td>kameshs-gloo-demos</td>
+</tr>
+<tr>
+<td><code>civo_api_key</code></td>
+<td>The CIVO Cloud API Key</td>
+<td></td>
+</tr>
+<tr>
+<td><code>civo_k3s_cluster_name</code></td>
+<td>The CIVO Kubernetes cluster Name</td>
+<td>gloo-mgmt</td>
+</tr>
+<tr>
+<td><code>force_app_install</code></td>
+<td>Force install application on VM</td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>clean_istio_vm_files</code></td>
+<td>Clean the generated Istio VM files</td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>k8s_context</code></td>
+<td>The kubernetes context that will be used to query Istio resources</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="vm-setup">VM Setup<a class="headerlink" href="#vm-setup" title="Permanent link">&para;</a></h2>
+<p>We will use <a href="http://vagrantup.com">Vagrant</a> to run and configure our workload VM.  The Workload VM also serves as our Ansible target host to run the ansible playbooks.</p>
 <div class="highlight"><pre><span></span><code>make vm-up
 </code></pre></div>
-<p>Once the vm is up run the following command to setup create the cloud ressources,</p>
-<h3 id="create-kubernetes-clusters">Create Kubernetes Clusters<a class="headerlink" href="#create-kubernetes-clusters" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>make cloud-run
+<p>The <code>make vm-up</code> will bring up the vagrant VM with with base packages installed.</p>
+<h3 id="cloud-setup">Cloud Setup<a class="headerlink" href="#cloud-setup" title="Permanent link">&para;</a></h3>
+<p>The cloud setup will setup the Clouds and create Kubernetes clusters on them.</p>
+<h4 id="google-cloud">Google Cloud<a class="headerlink" href="#google-cloud" title="Permanent link">&para;</a></h4>
+<p>The following command will run setup Google Cloud with VPC, VPN and setup Kubernetes using the VPC. This task will also setup a site-to-site VPN using <a href="https:/strongswan.org">strongswan</a> which will allow communication between on-premise(VM) to the GKE.</p>
+<div class="highlight"><pre><span></span><code>make cloud-gcp-run
+</code></pre></div>
+<h4 id="civo-cloud">Civo Cloud<a class="headerlink" href="#civo-cloud" title="Permanent link">&para;</a></h4>
+<p>The following command will setup a Kubernetes Cluster on Civo cloud,</p>
+<div class="highlight"><pre><span></span><code>make cloud-civo-run
+</code></pre></div>
+<h4 id="amzon-cloud">Amzon Cloud<a class="headerlink" href="#amzon-cloud" title="Permanent link">&para;</a></h4>
+<p>The following command will setup a Kubernetes Cluster(EKS) on AWS cloud,</p>
+<div class="highlight"><pre><span></span><code>make cloud-civo-run
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>

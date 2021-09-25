@@ -62,6 +62,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#what-we-wil-be-doing-as-part-of-this-demo" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -184,9 +189,37 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Overview
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="." class="md-nav__link md-nav__link--active">
         Overview
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-we-wil-be-doing-as-part-of-this-demo" class="md-nav__link">
+    What we wil be doing as part of this demo ?
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -215,8 +248,8 @@
   
   
     <li class="md-nav__item">
-      <a href="setup/" class="md-nav__link">
-        Setup
+      <a href="env-setup/" class="md-nav__link">
+        Environment Setup
       </a>
     </li>
   
@@ -380,6 +413,36 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-we-wil-be-doing-as-part-of-this-demo" class="md-nav__link">
+    What we wil be doing as part of this demo ?
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
@@ -388,17 +451,19 @@
                 
                   <h1>Overview</h1>
                 
-                <p>As part of this short demo we see how to do Blue-Green-Canary deployment with Gloo Mesh with workloads spread across Kubernetes Clusters and VMs. The clusters and vms could be on a public cloud, private cloud or could be even hybrid.</p>
-<p>At the end of this short tutorial you would have learnt,</p>
+                <p>As part of this short tutorial/demo we will be deploying a simple colored hello world microservice and explore how to integrate the service running on an on-premise VM with public cloud clusters using Istio. We will also leverage Gloo Mesh federation capabilites to unify the Istio clusters to provide better interoprablity between the clusters and VM. </p>
+<h2 id="what-we-wil-be-doing-as-part-of-this-demo">What we wil be doing as part of this demo ?<a class="headerlink" href="#what-we-wil-be-doing-as-part-of-this-demo" title="Permanent link">&para;</a></h2>
 <ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Setup minikube cluster</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Setup Virutal Machine</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Deploy Gloo Mesh Enterprise minikube cluster</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Deploy Istio on minikube</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Deploy Istio on vm</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Setup Kubernetes clusters on three public clouds</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Setup Virutal Machine on on-premise network</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Site-to-Site VPN to connect on-premise to public cloud</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Deploy Gloo Mesh Enterprise on clusters</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Deploy Istio on clusters</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Deploy Istio sidecar on VM</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Traffic Distribution between VM on-premise and public cloud</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Access Policies to control traffic</li>
 </ul>
-<p><mark class="critic"> TODO  update image </mark>
-<img align="center" alt="Gloo Edge" src="images/overview.png" /></p>
+<p><img align="center" alt="Demo Architecture" src="images/architecture.png" /></p>
                 
                   
                 
