@@ -1,6 +1,6 @@
 - name: "Remove EKS Cluster via Cloud Formation"
   amazon.aws.cloudformation:
-    stack_name: "{{ eks_cluster_name }}-eks"
+    stack_name: "{{ eks_cluster_name }}-cluster"
     state: absent
     region: "{{ aws_region }}"
 
@@ -12,6 +12,17 @@
 
 - name: "Remove EKS VPC via Cloud Formation"
   amazon.aws.cloudformation:
-    stack_name: "{{ aws_vpc_name }}-cloudformation"
+    stack_name: "{{ eks_cluster_name }}-vpc"
     state: absent
     region: "{{ aws_region }}"
+
+- name: "Remove ec2 key pair for {{ eks_cluster_name }}"
+  amazon.aws.ec2_key:
+    name: "{{eks_cluster_name}}_keypair"
+    region: "{{ aws_region }}"
+    state: absent
+
+- name: "Remove {{ eks_cluster_name}} kubeconfig"
+  file: 
+     path: "{{ ansible_env.HOME }}/.kube/eks_{{ eks_cluster_name }}.kubeconfig"
+     state: absent

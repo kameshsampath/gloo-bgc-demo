@@ -3,14 +3,16 @@
     stack_name: "{{ eks_cluster_name }}-vpc"
     disable_rollback: false
     region: "{{ aws_region }}"
-    template: "{{ ansible_env.HOME }}/aws/cloudformation/vpc.yaml"
+    template: "{{ ansible_env.HOME }}/aws/cloudformation/eks_vpc.yaml"
     template_parameters:
-      Name: "{{ aws_vpc_name }}"
-      Region: "{{ aws_region }}"
+      Name: "{{ eks_cluster_name }}"
       VpcCidr: "{{ aws_vpc_cidr }}"
-      SubnetRegiona: "{{ eks_public_subnet_cidr_blocks.a }}"
-      SubnetRegionb: "{{ eks_public_subnet_cidr_blocks.b }}"
-      SubnetRegionc: "{{ eks_public_subnet_cidr_blocks.c }}"
+      PublicSubneta: "{{ eks_public_subnet_cidr_blocks.a }}"
+      PublicSubnetb: "{{ eks_public_subnet_cidr_blocks.b }}"
+      PublicSubnetc: "{{ eks_public_subnet_cidr_blocks.c }}"
+      PrivateSubneta: "{{ eks_private_subnet_cidr_blocks.a }}"
+      PrivateSubnetb: "{{ eks_private_subnet_cidr_blocks.b }}"
+      PrivateSubnetc: "{{ eks_private_subnet_cidr_blocks.c }}"
     tags:
       usedFor: "{{ eks_cluster_name  }}-cluster"
       stack: "{{ eks_cluster_name }}-vpc"
@@ -21,10 +23,6 @@
   set_fact:
     stack_outputs: "{{ stack_outputs | combine(vpc_info['stack_outputs']) }}"
 
-- name: "Debug VPC Stack Output"
-  debug:
-    var: stack_outputs
-
 - name: "Create EKS Cluster"
   amazon.aws.cloudformation:
     stack_name: "{{ eks_cluster_name }}-cluster"
@@ -33,32 +31,86 @@
     template: "{{ ansible_env.HOME }}/aws/cloudformation/eks_cluster.yaml"
     template_parameters:
       ClusterName:  "{{ eks_cluster_name }}"
-      VpcId: "{{ stack_outputs.VpcId }}"
-      Subnets: "{{ stack_outputs.Subnets }}"
+      SubnetIds: "{{ stack_outputs.SubnetIds }}"
+      SecurityGroupIds: "{{ stack_outputs.SecurityGroupIds }}"
       KubernetesVersion: "{{ kubernetes_version }}"
     tags:
       stack: "{{ eks_cluster_name }}-cluster"
       application: gloo-mesh
   register: eks_cluster_info
 
-- name: "Create EKS Node Group"
+- name: Add to stack_outputs.
+  set_fact:
+    stack_outputs: "{{ stack_outputs | combine(eks_cluster_info['stack_outputs']) }}"
+
+- name: "Create a new ec2 key pair for {{ eks_cluster_name }}"
+  amazon.aws.ec2_key:
+    name: "{{eks_cluster_name}}_keypair"
+    region: "{{ aws_region }}"
+  register: eks_cluster_keypair
+
+# - debug: 
+#    var: eks_cluster_keypair
+
+- name: "Save the {{ eks_cluster_name }} Private Key"
+  copy:
+    dest: "{{ ansible_env.HOME }}/.ssh/eks_cluster_name"
+    content: "{{ eks_cluster_keypair.key.private_key }}"
+    mode: 700
+  when: eks_cluster_keypair.changed
+
+- name: "Create EKS Auto Scaling Node Group"
   amazon.aws.cloudformation:
     stack_name: "{{ eks_cluster_name }}-nodegroup"
     state: present
     region: "{{ aws_region }}"
     disable_rollback: false
-    template: "{{ ansible_env.HOME }}/aws/cloudformation/eks_nodegroup.yaml"
+    template_url: "https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-10-08/amazon-eks-nodegroup.yaml"
     template_parameters:
+      ClusterControlPlaneSecurityGroup: "{{ stack_outputs.ControlPlaneSecurityGroupId }}"
       ClusterName: "{{ eks_cluster_name }}"
+      KeyName: "{{ eks_cluster_keypair.key.name }}"
       NodeGroupName: "{{ eks_nodegroup_name }}"
-      NodeGroupDesiredCapacity: "{{ eks_nodegroup_cluster_size }}"
+      NodeAutoScalingGroupDesiredCapacity: "{{ eks_nodegroup_desired_capacity }}"
       NodeInstanceType: "{{ eks_cluster_node_instance_type }}"
-      Subnets: "{{ stack_outputs.Subnets }}"
+      Subnets: "{{ stack_outputs.SubnetIds }}"
+      VpcId: "{{ stack_outputs.VpcId }}"
+      NodeImageIdSSMParam: "/aws/service/eks/optimized-ami/{{ kubernetes_version }}/amazon-linux-2/recommended/image_id"
+      NodeVolumeSize: "{{ eks_node_volume_size_gb }}"
     tags:
       stack: "{{ eks_cluster_name }}-nodegroup"
       application: gloo-mesh
-  register: eks_nodegroup_info
+  register: eks_asg_nodegroup_info
 
-- name: "EKS Stack Output"
+- name: Add to stack_outputs.
+  set_fact:
+    stack_outputs: "{{ stack_outputs | combine(eks_asg_nodegroup_info['stack_outputs']) }}"
+
+- name: "EKS Output"
   debug:
     var: stack_outputs
+  
+- name: "Save KubeConfig"
+  template:
+    dest: "{{ ansible_env.HOME }}/.kube/eks_{{ eks_cluster_name }}.kubeconfig"
+    src: "cluster-kubeconfig.yaml.j2"
+    variable_start_string: '[['
+    variable_end_string: ']]'
+
+- name: "Create/Update aws-auth ConfigMap"
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ ansible_env.HOME }}/.kube/eks_{{ eks_cluster_name }}.kubeconfig"
+    template:
+      path: 'aws-auth-cm.yaml.j2'
+      variable_start_string: '[['
+      variable_end_string: ']]'
+
+- name: "Wait for the Nodes to be Ready"
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ ansible_env.HOME }}/.kube/eks_{{ eks_cluster_name }}.kubeconfig"
+    kind: Node
+    wait: yes
+    wait_sleep: 30
+    wait_timeout: 600
+  register: node_list

@@ -1,4 +1,7 @@
 ---
+roles:
+  - name: geerlingguy.ntp
+
 collections:
   - name: ansible.posix
     version: '1.2.0'

@@ -11,12 +11,17 @@ eks_delete: no
 
 eks_cluster_name: kameshs-gloo-demos
 eks_nodegroup_name: kameshs-node-m5xlarge
-eks_nodegroup_cluster_size: 3
+eks_nodegroup_desired_capacity: 1
 eks_cluster_node_instance_type: m5.xlarge
-aws_vpc_name: kameshs-gloo-demos
+eks_node_volume_size_gb: 80
 aws_vpc_cidr: 172.25.0.0/16
 aws_region: ap-south-1
 kubernetes_version: "1.20"
+
+eks_private_subnet_cidr_blocks:
+ a: 172.25.1.0/24 
+ b: 172.25.2.0/24
+ c: 172.25.3.0/24
 
 eks_public_subnet_cidr_blocks:
  a: 172.25.5.0/24 

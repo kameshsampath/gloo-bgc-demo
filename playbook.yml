@@ -4,6 +4,10 @@
     - .local.vars.yml
   
   roles:
+    - role: geerlingguy.ntp
+      become: yes
+      tags:
+        - base
     - role: base
       tags:
         - base
