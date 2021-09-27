@@ -22,6 +22,11 @@
     region: "{{ aws_region }}"
     state: absent
 
+- name: "Delete the {{ eks_cluster_name }} Private Key"
+  file:
+    dest: "{{ ansible_env.HOME }}/.ssh/eks_cluster_name"
+    state: absent
+
 - name: "Remove {{ eks_cluster_name}} kubeconfig"
   file: 
      path: "{{ ansible_env.HOME }}/.kube/eks_{{ eks_cluster_name }}.kubeconfig"
