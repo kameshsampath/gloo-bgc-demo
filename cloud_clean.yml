@@ -3,6 +3,7 @@
   vars_files:
     - .local.vars.yml
     
+  # Make sure to leave the deletion variables at role level to have higher precedence than .local.vars.yml
   roles:
       - role: civo
         vars:

@@ -31,6 +31,8 @@
     service_account_file: "{{ gcp_cred_file }}"
   register: vpn_target_gw_info
 
+# Setting null data if the facts are not defined as the paramters
+# are required for deletion
 - name: "Set VPN Deletion facts"
   set_fact:
     my_public_ip: "{{ my_ipify_facts.ansible_facts.ipify_public_ip}}"
@@ -130,3 +132,10 @@
     auth_kind: "{{ gcp_cred_kind }}"
     service_account_file: "{{ gcp_cred_file }}"
     state: absent
+
+- name: "Disable and Stop strongswan service"
+  become: yes
+  service:
+    enabled: yes
+    name: strongswan
+    state: stopped
