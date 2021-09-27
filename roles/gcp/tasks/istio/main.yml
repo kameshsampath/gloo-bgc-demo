@@ -1,6 +1,0 @@
-- name: "Deploy Istio Operator"
-  kubernetes.core.k8s:
-    name: istio-system
-    api_version: v1
-    kind: Namespace
-    state: present

@@ -11,3 +11,13 @@
     - boto
     - botocore
     - boto3
+    - PyYAML
+
+
+- name: "Install Kubernetes Tools"
+  become: yes
+  community.general.snap:
+    classic: yes
+    name: 
+      - kubectl
+      - helm

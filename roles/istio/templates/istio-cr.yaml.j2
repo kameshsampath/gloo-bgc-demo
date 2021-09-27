@@ -1,4 +1,4 @@
-# 
+#jinja2: lstrip_blocks: "True"
 apiVersion: install.istio.io/v1alpha1
 kind: IstioOperator
 metadata:
@@ -7,7 +7,7 @@ metadata:
 spec:
   profile: default
   meshConfig:
-    trustDomain: "${CLUSTER}"
+    trustDomain: "{{ istio_cluster }}"
     accessLogFile: /dev/stdout
     enableAutoMtls: true
     defaultConfig:
@@ -18,17 +18,17 @@ spec:
       proxyMetadata:
         ISTIO_META_DNS_CAPTURE: "true"
         ISTIO_META_DNS_AUTO_ALLOCATE: "true"
-        GLOO_MESH_CLUSTER_NAME: "${CLUSTER}"
+        GLOO_MESH_CLUSTER_NAME: "{{ istio_cluster }}"
   values:
     global:
       meshID: mesh1
       multiCluster:
-        clusterName: "${CLUSTER}"
-      network: "${CLUSTER_NETWORK}"
+        clusterName: "{{ istio_cluster }}"
+      network: "{{ istio_cluster_network }}"
       meshNetworks:
-        "${CLUSTER_NETWORK}":
+        "{{ istio_cluster_network }}":
           endpoints:
-          - fromRegistry: "${CLUSTER}"
+          - fromRegistry: "{{ istio_cluster }}"
           gateways:
           - registryServiceName: istio-ingressgateway.istio-system.svc.cluster.local
             port: 443
@@ -37,7 +37,7 @@ spec:
     ingressGateways:
     - name: istio-ingressgateway
       label:
-        topology.istio.io/network: "${CLUSTER_NETWORK}"
+        topology.istio.io/network: "{{ istio_cluster_network }}"
       enabled: true
       k8s:
         env:
@@ -46,7 +46,7 @@ spec:
             value: "sni-dnat"
           # traffic through this gateway should be routed inside the network
           - name: ISTIO_META_REQUESTED_NETWORK_VIEW
-            value: "${CLUSTER_NETWORK}"
+            value: "{{ istio_cluster_network }}"
         service:
           ports:
             - name: http2

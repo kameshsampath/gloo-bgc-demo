@@ -33,8 +33,15 @@
       - jq
       - traceroute
       - unzip
-      - kubernetes-client
       - google-cloud-sdk
       - "@nodejs:14/default"
       - strongswan
       - httpie
+      - snapd
+  
+- name: "Enable Classic snap support"
+  become: yes
+  file:
+    state: link
+    src: /var/lib/snapd/snap
+    dest: /snap

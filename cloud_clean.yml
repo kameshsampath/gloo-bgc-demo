@@ -1,0 +1,24 @@
+- hosts: all
+
+  vars_files:
+    - .local.vars.yml
+    
+  roles:
+      - role: civo
+        vars:
+          civo_create: no
+          civo_delete: yes
+      - role: gcp
+        vars:
+          gcp_create_vpc: no
+          gcp_delete_vpc: yes
+          gke_create: no
+          gke_delete: yes
+          gcp_create_vpn: no
+          gcp_delete_vpn: yes
+      - role: aws
+        vars:
+        aws_create_vpc: no
+        aws_delete_vpc: yes
+        eks_create: no
+        eks_delete: yes

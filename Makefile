@@ -3,7 +3,7 @@ ENV_FILE := .envrc
 include ${ENV_FILE}
 CURRENT_DIR = $(shell pwd)
 
-.PHONY:	clean	lint	edit-vars	rekey-vars	run	encrypt-vars	view-vars	base-run	cloud-run	cloud-civo-run	cloud-gcp-run	cloud-aws-run	app-run	istio-run	istio-run	workload-run	vm-up	vm-destroy	test
+.PHONY:	clean	lint	edit-vars	rekey-vars	run	encrypt-vars	view-vars	base-run	cloud-run	cloud-civo-run	cloud-gcp-run	cloud-aws-run	app-run	istio-run	istio-run	workload-run	vm-up	vm-destroy	test	cloud-clean
 
 clean:
 	
@@ -32,6 +32,10 @@ base-run:
 cloud-run:
 	@poetry shell
 	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,cloud" playbook.yml  $(EXTRA_ARGS)
+
+cloud-clean:
+	@poetry shell
+	ansible-playbook --vault-password-file=$(VAULT_FILE) cloud_clean.yml  $(EXTRA_ARGS)
 
 cloud-civo-run:
 	@poetry shell

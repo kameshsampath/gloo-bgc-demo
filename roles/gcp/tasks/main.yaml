@@ -14,19 +14,23 @@
     mode: "0744"
   when: create_gcp_credentials_file | bool
 
-- include: network/vpc.yml
-  when: ( gcp_create_vpc | bool ) or ( gke_create | bool)
+- name: "Create VPC"
+  include: network/vpc.yml
+  when: ( gcp_create_vpc | bool ) and  not ( gcp_delete_vpc | bool)
 
-- include: k8s/gke_cluster.yml
-  when: ( gke_create | bool )
+- name: "Create Kubernetes Cluster"
+  include: k8s/gke_cluster.yml
+  when: ( gke_create | bool ) and not ( gke_delete | bool )
 
-- include: k8s/gke_cluster_rollback.yml
+- name: "Delete Kubernetes Cluster"
+  include: k8s/gke_cluster_rollback.yml
   when: ( gke_delete | bool ) and not ( gke_create | bool )
 
 - name: "Generate Pre Shared Key"
   ansible.builtin.shell: |
     head -c 4096 /dev/urandom | sha256sum | cut -b1-32
   register: psk_out
+  when: gcp_create_vpn  | bool
 
 # - debug:
 #     var: psk_out
@@ -34,18 +38,23 @@
 - name: "Set PSK Fact"
   set_fact:
     ikev_secret: "{{ psk_out.stdout }}"
+  when: gcp_create_vpn  | bool
 
 # - debug:
 #     var: ikev_secret
 
-- include: network/vpn.yml
+- name: "Create VPN"
+  include: network/vpn.yml
   when: gcp_create_vpn  | bool
 
-- include: network/ipsec.yml
-  when: enable_ipsec  | bool
+- name: "Configure VPN Service"
+  include: network/ipsec.yml
+  when: (gcp_create_vpn  | bool ) and ( enable_ipsec  | bool)
 
-- include: network/vpn_rollback.yml
+- name: "Delete VPN"
+  include: network/vpn_rollback.yml
   when: not ( gcp_create_vpn | bool ) and ( gcp_delete_vpn | bool )
 
-- include: network/vpc_rollback.yml
+- name: "Delete VPC"
+  include: network/vpc_rollback.yml
   when: not ( gcp_create_vpc | bool ) and ( gcp_delete_vpc | bool )

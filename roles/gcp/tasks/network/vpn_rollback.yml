@@ -34,9 +34,9 @@
 - name: "Set VPN Deletion facts"
   set_fact:
     my_public_ip: "{{ my_ipify_facts.ansible_facts.ipify_public_ip}}"
-    target_gw_url: "{{ vpn_target_gw_info.resources[0].selfLink }}"
-    vpn_vpc_network: "{{ vpn_vpc_networks.resources[0] }}"
-    vpn_gw_address: "{{ cloud_vpn_gw_ip.resources[0].address }}"
+    target_gw_url: "{{ vpn_target_gw_info.resources[0].selfLink  | default(None) }}"
+    vpn_vpc_network: "{{ vpn_vpc_networks.resources[0]  | default(None) }}"
+    vpn_gw_address: "{{ cloud_vpn_gw_ip.resources[0].address | default(None)}}"
 
 - name: "Delete Route to Local Network via Tunnel"
   google.cloud.gcp_compute_route:
@@ -52,7 +52,7 @@
 - name: "Delete VPN Tunnel"
   google.cloud.gcp_compute_vpn_tunnel:
     name: "{{ gcp_vpn_name }}-tunnel-1"
-    shared_secret: "{{ ikev_secret }}"
+    shared_secret: "{{ ikev_secret | default(None) }}"
     peer_ip: "{{ my_public_ip }}"
     local_traffic_selector: 
       - "{{ k8s_subnet_cidr }}"
@@ -60,7 +60,6 @@
       - "{{ k8s_services_ip_range }}"
     remote_traffic_selector:
       - "{{ left_subnet }}"
-    peer_external_gateway: "{{ external_vpn_gateway }}"
     target_vpn_gateway: "{{ target_vpn_gateway }}"
     region: "{{ gcp_region }}"
     project: "{{ gcp_project }}"

@@ -1,0 +1,15 @@
+- name: "Delete Civo Cluster"
+  ansible.builtin.shell:
+    argv:
+     - civo
+     - k3s
+     - rm
+     - "{{ civo_k3s_cluster_name }}"
+     - "--region={{ civo_region }}"
+     - --yes 
+  ignore_errors: yes
+
+- name: "Remove Kubeconfig"
+  file: 
+    dest: "{{ ansible_env.HOME }}/.kube/{{ civo_k3s_cluster_name }}_kubeconfig"
+    state: absent
