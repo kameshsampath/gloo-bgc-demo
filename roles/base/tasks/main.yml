@@ -13,11 +13,36 @@
     - boto3
     - PyYAML
 
-
-- name: "Install Kubernetes Tools"
+- name: "Install Kubernetes Core Tools"
   become: yes
   community.general.snap:
     classic: yes
     name: 
       - kubectl
       - helm
+
+- name: "Install Kubernetes Helper Tools"
+  become: yes
+  get_url:
+    mode: 0755
+    url: "{{ item.url }}"
+    dest: "/usr/local/bin/{{ item.name}}"
+  loop:
+    - {name: "kubectx",url: "https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx"}
+    - {name: "kubens",url: "https://raw.githubusercontent.com/ahmetb/kubectx/master/kubens"}
+  loop_control:
+     label: "{{ item.name }}"
+
+- name: "Download kubectl (.kubectl_aliases) aliases"
+  get_url:
+    url: "https://raw.githubusercontent.com/ahmetb/kubectl-alias/master/.kubectl_aliases"
+    dest: "{{ ansible_env.HOME }}"
+    mode: 0755
+
+- name: "Add kubectl aliases to the bash profile"
+  ansible.builtin.blockinfile:
+    marker: "# {mark} ANSIBLE MANAGED BLOCK kubectlaliases"
+    block: |
+      [ -f ~/.kubectl_aliases ] && source ~/.kubectl_aliases
+      PATH=/usr/local/bin:$PATH
+    dest: "{{ ansible_env.HOME }}/.bashrc"

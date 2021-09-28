@@ -2,6 +2,21 @@
   community.general.ipify_facts:
   register: my_ipify_facts
 
+- name: "Generate Pre Shared Key"
+  ansible.builtin.shell: |
+    head -c 4096 /dev/urandom | sha256sum | cut -b1-32
+  register: psk_out
+
+# - debug:
+#     var: psk_out
+
+- name: "Set PSK Fact"
+  set_fact:
+    ikev_secret: "{{ psk_out.stdout }}"
+
+# - debug:
+#     var: ikev_secret
+
 - name: "Lookup VPC {{ gcp_vpn_vpc }} for VPN"
   google.cloud.gcp_compute_network_info:
     filters:
@@ -172,3 +187,6 @@
 ################################################################
 # NETWORK - ROUTES
 ################################################################
+
+- name: "Configure VPN Service"
+  include: network/ipsec.yml

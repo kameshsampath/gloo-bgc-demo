@@ -14,13 +14,15 @@ gke_create: yes
 gke_delete: no
 gke_cluster_name: kameshs-gloo-demos
 gke_node_count: 3
+gke_kubernetes_version: 1.21.4-gke.301
+gke_release_channel: RAPID
 
 # VPN
 gcp_create_vpn: yes
 gcp_delete_vpn: no
 gcp_vpn_vpc: "{{ gcp_vpc_name }}"
 gke_cluster_node_type: n1-standard-4
-gke_cluster_node_disk_size: 500
+gke_cluster_node_disk_size: 80
 gke_cluster_location: asia-south1-c
 gke_cluster_node_size: 3
 
@@ -32,6 +34,4 @@ k8s_services_ip_range: 172.18.0.0/20
 left_subnet: 192.168.0.0/16
 
 # IPSec
-enable_ipsec: false
 ipsec_connection_name: gcp-gloo-demos
-is_ikev2: "no"

@@ -16,7 +16,7 @@ eks_cluster_node_instance_type: m5.xlarge
 eks_node_volume_size_gb: 80
 aws_vpc_cidr: 172.25.0.0/16
 aws_region: ap-south-1
-kubernetes_version: "1.20"
+eks_kubernetes_version: "1.21"
 
 eks_private_subnet_cidr_blocks:
  a: 172.25.1.0/24 

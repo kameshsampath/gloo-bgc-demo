@@ -33,7 +33,7 @@
       ClusterName:  "{{ eks_cluster_name }}"
       SubnetIds: "{{ stack_outputs.SubnetIds }}"
       SecurityGroupIds: "{{ stack_outputs.SecurityGroupIds }}"
-      KubernetesVersion: "{{ kubernetes_version }}"
+      KubernetesVersion: "{{ eks_kubernetes_version }}"
     tags:
       stack: "{{ eks_cluster_name }}-cluster"
       application: gloo-mesh

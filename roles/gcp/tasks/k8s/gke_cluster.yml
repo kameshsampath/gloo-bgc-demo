@@ -12,6 +12,8 @@
       # services secondary ip range
       services_secondary_range_name: "{{ gcp_vpc_name }}-services-range"
       use_ip_aliases: yes
+    release_channel:
+      channel: "{{ gke_release_channel }}"
     # TODO Get this dynamically by query 
     location: "{{ gke_cluster_location }}"
     project: "{{ gcp_project }}"
@@ -30,6 +32,7 @@
      machine_type: "{{ gke_cluster_node_type }}"
      tags:
       - gloo
+    version: "{{ gke_kubernetes_version }}"
     location: "{{ gke_cluster_location }}"
     project: "{{ gcp_project }}"
     auth_kind: "{{ gcp_cred_kind }}"

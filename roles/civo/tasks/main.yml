@@ -3,9 +3,6 @@
   ansible.builtin.apt:
     deb: "https://github.com/civo/cli/releases/download/{{ civo_cli_version }}/civo_amd64.deb"
   when: ansible_os_family == "Debian"
-  tags:
-   - cloud
-   - civo
 
 - name: "Install civo cli(Red Hat)"
   become: yes
@@ -13,9 +10,6 @@
     name: "https://github.com/civo/cli/releases/download/{{ civo_cli_version }}/civo_amd64.rpm"
     disable_gpg_check: yes
   when: ansible_os_family == "RedHat"
-  tags:
-   - cloud
-   - civo
 
 - name: "Save Civo Credentials"
   ansible.builtin.command:
@@ -26,9 +20,6 @@
       - default
       - "{{ civo_api_key }}"
   when: create_civo_credentials_file  | bool
-  tags:
-   - cloud
-   - civo
 
 - name: "Set Default civo API Key"
   ansible.builtin.command:
@@ -38,9 +29,6 @@
       - current 
       - default
   when: create_civo_credentials_file  | bool
-  tags:
-   - cloud
-   - civo
 
 - name: "Create k3s Cluster"
   include: k3s_create.yml

@@ -8,5 +8,5 @@ civo_k3s_cluster_size: g3.k3s.xlarge
 civo_k3s_cluster_nodes: 1
 # LON1, FRA1, NYC1 
 civo_region: LON1
-civo_kubernetes_version: 1.20.0+k3s1
+civo_kubernetes_version: 1.21.2+k3s1
 civo_firewall_ports: 80,443,8080,8443,9900,15443,15021,15012,15017

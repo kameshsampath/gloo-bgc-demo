@@ -18,14 +18,13 @@
      - civo
      - k3s
      - create
-     - cluster
      - "{{ civo_k3s_cluster_name }}"
      - -r="Traefik"
-     - --create-firewall="{{ civo_firewall_ports }}"
-     - --size='{{ civo_k3s_cluster_size }}'
-     - --nodes={{ civo_k3s_cluster_nodes }}
-     - --region='{{ civo_region }}'
-     - --version='{{ civo_kubernetes_version }}'
+     - "--create-firewall='{{ civo_firewall_ports }}'"
+     - "--size='{{ civo_k3s_cluster_size }}'"
+     - "--nodes={{ civo_k3s_cluster_nodes }}"
+     - "--region={{ civo_region }}"
+     - "--version='{{ civo_kubernetes_version }}'"
      - --wait
   when: civo_clusters is defined and civo_k3s_cluster_name not in civo_clusters
 
