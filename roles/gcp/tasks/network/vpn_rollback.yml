@@ -36,9 +36,9 @@
 - name: "Set VPN Deletion facts"
   set_fact:
     my_public_ip: "{{ my_ipify_facts.ansible_facts.ipify_public_ip}}"
-    target_gw_url: "{{ vpn_target_gw_info.resources[0].selfLink  | default(None) }}"
-    vpn_vpc_network: "{{ vpn_vpc_networks.resources[0]  | default(None) }}"
-    vpn_gw_address: "{{ cloud_vpn_gw_ip.resources[0].address | default(None)}}"
+    target_gw_url: "{{ vpn_target_gw_info.resources[0].selfLink  | default('') }}"
+    vpn_vpc_network: "{{ vpn_vpc_networks.resources[0]  | default({}) }}"
+    vpn_gw_address: "{{ cloud_vpn_gw_ip.resources[0].address | default('')}}"
 
 - name: "Delete Route to Local Network via Tunnel"
   google.cloud.gcp_compute_route:
@@ -94,6 +94,7 @@
     ip_protocol: ESP
     target: "{{ target_gw_url }}"
     state: absent
+  when: vpn_gw_address != None and target_gw_url != None
 
 - name: "Delete VPN Forward Rule udp/500"
   google.cloud.gcp_compute_forwarding_rule:
@@ -108,6 +109,7 @@
     port_range: 500-500
     target: "{{ target_gw_url }}"
     state: absent
+  when: vpn_gw_address != None
 
 - name: "Delete VPN Forward Rule udp/4500"
   google.cloud.gcp_compute_forwarding_rule:
@@ -122,6 +124,7 @@
     port_range: 4500-4500
     target: "{{ target_gw_url}}"
     state: absent
+  when: vpn_gw_address != None
 
 - name: "Delete Cloud VPN(Target) Gateway"
   google.cloud.gcp_compute_target_vpn_gateway:
