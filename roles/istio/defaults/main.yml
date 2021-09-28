@@ -1,5 +1,9 @@
 istio_version: "1.10.4"
 
+istio_kubernetes_contexts:
+ - cluster-1
+ - cluster-2 
+ 
 # Istio 
 istio_enabled: yes
 istio_vm_app: blue-green-canary

@@ -4,8 +4,6 @@
     url: "https://github.com/google/go-containerregistry/releases/download/v0.6.0/go-containerregistry_Linux_x86_64.tar.gz"
     checksum: "sha256:b71c7ca16abff07787516efbe0c06c129d273f34490d6a85f815cec980fffe85"
     dest: "/tmp"
-  tags:
-   - app
 
 - name: "Extract Crane"
   become: yes
@@ -16,8 +14,6 @@
     include:
       - crane
       - gcrane
-  tags:
-   - app
 
 - name: "Force App install"
   become: yes
@@ -28,8 +24,6 @@
     - /opt/app
     - /opt/blue-green-canary.tar.gz
   when: force_app_install | default(False)
-  tags:
-   - app
 
 - name: "Export blue-green-canary app to tarball"
   become: yes
@@ -41,8 +35,6 @@
       - /opt/blue-green-canary.tar.gz
     creates: /opt/blue-green-canary.tar.gz
   register: app_install
-  tags:
-   - app 
 
 - name: "Extract App"
   become: yes
@@ -56,8 +48,6 @@
     include:
       - app
   when: app_install.rc == 0
-  tags:
-   - app
   notify:
    - "Restart Blue Green Canary"
 
@@ -69,8 +59,6 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: '0644'
-  tags:
-   - app
   notify:
    - "Restart Blue Green Canary"
     
@@ -80,8 +68,6 @@
     src: "app/blue-green-canary.service.j2"
     dest: "/etc/systemd/system/blue-green-canary.service"
     mode: '0644'
-  tags:
-   - app
   notify:
    - "Restart Blue Green Canary"
 
@@ -92,8 +78,6 @@
     daemon_reload: true
     state: started
     name: blue-green-canary.service
-  tags:
-   - app
 
 - name: "Update Service Port"
   lineinfile:
@@ -101,7 +85,5 @@
     regex: '^(\s*"start": "next start)(",)$'
     line: '\1 -p 8080\2'
     path: "/opt/app/package.json"
-  tags:
-   - app
   notify:
    - "Restart Blue Green Canary"

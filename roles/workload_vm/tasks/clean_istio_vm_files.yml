@@ -3,46 +3,34 @@
   service:
     name: istio
     state: stopped
-  tags:
-   - istio
 
 - name: "Kill Envoy"
   become: yes
   shell: "/usr/local/bin/killEnvoy.sh"
-  tags:
-   - istio
 
 - name: "Remove the root certificate root-cert.pem"
   become: yes
   file:
     path: /etc/certs/root-cert.pem
     state: absent
-  tags:
-   - istio
 
 - name: "Remove istio-token"
   become: yes
   file:
     path: /var/run/secrets/tokens/istio-token
     state: absent
-  tags:
-   - istio
 
 - name: "Remove cluster.env"
   become: yes
   file:
     path: /var/lib/istio/envoy/cluster.env
     state: absent
-  tags:
-   - istio
 
 - name: "Remove the Mesh Config"
   become: yes
   file:
     path: /etc/istio/config/mesh/mesh.yaml
     state: absent
-  tags:
-   - istio
 
 - name: "Remove istio Required Directories"
   become: yes
@@ -53,12 +41,8 @@
     - /etc/certs
     - /var/run/secrets/tokens
     - /etc/istio/proxy
-  tags:
-   - istio
 
 - name: "Remove Istio Work Dir"
   file:
     path: "{{ istio_vm_workdir }}"
     state: absent
-  tags:
-   - istio

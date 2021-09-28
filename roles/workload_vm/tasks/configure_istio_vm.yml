@@ -1,11 +1,17 @@
+- name: "Clean existing Istio VM files"
+  include: clean_istio_vm_files.yml
+  when: clean_istio_vm_files 
 
+- name: "Create Istio Work Dir"
+  file:
+    path: "{{ istio_vm_workdir }}"
+    recurse: True
+    state: directory
 
 - name: "Create workload YAML"
   template:
     dest: "{{ istio_vm_workdir }}/workload-group.yaml"
     src: "istio/workload-group.yaml.j2"
-  tags:
-   - istio
 
 - name: "Generate Workload Files"
   ansible.builtin.command:
@@ -28,33 +34,25 @@
       - "--context"
       - "{{ k8s_context }}"
   register: workload_entry_create
-  tags:
-   - istio
 
 - name: "Install Istio Sidecar(Debian)"
   become: yes
   ansible.builtin.apt:
     deb: "https://storage.googleapis.com/istio-release/releases/{{ istio_version }}/deb/istio-sidecar.deb"
   when: ansible_os_family == "Debian"
-  tags:
-   - istio
 
-- name: "Install Istio Sidecar(Red Hat)"
+- name: "Install Istio Sidecar(RedHat)"
   become: yes
   ansible.builtin.dnf:
     name: "https://storage.googleapis.com/istio-release/releases/{{ istio_version }}/rpm/istio-sidecar.rpm"
     disable_gpg_check: yes
   when: ansible_os_family == "RedHat"
-  tags:
-   - istio
 
 - name: "Enable Istio"
   become: yes
   service:
     name: istio
     enabled: true
-  tags:
-   - istio
 
 - name: "Copy Envoy kill script"
   become: yes
@@ -62,8 +60,6 @@
     src: "killEnvoy.sh"
     dest: "/usr/local/bin/killEnvoy.sh"
     mode: 755
-  tags:
-   - istio
 
 - name: "Create Required Directories"
   become: yes
@@ -74,8 +70,6 @@
     - /etc/certs
     - /var/run/secrets/tokens
     - /etc/istio/proxy
-  tags:
-   - istio
 
 - name: "Set ISTIO_SVC_IP"
   become: yes
@@ -84,8 +78,6 @@
     path: /etc/istio/envoy/sidecar.env
     regexp: "^# ISTIO_SVC_IP=.*$"
     line: "ISTIO_SVC_IP={{ ansible_default_ipv4.address  | ansible.netcommon.ipv4('address')}}"
-  tags:
-   - istio
 
 - name: "Lookup Istio Ingress Gateway"
   kubernetes.core.k8s_info:
@@ -95,14 +87,10 @@
     name: istio-ingressgateway
     context: "{{ k8s_context }}"
   register: istio_ingress_gw_result
-  tags:
-   - istio
 
 - name: "Get LoadBalancer Address"
   set_fact:
     ingress_gw_lb_addr: "{{ istio_ingress_gw_result.resources[0] | community.general.json_query('status.loadBalancer.ingress[*]')}}"
-  tags:
-   - istio
 
 # - debug:
 #     var: ingress_gw_lb_addr
@@ -111,21 +99,17 @@
   set_fact:
     lb_ips: "{{ lookup('community.general.dig',ingress_gw_lb_addr[0].hostname) | split(',') }}"
     multi_lb: True
-  when: ingress_gw_lb_addr[0].hostname is defined and ingress_gw_lb_addr | length > 0  
-  tags:
-   - istio
+  when: ingress_gw_lb_addr[0].hostname is defined and ingress_gw_lb_addr | length > 0
 
 - name: "Set LoadBalancer IP"
   set_fact:
     lb_ips: "{{ ingress_gw_lb_addr[0].ip }}"
     one_lb: True
   when: ingress_gw_lb_addr[0].ip is defined and ingress_gw_lb_addr | length > 0
-  tags:
-   - istio
 
-- name: "Debug Istio Ingress LB IPs"
-  debug:
-    var: lb_ips
+# - name: "Debug Istio Ingress LB IPs"
+#   debug:
+#     var: lb_ips
 
 - name: "Add entries to hosts file"
   become: yes
@@ -142,8 +126,6 @@
   notify:
   - "Kill Envoy"
   - "Restart Istio"
-  tags:
-   - istio
 
 - name: "Install the root certificate root-cert.pem"
   become: yes
@@ -154,8 +136,6 @@
   notify:
   - "Kill Envoy"
   - "Restart Istio"
-  tags:
-   - istio
 
 - name: "Install the token istio-token"
   become: yes
@@ -166,8 +146,6 @@
   notify:
   - "Kill Envoy"
   - "Restart Istio"
-  tags:
-   - istio
 
 - name: "Install cluster.env"
   become: yes
@@ -178,8 +156,6 @@
   notify:
   - "Kill Envoy"
   - "Restart Istio"
-  tags:
-   - istio
 
 - name: "Install the Mesh Config"
   become: yes
@@ -190,8 +166,6 @@
   notify:
   - "Kill Envoy"
   - "Restart Istio"
-  tags:
-   - istio
 
 - name: "Set Right Ownership on file {{ item }}"
   become: yes
@@ -202,8 +176,6 @@
     - /etc/certs/root-cert.pem
   loop_control:
     label: "{{ item }}"
-  tags:
-   - istio
 
 - name: "Set Right Ownership on {{ item }} directories"
   become: yes
@@ -219,8 +191,6 @@
     - /var/run/secrets
   loop_control:
     label: "{{ item }}"
-  tags:
-   - istio
 
 - name: "Create or Update VM Workload Service in Cluster"
   kubernetes.core.k8s:

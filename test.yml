@@ -2,14 +2,73 @@
 
   vars_files:
     - .local.vars.yml
+ 
   vars:
    civo_region: LON1
    civo_cluster_name: gloo-mgmt
-
+   
+  
   tasks:
-    - debug:
-        msg: "{{ eks_create | bool  }}"
-    - debug:
-        msg: "{{ eks_delete | bool  }}"       
-    - debug:
-        msg: "Delete ? {{ (eks_delete | bool) and not (eks_create | bool ) }}"
+   - google.cloud.gcp_container_cluster_info:
+      # TODO Get this dynamically by query 
+      location: "{{ gcp_region }}"
+      project: "{{ gcp_project }}"
+      auth_kind: "{{ gcp_cred_kind }}"
+      service_account_file: "{{ gcp_cred_file }}"
+     register: k8s_clusters
+     vars:
+        gke_cluster_name: kameshs-gloo-demos
+        gcp_region: asia-south1-c
+        gcp_cred_kind: serviceaccount
+        gcp_cred_file: "/Users/kameshs/.ssh/kameshs-solo-io-gcp.json"
+   
+   - set_fact:
+       cluster_query: "resources[?name == '{{ gke_cluster_name }}']"
+     vars: 
+       gke_cluster_name: kameshs-gloo-demos
+      
+  #  - debug:
+  #     var: k8s_clusters
+
+   - set_fact:
+      k8s_cluster: "{{ k8s_clusters | community.general.json_query( cluster_query) | first }}"
+
+   - set_fact:
+      gke_master_endpoint: "https://{{ k8s_cluster.endpoint }}"
+      gke_master_ca: "{{  k8s_cluster.masterAuth.clusterCaCertificate }}"
+    
+   - debug:
+      var: gke_master_endpoint
+
+   - debug:
+      var: gke_master_ca
+
+    # - ansible.builtin.command:
+    #     argv:
+    #       - gcloud
+    #       - container
+    #       - clusters
+    #       - get-credentials
+    #       - "{{ gke_cluster_name }}"
+    #       - "--region={{ gcp_region }}"
+    #   vars:
+    #     gke_cluster_name: kameshs-gloo-demos
+    #     gcp_region: asia-south1-c
+    #   environment:
+    #     KUBECONFIG: "{{ playbook_dir }}/work/.kube/config"
+
+    # - set_fact:
+    #     query: "resources[*].status.conditions[?reason=='KubeletReady'].status"
+
+    # - name: "Wait for the Nodes to be Ready"
+    #   kubernetes.core.k8s_info:
+    #     kubeconfig: "{{ playbook_dir }}/work/.kube/config"
+    #     kind: Node
+    #   until: (node_list | community.general.json_query(query) | flatten | unique | count == 1 ) and (node_list | community.general.json_query(query) | flatten | unique | first )
+    #   retries: 60
+    #   delay: 10
+    #   register: node_list
+
+    # - debug: 
+    #    msg: "{{ node_list | community.general.json_query(query) | flatten | unique | count }}"
+    

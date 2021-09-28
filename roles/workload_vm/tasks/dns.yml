@@ -5,8 +5,6 @@
     system: true
     name: coredns
     state: present
-  tags:
-   - dns
 
 - name: "Create AWS Credentials folder"
   become: yes
@@ -17,8 +15,6 @@
     owner: coredns
     group: coredns
   when: core_dns_use_k8s and create_aws_credentials_file
-  tags:
-   - dns
 
 - name: Save AWS Credentials
   become: yes
@@ -32,8 +28,6 @@
     group: coredns
     mode: "0744"
   when: core_dns_use_k8s and create_aws_credentials_file
-  tags:
-   - dns
 
 - name: "Create Kubeconfig folder"
   become: yes
@@ -44,9 +38,7 @@
     owner: coredns
     group: coredns
     mode: "0744"
-  when: core_dns_use_k8s 
-  tags:
-   - dns
+  when: core_dns_use_k8s
 
 - name: "Copy kubeconfig"
   become: yes
@@ -57,17 +49,13 @@
     group: coredns
     mode: "0744"
     remote_src: yes
-  when: core_dns_use_k8s 
-  tags:
-   - dns
+  when: core_dns_use_k8s
 
 - name:  "Create CoreDNS Config Folder"
   become: yes
   file:
     path: /etc/coredns
     state: directory
-  tags:
-   - dns
   
 - name: "Download CoreDNS"
   become: yes
@@ -75,8 +63,6 @@
     url: "https://github.com/coredns/coredns/releases/download/v{{coredns_version }}/coredns_{{ coredns_version }}_linux_amd64.tgz"
     checksum: "sha256:aede302ae591c9747040e10dc749d144df4812bd8bb141041d3d24c6204f309d"
     dest: /tmp
-  tags:
-   - dns
 
 - name: "Extract CoreDNS"
   become: yes
@@ -84,40 +70,30 @@
     src: "/tmp/coredns_{{ coredns_version }}_linux_amd64.tgz"
     dest: /usr/bin
     remote_src: yes
-  tags:
-   - dns
 
 - name: "Create Corefile"
   become: yes
   template:
     src: "coredns/corefile.j2"
     dest: "{{ coredns_config_dir }}/Corefile"
-  tags:
-   - dns
 
 - name: "Create CoreDNS Service"
   become: yes
   template:
     src: "coredns/coredns.service.j2"
     dest: "/etc/systemd/system/coredns.service"
-  tags:
-   - dns
 
 - name: "Create coredns-sysusers.conf"
   become: yes
   template:
     src: "coredns/sysusers.conf.j2"
     dest: "/usr/lib/sysusers.d/coredns-sysusers.conf"
-  tags:
-   - dns
 
 - name: "Create coredns-tmpfiles.conf"
   become: yes
   template:
     src: "coredns/tmpfiles.conf.j2"
     dest: "/usr/lib/tmpfiles.d/coredns-tmpfiles.conf"
-  tags:
-   - dns
 
 - name: "Disable and stop systemd-resolved"
   become: yes
@@ -125,24 +101,18 @@
     name: systemd-resolved
     enabled: no
     state: stopped
-  tags:
-   - dns
 
 - name: "Delete old 'resolv.conf' link"
   become: yes
   file:
     path: "/etc/resolv.conf"
     state: absent
-  tags:
-   - dns
 
 - name: "Create 'resolv.conf'"
   become: yes
   template:
     src: "coredns/resolv.conf.j2"
     dest: "/etc/resolv.conf"
-  tags:
-   - dns
 
 - name: "Enable and start coredns service"
   become: yes
@@ -150,5 +120,3 @@
     name: coredns
     enabled: yes
     state: restarted
-  tags:
-   - dns

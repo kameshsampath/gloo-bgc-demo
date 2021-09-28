@@ -75,7 +75,7 @@
       NodeInstanceType: "{{ eks_cluster_node_instance_type }}"
       Subnets: "{{ stack_outputs.SubnetIds }}"
       VpcId: "{{ stack_outputs.VpcId }}"
-      NodeImageIdSSMParam: "/aws/service/eks/optimized-ami/{{ kubernetes_version }}/amazon-linux-2/recommended/image_id"
+      NodeImageIdSSMParam: "/aws/service/eks/optimized-ami/{{ eks_kubernetes_version }}/amazon-linux-2/recommended/image_id"
       NodeVolumeSize: "{{ eks_node_volume_size_gb }}"
     tags:
       stack: "{{ eks_cluster_name }}-nodegroup"
@@ -89,13 +89,20 @@
 - name: "EKS Output"
   debug:
     var: stack_outputs
-  
+
+- name: "Ensure kubeconfig directory"
+  file:
+    dest: "{{ ansible_env.HOME }}/.kube"
+    state: directory
+    mode: 0744
+
 - name: "Save KubeConfig"
   template:
     dest: "{{ ansible_env.HOME }}/.kube/eks_{{ eks_cluster_name }}.kubeconfig"
     src: "cluster-kubeconfig.yaml.j2"
     variable_start_string: '[['
     variable_end_string: ']]'
+    mode: 0744
 
 - name: "Create/Update aws-auth ConfigMap"
   kubernetes.core.k8s:
@@ -110,7 +117,7 @@
   kubernetes.core.k8s_info:
     kubeconfig: "{{ ansible_env.HOME }}/.kube/eks_{{ eks_cluster_name }}.kubeconfig"
     kind: Node
-    wait: yes
-    wait_sleep: 30
-    wait_timeout: 600
+  until: ( node_list | community.general.json_query(node_ready_query) | flatten | unique | count == 1 ) and ( node_list | community.general.json_query(node_ready_query) | flatten | unique | first )
+  retries: 60
+  delay: 10
   register: node_list

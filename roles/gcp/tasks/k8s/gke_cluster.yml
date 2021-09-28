@@ -38,3 +38,37 @@
     auth_kind: "{{ gcp_cred_kind }}"
     service_account_file: "{{ gcp_cred_file }}"
     state: present
+
+- name: "Create Kubernetes Cluster Info"
+  google.cloud.gcp_container_cluster_info:
+    # TODO Get this dynamically by query 
+    location: "{{ gke_cluster_location }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+  register: k8s_clusters
+
+- name: "Extract {{ gke_cluster_name }} details "
+  set_fact:
+    k8s_cluster: "{{ k8s_clusters | community.general.json_query( gke_cluster_json_query) | first }}"
+
+- name: "Set Kubeconfig facts"
+  set_fact:
+      gke_master_endpoint: "https://{{ k8s_cluster.endpoint }}"
+      gke_master_ca: "{{  k8s_cluster.masterAuth.clusterCaCertificate }}"
+
+- name: "Ensure kubeconfig directory"
+  file:
+    dest: "{{ ansible_env.HOME }}/.kube"
+    state: directory
+    mode: 0744
+
+- name: "Save KubeConfig"
+  template:
+    dest: "{{ ansible_env.HOME }}/.kube/gke_{{ gke_cluster_name }}.kubeconfig"
+    src: "cluster-kubeconfig.yaml.j2"
+    variable_start_string: '[['
+    variable_end_string: ']]'
+    mode: 0744
+  environment:
+    GOOGLE_APPLICATION_CREDENTIALS: "{{ ansible_env.HOME }}/.config/gcloud/credentials"

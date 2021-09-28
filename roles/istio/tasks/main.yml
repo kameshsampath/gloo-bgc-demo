@@ -1,3 +1,16 @@
+- name: "Create Kubeconfig folder"
+  file:
+    state: directory
+    path: "{{ ansible_env.HOME }}/.kube"
+    mode: "0744"
+
+- name: "Copy kubeconfig"
+  become: yes
+  copy:
+    src: "{{ playbook_dir }}/work/.kube/config"
+    dest: "{{ ansible_env.HOME }}/.kube/config"
+    mode: "0744"
+
 - name: "Download Istio"
   get_url:
     url: "https://github.com/istio/istio/releases/download/{{ istio_version }}/istio-{{ istio_version }}-linux-amd64.tar.gz"
@@ -19,21 +32,10 @@
   ansible.builtin.blockinfile:
     marker: "# {mark} ANSIBLE MANAGED BLOCK Istio {{ istio_version }}"
     block: |
-      PATH=~/istio-{{ istio_version }}/bin:$PATH
+      ISTIO_HOME=~/istio-{{ istio_version }}
+      PATH=$ISTIO_HOME/bin:$PATH
     dest: "{{ ansible_env.HOME }}/.bashrc"
   when: istio_install
-  tags:
-   - istio
-
-- name: "Clean existing Istio VM files"
-  include: clean_istio_vm_files.yml
-  when: clean_istio_vm_files 
-
-- name: "Create Istio Work Dir"
-  file:
-    path: "{{ istio_vm_workdir }}"
-    recurse: True
-    state: directory
   tags:
    - istio
 

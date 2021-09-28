@@ -14,6 +14,23 @@
     mode: "0744"
   when: create_gcp_credentials_file | bool
 
+- name: "Activate gcloud service account"
+  ansible.builtin.command:
+    argv:
+      - gcloud
+      - auth
+      - activate-service-account
+      - "--key-file={{ ansible_env.HOME }}/.config/gcloud/credentials"
+      - "--project={{ gcp_project }}"
+  changed_when: false
+
+- name: "Set Google Application Credentials File"
+  ansible.builtin.blockinfile:
+    marker: "# {mark} ANSIBLE MANAGED BLOCK GOOGLE_APPLICATION_CREDENTIALS"
+    block: |
+      export GOOGLE_APPLICATION_CREDENTIALS="{{ ansible_env.HOME }}/.config/gcloud/credentials"
+    dest: "{{ ansible_env.HOME }}/.bashrc"
+
 - name: "Create VPC"
   include: network/vpc.yml
   when: ( gcp_create_vpc | bool ) and  not ( gcp_delete_vpc | bool)

@@ -13,7 +13,7 @@
         - base
     - role: civo
       tags:
-        - cloud
+       # - cloud
         - civo
     - role: gcp
       tags:
@@ -23,6 +23,9 @@
       tags:
         - cloud
         - aws
+    - role: istio
+      tags:
+        - istio
     - role: workload_vm
       tags:
         - workload

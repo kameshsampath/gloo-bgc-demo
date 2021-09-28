@@ -49,13 +49,18 @@ cloud-aws-run:
 	@poetry shell
 	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,aws" playbook.yml $(EXTRA_ARGS)
 
+# Creates the Kubernetes Clusters in the cloud with out VPN on GCP
+create-kube-clusters:
+	@poetry shell
+	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,cloud" playbook.yml --extra-vars="gcp_create_vpn=no" $(EXTRA_ARGS)
+
 app-run:
 	@poetry shell
 	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "workload,app" playbook.yml $(EXTRA_ARGS)
 
 istio-run:
 	@poetry shell
-	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "workload,istio" playbook.yml $(EXTRA_ARGS)
+	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "istio" playbook.yml $(EXTRA_ARGS)
 
 workload-run:
 	@poetry shell

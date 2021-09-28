@@ -27,3 +27,5 @@ eks_public_subnet_cidr_blocks:
  a: 172.25.5.0/24 
  b: 172.25.6.0/24
  c:  172.25.7.0/24
+
+node_ready_query: "resources[*].status.conditions[?reason=='KubeletReady'].status"
