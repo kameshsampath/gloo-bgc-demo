@@ -67,3 +67,5 @@ kubeconfig*
 local.gcp.conf
 .local.vars.yml
 *.url
+# todo remove later
+edge-files

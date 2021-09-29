@@ -1,16 +1,54 @@
-- name: "Create Kubeconfig folder"
+- name: "Ensure Kubeconfig folder"
   file:
     state: directory
     path: "{{ ansible_env.HOME }}/.kube"
     mode: "0744"
 
-- name: "Copy kubeconfig"
-  become: yes
-  copy:
-    src: "{{ playbook_dir }}/work/.kube/config"
-    dest: "{{ ansible_env.HOME }}/.kube/config"
-    mode: "0744"
+- name: "Authenticate with GKE"
+  ansible.builtin.command:
+    argv:
+      - gcloud
+      - container
+      - clusters
+      - get-credentials 
+      - "{{ gke_cluster_name }}"
+      - "--region={{ gke_cluster_location }}"
+  environment:
+    KUBECONFIG: "{{ ansible_env.HOME }}/.kube/gke_{{ gke_cluster_name  }}.kubeconfig"
+    GOOGLE_APPLICATION_CREDENTIALS: "{{ gcp_cred_file }}"
+  changed_when: false
 
+- name: "Get available kubeconfigs"
+  find: 
+    use_regex: yes
+    patterns: ['^.*\.?[kube]?config$']
+    paths: "{{ ansible_env.HOME }}/.kube"
+  register: kubeconfigs_files
+
+- name: "Join kubeconfig files"
+  set_fact:
+    kubeconfig: "{{ kubeconfigs_files | community.general.json_query(kubeconfig_json_query) | join(':') }}"
+  when: kubeconfigs_files.files 
+
+- debug:
+   var: kubeconfig
+
+- name: "Kubernetes check"
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    context: "{{ item }}"
+    kind: Node
+  register: nodes
+  environment:
+    GOOGLE_APPLICATION_CREDENTIALS: "{{ gcp_cred_file }}"
+  loop: "{{ istio_kubernetes_contexts }}"
+
+- debug:
+    var: nodes
+  
+- fail: 
+   msg: "checkpoint"
+  
 - name: "Download Istio"
   get_url:
     url: "https://github.com/istio/istio/releases/download/{{ istio_version }}/istio-{{ istio_version }}-linux-amd64.tar.gz"

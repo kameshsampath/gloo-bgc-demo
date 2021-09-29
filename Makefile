@@ -54,11 +54,15 @@ create-kube-clusters:
 	@poetry shell
 	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,cloud" playbook.yml --extra-vars="gcp_create_vpn=no" $(EXTRA_ARGS)
 
+create-work-dirs:
+	@poetry shell
+	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "work" playbook.yml	$(EXTRA_ARGS)
+
 app-run:
 	@poetry shell
 	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "workload,app" playbook.yml $(EXTRA_ARGS)
 
-istio-run:
+deploy-istio:
 	@poetry shell
 	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "istio" playbook.yml $(EXTRA_ARGS)
 

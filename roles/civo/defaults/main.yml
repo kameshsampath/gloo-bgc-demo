@@ -3,7 +3,7 @@ civo_delete: no
 
 create_civo_credentials_file: yes
 civo_cli_version: v0.7.32
-civo_k3s_cluster_name: gloo-mgmt
+civo_k3s_cluster_name: kameshs-gloo-demos
 civo_k3s_cluster_size: g3.k3s.xlarge
 civo_k3s_cluster_nodes: 1
 # LON1, FRA1, NYC1 

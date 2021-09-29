@@ -63,6 +63,26 @@
     state: directory
     mode: 0744
 
+- name: "Get Application Default Access Token"
+  ansible.builtin.command:
+     argv:
+       - gcloud
+       - auth 
+       - application-default
+       - print-access-token
+       - "--format=json"
+  environment:
+    GOOGLE_APPLICATION_CREDENTIALS: "{{ ansible_env.HOME }}/.config/gcloud/credentials"
+  register: access_token_json
+
+# - debug:
+#     msg: "{{ access_token_json.stdout | from_json }}"
+
+- name: 'Set Kubeconfig facts'
+  set_fact:
+    token_expiry: "{{ access_token_json.stdout | from_json | community.general.json_query('expiry.datetime') }}"
+    gke_access_token: "{{ access_token_json.stdout | from_json | community.general.json_query('token')  }}"
+
 - name: "Save KubeConfig"
   template:
     dest: "{{ ansible_env.HOME }}/.kube/gke_{{ gke_cluster_name }}.kubeconfig"

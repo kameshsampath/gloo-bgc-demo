@@ -12,6 +12,12 @@ Vagrant.configure("2") do |config|
      ],
      use_dhcp_assigned_default_route: true
  
+  
+  config.vm.synced_folder "#{ENV['PWD']}/work/.kube",
+     "/home/vagrant/.kube",
+     create: true,
+     id: "kubeconfig"
+
   config.vm.provider "virtualbox" do |vb|
     vb.gui = false
     vb.cpus = 2
