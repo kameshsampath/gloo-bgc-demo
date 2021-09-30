@@ -1,0 +1,49 @@
+export TUTORIAL_HOME={{ playbook_dir }}
+export ISTIO_VERSION={{ istio_version }}
+# Kubernetes context name of Gloo Mesh Cluster that will have management components installed
+export MGMT={{ gloo_mesh.mgmt.k8s_context }}
+# Kubernetes context names of Gloo Mesh Cluster that will have Istio workload installed, the cluster names are automatically generated during the make create-kubernetes-clusters task
+export CLUSTER1={{ gloo_mesh.cluster1.k8s_context }}
+export CLUSTER2={{ gloo_mesh.cluster2.k8s_context }}
+
+export KUBECONFIG="${TUTORIAL_HOME}/.kube/config"
+
+# AWS
+export AWS_ACCESS_KEY_ID={{ aws_access_key_id }}
+export AWS_SECRET_ACCESS_KEY={{ aws_secret_access_key }}
+export AWS_DEFAULT_REGION={{ aws_region }}
+
+# CIVO
+export CIVO_API_KEY={{ civo_api_key }}
+
+# GKE
+{% if lookup('env','GOOGLE_APPLICATION_CREDENTIALS') %}
+export GOOGLE_APPLICATION_CREDENTIALS={{ lookup('env','GOOGLE_APPLICATION_CREDENTIALS') }}
+{% else %}
+# Set this to your GCP SA JSON
+export GOOGLE_APPLICATION_CREDENTIALS=<gcp sa json >
+{% endif %}
+export CLOUDSDK_CORE_PROJECT={{ gcp_project }}
+export CLOUDSDK_COMPUTE_REGION={{ gcp_region }}
+# just a single node cluster
+export CLOUDSDK_COMPUTE_ZONE={{ gke_cluster_location }}
+export GKE_CLUSTER_NAME={{ gke_cluster_name }}
+
+# Istio
+export ISTIO_HOME="$TUTORIAL_HOME/istio-1.10.4"
+
+# VM and Istio 
+export VM_APP={{ istio_vm_app }}
+export VM_NAMESPACE={{ istio_vm_namespace }}
+# this directory will be inside the vm 
+export WORK_DIR={{ istio_vm_workdir }}
+export SERVICE_ACCOUNT={{ istio_vm_service_account }}
+export CLUSTER_NETWORK={{ istio_cluster_network }}
+export VM_NETWORK={{ istio_cluster }}
+export CLUSTER={{ istio_cluster }}
+
+# Vagrant 
+export VAULT_FILE=.password_file
+export VAGRANT_DEFAULT_PROVIDER=virtualbox
+# tested with ubuntu/focal64, fedora/34-cloud-base
+export VAGRANT_BOX=ubuntu/focal64

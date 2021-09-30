@@ -69,3 +69,4 @@ local.gcp.conf
 *.url
 # todo remove later
 edge-files
+!.envrc.j2

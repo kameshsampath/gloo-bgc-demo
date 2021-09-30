@@ -3,7 +3,7 @@
   vars_files:
     - .local.vars.yml
   vars:
-    work_dir: "{{ playbook_dir }}/work"
+    work_dir: "{{ playbook_dir }}"
   roles:
     - role: geerlingguy.ntp
       become: yes
@@ -73,7 +73,7 @@
       local_action:
         module: ansible.builtin.template
         dest: "{{ playbook_dir }}/.envrc"
-        src: "{{ playbook_dir }}/.envrc.j2"
+        src: "{{ playbook_dir }}/templates/.envrc.j2"
       tags:
         - work
         - base

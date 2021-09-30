@@ -24,7 +24,9 @@ nav:
       - "Deploy Canary": "deploy-canary.md"
   - "Traffic Management": "traffic.md"
   - "Access Policies": "access-policies.md"
-  - "Troubleshooting": "troubleshooting.md"
+  - "Appendix":
+    - "Ansible Roles": "ansible-roles.md"
+    - "Troubleshooting": "troubleshooting.md"
 
 markdown_extensions:
   - toc:
@@ -55,4 +57,6 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.tasklist:
       custom_checkbox: true
+  - pymdownx.highlight:
+      linenums_style: pymdownx-inline
 

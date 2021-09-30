@@ -15,7 +15,7 @@ lint:
 	@ansible-lint --force-color
 
 .local.vars.yml:	
-	cp vars.yml.example .local.vars.yml
+	cp templates/vars.yml.example .local.vars.yml
 
 encrypt-vars:	.local.vars.yml	
 	@$(POETRY_COMMAND) run ansible-vault encrypt --vault-password-file=$(VAULT_FILE) .local.vars.yml
@@ -47,6 +47,10 @@ cloud-aws-run:
 # Creates the Kubernetes Clusters in the cloud with out VPN on GCP
 create-kube-clusters:
 	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,cloud" playbook.yml --extra-vars="gcp_create_vpn=no" $(EXTRA_ARGS)
+
+# Creates VPN tunnel and enable IPSec services on the VM
+create-tunnel:
+	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,gcp" playbook.yml --extra-vars="gcp_create_vpn=yes" $(EXTRA_ARGS)
 
 create-work-dirs:
 	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "work" playbook.yml	$(EXTRA_ARGS)

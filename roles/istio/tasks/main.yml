@@ -1,54 +1,18 @@
-- name: "Ensure Kubeconfig folder"
-  file:
-    state: directory
-    path: "{{ ansible_env.HOME }}/.kube"
-    mode: "0744"
-
-- name: "Authenticate with GKE"
-  ansible.builtin.command:
-    argv:
-      - gcloud
-      - container
-      - clusters
-      - get-credentials 
-      - "{{ gke_cluster_name }}"
-      - "--region={{ gke_cluster_location }}"
-  environment:
-    KUBECONFIG: "{{ ansible_env.HOME }}/.kube/gke_{{ gke_cluster_name  }}.kubeconfig"
-    GOOGLE_APPLICATION_CREDENTIALS: "{{ gcp_cred_file }}"
-  changed_when: false
-
-- name: "Get available kubeconfigs"
-  find: 
-    use_regex: yes
-    patterns: ['^.*\.?[kube]?config$']
-    paths: "{{ ansible_env.HOME }}/.kube"
-  register: kubeconfigs_files
-
-- name: "Join kubeconfig files"
-  set_fact:
-    kubeconfig: "{{ kubeconfigs_files | community.general.json_query(kubeconfig_json_query) | join(':') }}"
-  when: kubeconfigs_files.files 
-
-- debug:
-   var: kubeconfig
-
-- name: "Kubernetes check"
+- name: "Ensure Kubernetes Clusters are reachable"
   kubernetes.core.k8s_info:
-    kubeconfig: "{{ kubeconfig }}"
-    context: "{{ item }}"
+    context: "{{ item.value.k8s_context }}"
     kind: Node
-  register: nodes
   environment:
+    KUBECONFIG: "{{ ansible_env.HOME }}/.kube/config"
     GOOGLE_APPLICATION_CREDENTIALS: "{{ gcp_cred_file }}"
-  loop: "{{ istio_kubernetes_contexts }}"
+  loop: "{{ gloo_mesh | dict2items}}"
+  loop_control:
+    label: "{{ item.key }}"
+  register: nodes
+  when: ( item.value.install_istio | bool )
+  tags:
+   - istio
 
-- debug:
-    var: nodes
-  
-- fail: 
-   msg: "checkpoint"
-  
 - name: "Download Istio"
   get_url:
     url: "https://github.com/istio/istio/releases/download/{{ istio_version }}/istio-{{ istio_version }}-linux-amd64.tar.gz"
@@ -77,32 +41,98 @@
   tags:
    - istio
 
-- name: "Deploy Istio Operator"
+- name: "Ensure Istio Operator Namespace"
   kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig }}"
-    name: istio-operator
-    api_version: v1
-    kind: Namespace
+    definition:
+      api_version: v1
+      kind: Namespace
+      metadata:
+        name: istio-operator
+        labels:
+          app.kubernetes.io/managed-by: Helm
+        annotations:
+          meta.helm.sh/release-name: istio-operator
+          meta.helm.sh/release-namespace: istio-operator
     state: present
+    context: "{{ item.value.k8s_context }}"
+  environment:
+    KUBECONFIG: "{{ ansible_env.HOME }}/.kube/config"
+    GOOGLE_APPLICATION_CREDENTIALS: "{{ gcp_cred_file }}"
+  loop: "{{ gloo_mesh | dict2items}}"
+  loop_control:
+    label: "{{ item.key }}"
+  when: ( item.value.install_istio | bool )
   tags:
     - istio
 
 - name: "Deploy Istio Operator"
   kubernetes.core.helm:
-    kubeconfig: "{{ kubeconfig }}"
-    name: istio-operator
+    release_name: istio-operator
     chart_ref: "{{ ansible_env.HOME}}/istio-{{ istio_version }}/manifests/charts/istio-operator"
     release_namespace: istio-operator
-    create_namespace: true
+    context: "{{ item.value.k8s_context }}"
+    wait: yes
+    wait_timeout: 5m
+  environment:
+    KUBECONFIG: "{{ ansible_env.HOME }}/.kube/config"
+    GOOGLE_APPLICATION_CREDENTIALS: "{{ gcp_cred_file }}"
+  loop: "{{ gloo_mesh | dict2items}}"
+  loop_control:
+    label: "{{ item.key }}"
+  when: ( item.value.install_istio | bool )
+  tags:
+    - istio
+  register: istio_operator_install
+  
+- name: "Ensure Istio Namespace"
+  kubernetes.core.k8s:
+    name: istio-system
+    api_version: v1
+    kind: Namespace
+    state: present
+    context: "{{ item.value.k8s_context }}"
+  environment:
+    KUBECONFIG: "{{ ansible_env.HOME }}/.kube/config"
+    GOOGLE_APPLICATION_CREDENTIALS: "{{ gcp_cred_file }}"
+  loop: "{{ gloo_mesh | dict2items}}"
+  loop_control:
+    label: "{{ item.key }}"
+  when: ( item.value.install_istio | bool )
   tags:
     - istio
 
 - name: "Deploy Istio"
   kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig }}"
     state: present
     namespace: istio-system
     template:
-      path: 'istio/istio-cr.yaml.j2'
+      path: 'istio-cr.yaml.j2'
+    context: "{{ item.value.k8s_context }}"
+    wait: true
+    wait_timeout: 600
+  environment:
+    KUBECONFIG: "{{ ansible_env.HOME }}/.kube/config"
+    GOOGLE_APPLICATION_CREDENTIALS: "{{ gcp_cred_file }}"
+  loop: "{{ gloo_mesh | dict2items}}"
+  loop_control:
+    label: "{{ item.key }}"
+  when: ( item.value.install_istio | bool )
   tags:
     - istio
+
+- name: "Deploy istiod Gateway and Virtual Service"
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('kubernetes.core.kustomize', dir=role_path +'/files/istiod') }}"
+    context: "{{ item.value.k8s_context }}"
+  environment:
+    KUBECONFIG: "{{ ansible_env.HOME }}/.kube/config"
+    GOOGLE_APPLICATION_CREDENTIALS: "{{ gcp_cred_file }}"
+  loop: "{{ gloo_mesh | dict2items}}"
+  loop_control:
+    label: "{{ item.key }}"
+  when: ( item.value.install_istio | bool )
+  tags:
+    - istio
+  register: istiod_resources
+

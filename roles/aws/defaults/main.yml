@@ -1,5 +1,4 @@
 create_aws_credentials_file: yes
-aws_profile: default
 
 stack_outputs: {}
 stack_name: kameshs-gloo-demos

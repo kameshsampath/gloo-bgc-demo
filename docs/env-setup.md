@@ -12,38 +12,17 @@ At the end of this chapter you would have,
 - [x] The VM on local environment
 - [x] Installed Gloo Mesh Enterprise
 
-## Ensure Enviroment
-
-For easier setup and convinience setup the following enviroment variables before starting the setup:
-
-```bash
-# the Tutorial home directory
-export TUTORIAL_HOME="$(realpath -m "$PWD/../..")"
-# this is not available at this point but will be useful later
-export KUBECONFIG=$TUTORIAL_HOME/work/.kube/config
-export GOOGLE_APPLICATION_CREDENTIALS=<your google SA JSON FILE>
-export GOOGLE_PROJECT_ID=<your GCP test project>
-# The password file where your Ansible valut password will be stored
-export VAULT_FILE=.password_file
-# the vagrant vm provider
-export VAGRANT_DEFAULT_PROVIDER=virtualbox
-# Vagrant base box ubuntu/focal64, fedora/34-cloud-base
-export VAGRANT_BOX=ubuntu/focal64
-```
-
-!!! tip
-    A vary handy tool to work with environment and variables [direnv](https://direnv.net)
-
 ## Demo Environment
 
 The demo requires us to have three Kubernetes clusters and one Virtual Machine. The following tables shows the environment to component matrix.
 
 | Components  | GCP | AWS | CIVO | VM
 | ----------- | --- | --- | ---- | --
-| Cluster Name| cluster-1| cluster-2 | mgmt |
+| Gloo Mesh Cluster Name| cluster1| cluster2 | mgmt |
 | Gloo Mesh Management | :material-close: | :material-close: | :material-check: | :material-close:
 | Gloo Mesh Agent | :material-check: | :material-check: | :material-close: | :material-close:
 | Kubernetes | :material-check: | :material-check: | :material-check: | :material-close:
+| Kubernetes Context Name | gke | eks | civo |  
 | Istio | :material-check: | :material-check: | :material-close: | :material-check:
 | Blue-Green-Canary Service | :material-check: | :material-check: | :material-close: | :material-check:
 
@@ -53,16 +32,24 @@ Navigate to the `$TUTORIAL_HOME`,
 cd $TUTORIAL_HOME
 ```
 
+### Ansible Variables File
+
 Create the Ansible variables file,
 
 ```bash
 make encrypt-vars
 ```
 
-!!!note
-  As we will having sensitive keys in the Ansible variables, its highly recommended to create an encrypted variables file.
+The command will create a file `.local.vars.yml` under `$TUTORIAL_HOME`.
 
-The following table shows the ansible variables used, do update the values of the file as per your environment.
+!!!important
+  As we will having sensitive keys in the Ansible variables, the file is by default encrypted and the encryption key is stored in the `$TUTORIAL_HOME/.password_file`
+
+The following table shows the ansible variables used by the demo, please make sure to update the values to suit your settings.  The values can be edit using the command,
+
+```bash
+make edit-vars
+```
 
 | Variable               | Description              | Default
 | ---------------------- | ------------------------ | -----------|
@@ -80,67 +67,205 @@ The following table shows the ansible variables used, do update the values of th
 |`civo_k3s_cluster_name`| The CIVO Kubernetes cluster Name | gloo-mgmt
 |`force_app_install`| Force install application on VM| no
 |`clean_istio_vm_files`| Clean the generated Istio VM files | no
-|`k8s_context`| The kubernetes context that will be used to query Istio resources |
+|`k8s_context`| The kubernetes context that will be used to query Istio resources | *gke*
+|`gloo_mesh` | A dictionary of values that is used to set the values required for Gloo Mesh setup |
+
+The `gloo_mesh` variable by default has the following values, refer to the [component matrix](./env-setup.md#demo-environment) above to understand what this dictionary key/value represents.
+
+```yaml
+gloo_mesh:
+   mgmt:
+    cloud: civo
+    k8s_context: civo
+    install_istio: no
+   cluster1:
+    cloud: gcp
+    k8s_context: gke
+    install_istio: yes
+   cluster2:
+    cloud: aws
+    k8s_context: eks
+    install_istio: yes
+```
 
 ## VM Setup
 
-We will use [Vagrant](http://vagrantup.com) to run and configure our workload VM.  The Workload VM also serves as our Ansible target host to run the ansible playbooks.
+We will use [Vagrant](http://vagrantup.com) to run and configure our workload VM.  The Workload VM also serves as our Ansible target host to run the ansible playbooks. The same VM will be reused for running our `blue-green-canary` microservice. 
+
+Lets bring up the the VM by running the following command,
 
 ```bash
-make vm-up
+VAGRANT_BOX=ubuntu/focal64 make vm-up
 ```
 
-The `make vm-up` will bring up the vagrant VM with with base packages installed.
+Once the VM is up you should see,
 
-### Cloud Setup
+- `.envrc` file in the `$TUTORIAL_HOME` which will have the following variables,
+
+```bash
+export TUTORIAL_HOME=/Users/kameshs/git/kameshsampath/gloo-bgc-demo
+export ISTIO_VERSION=1.10.4
+# Kubernetes context name of Gloo Mesh Cluster that will have management components installed
+export MGMT=civo
+# Kubernetes context names of Gloo Mesh Cluster that will have Istio workload installed, the cluster names are automatically generated during the make create-kubernetes-clusters task
+export CLUSTER1=gke
+export CLUSTER2=eks
+
+export KUBECONFIG="${TUTORIAL_HOME}/.kube/config"
+
+# AWS
+export AWS_ACCESS_KEY_ID=<your AWS Access key>
+export AWS_SECRET_ACCESS_KEY=<your AWS Secret Access key>
+export AWS_DEFAULT_REGION=<your AWS Region>
+
+# CIVO
+export CIVO_API_KEY=<your civo API key>
+
+# GKE
+export GOOGLE_APPLICATION_CREDENTIALS=/Users/kameshs/.ssh/kameshs-solo-io-gcp.json
+export CLOUDSDK_CORE_PROJECT=<your GCP Project>
+export CLOUDSDK_COMPUTE_REGION=<your GCP compute region>
+# just a single node cluster
+export CLOUDSDK_COMPUTE_ZONE=<your GCP compute zone>
+export GKE_CLUSTER_NAME=<your GKE cluster name>
+
+# Istio
+export ISTIO_HOME="$TUTORIAL_HOME/istio-1.10.4"
+
+# VM and Istio 
+export VM_APP=blue-green-canary
+export VM_NAMESPACE=vm-blue-green-canary
+# this directory will be inside the vm 
+export WORK_DIR=/home/vagrant/istio-vm/files
+export SERVICE_ACCOUNT=vm-blue-green-canary
+export CLUSTER_NETWORK=bgc-network1
+export VM_NETWORK=cluster1
+export CLUSTER=cluster1
+
+# Vagrant 
+export VAULT_FILE=.password_file
+export VAGRANT_DEFAULT_PROVIDER=virtualbox
+# tested with ubuntu/focal64, fedora/34-cloud-base
+export VAGRANT_BOX=ubuntu/focal64
+```
+
+!!! tip
+    A vary handy tool to work with environment and variables [direnv](https://direnv.net), if you have `direnv` installed, it will recogonize and load the variables automatically.
+
+- `.kube` folder under `$TUTORIAL_HOME` this will hold the kube config files of all the kube clusters that will be created.
+
+## Kubernetes Setup
 
 The cloud setup will setup the Clouds and create Kubernetes clusters on them.
 
-#### Google Cloud
-
-The following command will run setup Google Cloud with VPC, VPN and setup Kubernetes using the VPC. This task will also setup a site-to-site VPN using [strongswan](https:/strongswan.org) which will allow communication between on-premise(VM) to the GKE.
-
 ```bash
-make cloud-gcp-run
-```
-
-#### Civo Cloud
-
-The following command will setup a Kubernetes Cluster on Civo cloud,
-
-```bash
-make cloud-civo-run
-```
-
-#### Amzon Cloud
-
-The following command will setup a Kubernetes Cluster(EKS) on AWS cloud,
-
-```bash
-make cloud-civo-run
+make create-kube-clusters
 ```
 
 !!! note
-  The step above will take approx 30-40 mins to complete
+  The step above will take approx 30 mins to complete depending on the cloud and region.
+
+The successful creation of Kube clusters will have the respective `kubeconfig` files in `$TUTORIAL_HOME/.kube`. The script will also create a merged kubeconfig file `$TUTORIAL_HOME/.kube/config` that will have all three Kubernetes contexts merged into single file.
+
+Verify the same by running the following command,
+
+```bash
+kubectl config get-contexts -o name
+```
+
+The command should show an output like,
+
+```text
+civo
+eks
+gke
+```
+
+Verify if you are able to connect to clusters by running the following commands,
+
+e.g. to get nodes of `gke` cluster,
+
+```bash
+KUBECONFIG=$TUTORIAL_HOME/.kube/config kubectl --context=gke get nodes
+```
+
+!!!tip
+  You can also do `source $TUTORIAL_HOME/.envrc` to have all the variables setup for your current terminal shell
 
 ### Deploy Istio
 
-We will deploy istio to all our workload clusters, in our setup AWS and GCP are workload clusters, run the following command to install the istio,
+As our clusters are ready, we can deploy Istio on to our workload clusters. Before we deploy lets check our `gloo_mesh` dictionary on the mappings,
 
-```bash
-cd $TUTORIAL_HOME/work/mgmt
+```yaml
+gloo_mesh:
+  mgmt:
+    cloud: civo
+    k8s_context: civo
+    install_istio: no
+  cluster1:
+    cloud: gcp
+    k8s_context: gke
+    install_istio: yes
+  cluster2:
+    cloud: aws
+    k8s_context: eks
+    install_istio: yes
 ```
 
-Install Istio on `cluster-1`:
+with our settings by runing the following command we should have Istio setup on `$CLUSTER1` and `$CLUSTER2`.
+
+!!!important
+    As we have setup the aliases via Environment variables,
+      
+      - `$CLUSTER1=gke`
+      - `$CLUSTER2=aws`
+      - `$MGMT=civo`
+
+    We will use environment variables to refer to them. Rest of the tutorial we will refer the clusters using their environment aliases. You can always check the `$TUTORIAL_HOME/.envrc` for these mappings.
 
 ```bash
-$TUTORIAL_HOME/bin/install_istio.sh "$CLUSTER1"
+make deploy-istio
 ```
 
-Install Istio on `cluster-2`:
+Verify istio on  `$CLUSTER1`(gke):
 
 ```bash
-$TUTORIAL_HOME/bin/install_istio.sh "$CLUSTER2"
+kubectl --context=$CLUSTER1 get pods,svc -n istio-system
+```
+
+Install Istio on `$CLUSTER2`(eks):
+
+```bash
+kubectl --context=$CLUSTER2 get pods,svc -n istio-system
+```
+
+Both the comands should return a similar output like,
+
+```bash
+NAME                                       READY   STATUS    RESTARTS   AGE
+pod/istio-ingressgateway-7cb8f9c54-r84m6   1/1     Running   0          32m
+pod/istiod-85d66d64d6-mdgz2                1/1     Running   0          32m
+
+NAME                           TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)                                                                                      AGE
+service/istio-ingressgateway   LoadBalancer   172.18.3.206   34.93.158.36   80:32614/TCP,443:32739/TCP,15021:31949/TCP,15443:30942/TCP,15012:31256/TCP,15017:31886/TCP   32m
+service/istiod                 ClusterIP      172.18.4.55    <none>         15010/TCP,15012/TCP,443/TCP,15014/TCP                                                        32m
+```
+
+We also deployed a Gateway to `istiod` to enable the VM to communicate to the Istio cluster, we can query the resources using the command,
+
+```bash
+kubectl --context=$CLUSTER1 get vs,gw -n istio-system
+```
+
+Should show an output like,
+
+```text
+NAME                                                AGE
+gateway.networking.istio.io/cross-network-gateway   31m
+gateway.networking.istio.io/istiod-gateway          31m
+
+NAME                                           GATEWAYS             HOSTS                                       AGE
+virtualservice.networking.istio.io/istiod-vs   ["istiod-gateway"]   ["istiod.istio-system.svc.cluster.local"]   31m
 ```
 
 ## Ensure Environment

@@ -1,0 +1,71 @@
+# GCP 
+create_gcp_credentials: yes
+gcp_vpc_name: <your vpc name>
+gcp_vpn_name: <your vpn name>
+gcp_create_vpc: yes
+gke_cluster_name: <gke cluster name>
+# the path to GCP SA JSON file where it will be saved in VM
+gcp_cred_file: "{{ ansible_env.HOME }}/.config/gcloud/credentials"
+gcp_project: <your  GCP project name>
+gcp_region: <your  GCP project region>
+# just a single maste cluster
+gke_cluster_location: <your  GCP project zone>
+
+# CIVO key
+civo_api_key: <your civo api key>
+civo_region: LON1
+civo_k3s_cluster_name: <civo k3s cluster name>
+
+# GCP SA JSON file
+gcp_project: <your gcp project>
+gcp_region: <gcp region to use>
+
+# AWS
+create_aws_credentials_file: yes
+aws_access_key_id: <your aws access id>
+aws_secret_access_key: <your aws access secret key>
+aws_region: <your aws region>
+eks_cluster_name: <the EKS cluster name>
+
+#CIVO 
+civo_cred_file: "{{ ansible_env.HOME }}/.config/gcloud/credentials"
+
+# APP
+# Clean install of app
+force_app_install: no
+# Clean Istio VM files
+clean_istio_vm_files: no
+
+# Istio 
+k8s_context: <your kubernetes cluster context name where VM isito sidecar to connect>
+k8s_context: gke
+
+istio_vm_app: blue-green-canary
+istio_vm_namespace: vm-blue-green-canary
+istio_vm_workdir: "/home/{{ ansible_user }}/istio-vm/files"
+istio_vm_service_account: vm-blue-green-canary
+istio_cluster_network: bgc-network1
+istio_vm_network: bgc-vm-network
+istio_cluster: cluster1
+
+# Gloo Mesh cluster clouds and aliases
+gloo_mesh:
+  mgmt:
+    cloud: civo
+    k8s_context: civo
+    install_istio: no
+  cluster1:
+    cloud: gcp
+    k8s_context: gke
+    install_istio: yes
+  cluster2:
+    cloud: aws
+    k8s_context: eks
+    install_istio: yes
+
+# APP 
+# force_app_install: yes
+clean_istio_vm_files: yes
+
+
+
