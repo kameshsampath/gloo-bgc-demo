@@ -1,15 +1,40 @@
+- name: "Get Clusters"
+  ansible.builtin.uri:
+    url: "{{ civo_api_url }}/kubernetes/clusters/?region={{ civo_region }}"
+    body_format: json
+    return_content: yes
+    headers: 
+      Authorization: "bearer {{ civo_api_key }}"
+  register: civo_clusters
+
+#  - debug: 
+#      msg: "{{ civo_clusters.json | community.general.json_query (list_query) }}"
+
+- name: "Check if cluster exists"
+  set_fact:
+    cluster_exists: "{{ civo_clusters.json | community.general.json_query (civo_clusters_list_query) | length == 1 }}"
+
+- name: "Get Cluster Id"
+  set_fact:
+    civo_cluster_id: "{{ civo_clusters.json | community.general.json_query (civo_clusters_list_query) | first |  community.general.json_query('id') }}"
+  when: cluster_exists
+
 - name: "Delete Civo Cluster"
-  ansible.builtin.shell:
-    argv:
-     - civo
-     - k3s
-     - rm
-     - "{{ civo_k3s_cluster_name }}"
-     - "--region={{ civo_region }}"
-     - --yes 
-  ignore_errors: yes
+  ansible.builtin.uri:
+    url: "{{ civo_api_url }}/kubernetes/clusters/{{ civo_cluster_id }}/?region={{ civo_region }}"
+    method: DELETE
+    body_format: json
+    return_content: yes
+    headers: 
+      Authorization: "bearer {{ civo_api_key }}"
+  when: cluster_exists and civo_cluster_id is defined
+  register: cluster_delete
+
+# - debug:
+#     var: cluster_delete
 
 - name: "Remove Kubeconfig"
   file: 
-    dest: "{{ ansible_env.HOME }}/.kube/{{ civo_k3s_cluster_name }}_kubeconfig"
+    dest: "{{ ansible_env.HOME }}/.kube/civo_{{ civo_k3s_cluster_name }}.kubeconfig"
     state: absent
+  when: cluster_exists and cluster_delete.json.result == 'success'

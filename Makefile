@@ -1,12 +1,16 @@
-SHELL := /usr/bin/env bash
-ENV_FILE := .envrc
-include ${ENV_FILE}
+SHELL := bash
 CURRENT_DIR = $(shell pwd)
-
+ENV_FILE := $(CURRENT_DIR)/.envrc
+include ${ENV_FILE}
+POETRY_COMMAND := $(shell which poetry)
 .PHONY:	clean	lint	edit-vars	rekey-vars	run	encrypt-vars	view-vars	base-run	cloud-run	cloud-civo-run	cloud-gcp-run	cloud-aws-run	app-run	istio-run	istio-run	workload-run	vm-up	vm-destroy	test	cloud-clean
 
-clean:
-	
+create-venv:
+	@$(POETRY_COMMAND) install
+
+shell-env:
+	@$(POETRY_COMMAND) shell
+
 lint:	
 	@ansible-lint --force-color
 
@@ -14,69 +18,53 @@ lint:
 	cp vars.yml.example .local.vars.yml
 
 encrypt-vars:	.local.vars.yml	
-	@poetry shell
-	ansible-vault encrypt --vault-password-file=$(VAULT_FILE) .local.vars.yml
+	@$(POETRY_COMMAND) run ansible-vault encrypt --vault-password-file=$(VAULT_FILE) .local.vars.yml
 
 edit-vars:
-	@poetry shell
-	ansible-vault edit --vault-password-file=$(VAULT_FILE) .local.vars.yml
+	@$(POETRY_COMMAND) run ansible-vault edit --vault-password-file=$(VAULT_FILE) .local.vars.yml
 
 view-vars:
-	@poetry shell
-	ansible-vault view --vault-password-file=$(VAULT_FILE) .local.vars.yml
+	@$(POETRY_COMMAND) run ansible-vault view --vault-password-file=$(VAULT_FILE) .local.vars.yml
 
 base-run:
-	@poetry shell
-	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base" playbook.yml  $(EXTRA_ARGS)
+	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base" playbook.yml  $(EXTRA_ARGS)
 
 cloud-run:
-	@poetry shell
-	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,cloud" playbook.yml  $(EXTRA_ARGS)
+	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,cloud" playbook.yml  $(EXTRA_ARGS)
 
 cloud-clean:
-	@poetry shell
-	ansible-playbook --vault-password-file=$(VAULT_FILE) cloud_clean.yml  $(EXTRA_ARGS)
+	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) cloud_clean.yml  $(EXTRA_ARGS)
 
 cloud-civo-run:
-	@poetry shell
-	ansible-playbook --tags "base,civo" --vault-password-file=$(VAULT_FILE) playbook.yml  $(EXTRA_ARGS)
+	@$(POETRY_COMMAND) run ansible-playbook --tags "base,civo" --vault-password-file=$(VAULT_FILE) playbook.yml $(EXTRA_ARGS)
 
 cloud-gcp-run:
-	@poetry shell
-	ansible-playbook --tags "base,gcp" --vault-password-file=$(VAULT_FILE) playbook.yml  $(EXTRA_ARGS)
+	@$(POETRY_COMMAND) run ansible-playbook --tags "base,gcp" --vault-password-file=$(VAULT_FILE) playbook.yml $(EXTRA_ARGS)
 		
 cloud-aws-run:
-	@poetry shell
-	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,aws" playbook.yml $(EXTRA_ARGS)
+	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,aws" playbook.yml $(EXTRA_ARGS)
 
 # Creates the Kubernetes Clusters in the cloud with out VPN on GCP
 create-kube-clusters:
-	@poetry shell
-	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,cloud" playbook.yml --extra-vars="gcp_create_vpn=no" $(EXTRA_ARGS)
+	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,cloud" playbook.yml --extra-vars="gcp_create_vpn=no" $(EXTRA_ARGS)
 
 create-work-dirs:
-	@poetry shell
-	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "work" playbook.yml	$(EXTRA_ARGS)
+	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "work" playbook.yml	$(EXTRA_ARGS)
 
 app-run:
-	@poetry shell
-	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "workload,app" playbook.yml $(EXTRA_ARGS)
+	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "workload,app" playbook.yml $(EXTRA_ARGS)
 
 deploy-istio:
-	@poetry shell
-	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "istio" playbook.yml $(EXTRA_ARGS)
+	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "istio" playbook.yml $(EXTRA_ARGS)
 
 workload-run:
-	@poetry shell
-	ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,workload,app,istio" playbook.yml $(EXTRA_ARGS)
+	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,workload,app,istio" playbook.yml $(EXTRA_ARGS)
 
 vm-up:
-	@poetry shell
-	vagrant up
+	@$(POETRY_COMMAND) run vagrant up
 
 vm-destroy:
 	vagrant destroy --force
 
 test:
-	@poetry shell
-	ansible-playbook --vault-password-file=$(VAULT_FILE) test.yml  $(EXTRA_ARGS)
+	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) test.yml  $(EXTRA_ARGS)

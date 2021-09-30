@@ -4,71 +4,95 @@
     - .local.vars.yml
  
   vars:
+   civo_cluster_name: kameshs-gloo-demos
+   civo_api_url: 'https://api.civo.com/v2/kubernetes/clusters'
+   civo_k3s_cluster_name: kameshs-gloo-demos
+   civo_k3s_cluster_size: g3.k3s.xlarge
+   civo_k3s_cluster_nodes: 1
+   civo_network_label: 'Default'
+   # LON1, FRA1, NYC1 
    civo_region: LON1
-   civo_cluster_name: gloo-mgmt
-   
-  
+   civo_kubernetes_version: 1.21.2+k3s1
+   civo_firewall_rules: 6443,80,443,8080,8443,9900,15443,15021,15012,15017
+   clusters_list_query: "items[?name=='{{ civo_cluster_name }}']"
+   network_query: "json[?label=='{{ civo_network_label }}']"
+
   tasks:
-   - google.cloud.gcp_container_cluster_info:
-      # TODO Get this dynamically by query 
-      location: "{{ gcp_region }}"
-      project: "{{ gcp_project }}"
-      auth_kind: "{{ gcp_cred_kind }}"
-      service_account_file: "{{ gcp_cred_file }}"
-     register: k8s_clusters
-     vars:
-        gke_cluster_name: kameshs-gloo-demos
-        gcp_region: asia-south1-c
-        gcp_cred_kind: serviceaccount
-        gcp_cred_file: "/Users/kameshs/.ssh/kameshs-solo-io-gcp.json"
+   - name: "Get Networks"
+     ansible.builtin.uri:
+       url: "https://api.civo.com/v2/networks/?region={{ civo_region }}&label=Default"
+       body_format: json
+       return_content: yes
+       headers: 
+        Authorization: "bearer {{ civo_api_key }}"
+     register: civo_networks
    
-   - set_fact:
-       cluster_query: "resources[?name == '{{ gke_cluster_name }}']"
-     vars: 
-       gke_cluster_name: kameshs-gloo-demos
-      
   #  - debug:
-  #     var: k8s_clusters
+  #      var: civo_networks
 
-   - set_fact:
-      k8s_cluster: "{{ k8s_clusters | community.general.json_query( cluster_query) | first }}"
+   - name: "Set Network facts"
+     set_fact: 
+        network_id: "{{ civo_networks | community.general.json_query(network_query) | first | community.general.json_query('id')  }}"
 
-   - set_fact:
-      gke_master_endpoint: "https://{{ k8s_cluster.endpoint }}"
-      gke_master_ca: "{{  k8s_cluster.masterAuth.clusterCaCertificate }}"
-    
+   - name: "Get Clusters"
+     ansible.builtin.uri:
+       url: "{{ civo_api_url }}/?region={{ civo_region }}"
+       body_format: json
+       return_content: yes
+       headers: 
+        Authorization: "bearer {{ civo_api_key }}"
+     register: civo_clusters
+  
+  #  - debug: 
+  #      msg: "{{ civo_clusters.json | community.general.json_query (list_query) }}"
+
+   - name: "Check if cluster exists"
+     set_fact:
+       cluster_exists: "{{ civo_clusters.json | community.general.json_query (clusters_list_query) | length == 1 }}"
+       
+  #  - debug:
+  #     var: cluster_exists
+
+  #  - fail:
+  #      msg: "check point"
+
+   - name: "Create Cluster"
+     ansible.builtin.uri:
+       url: "{{ civo_api_url }}"
+       body:
+         name: "{{ civo_cluster_name}}"
+         applications: "-Traefik"
+         network_id: "{{ network_id }}"
+         firewall_rule: "{{ civo_firewall_rules }}"
+         kubernetes_version: "{{ civo_kubernetes_version }}"
+         num_target_nodes: "{{ civo_k3s_cluster_nodes }}"
+         region: "{{ civo_region }}"
+         target_nodes_size: "{{ civo_k3s_cluster_size }}"
+       body_format: json
+       return_content: yes
+       method: POST
+       headers: 
+        Authorization: "bearer {{ civo_api_key }}"
+     when: not cluster_exists
+     register: cluster_create_result
+  
+  #  - debug:
+  #     var: cluster_create_result
+
+   - name: "Wait for Cluster Creation"
+     ansible.builtin.uri:
+       url: "{{ civo_api_url }}/{{ cluster_create_result.json.id }}/?region={{ civo_region }}"
+       body_format: json
+       return_content: yes
+       headers: 
+        Authorization: "bearer {{ civo_api_key }}"
+     register: cluster_active_result
+     retries: 20
+     delay: 30
+     until: cluster_active_result.json is defined and cluster_active_result.json.status == 'ACTIVE'
+     when: not cluster_exists
+  
    - debug:
-      var: gke_master_endpoint
-
-   - debug:
-      var: gke_master_ca
-
-    # - ansible.builtin.command:
-    #     argv:
-    #       - gcloud
-    #       - container
-    #       - clusters
-    #       - get-credentials
-    #       - "{{ gke_cluster_name }}"
-    #       - "--region={{ gcp_region }}"
-    #   vars:
-    #     gke_cluster_name: kameshs-gloo-demos
-    #     gcp_region: asia-south1-c
-    #   environment:
-    #     KUBECONFIG: "{{ playbook_dir }}/work/.kube/config"
-
-    # - set_fact:
-    #     query: "resources[*].status.conditions[?reason=='KubeletReady'].status"
-
-    # - name: "Wait for the Nodes to be Ready"
-    #   kubernetes.core.k8s_info:
-    #     kubeconfig: "{{ playbook_dir }}/work/.kube/config"
-    #     kind: Node
-    #   until: (node_list | community.general.json_query(query) | flatten | unique | count == 1 ) and (node_list | community.general.json_query(query) | flatten | unique | first )
-    #   retries: 60
-    #   delay: 10
-    #   register: node_list
-
-    # - debug: 
-    #    msg: "{{ node_list | community.general.json_query(query) | flatten | unique | count }}"
+      var: cluster_active_result
+      
     

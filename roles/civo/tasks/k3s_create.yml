@@ -1,46 +1,100 @@
-- name: "Check if cluster exists"
-  ansible.builtin.command:
-    argv:
-     - civo
-     - k3s
-     - ls
-     - --region={{ civo_region }}
-     - -ojson
-  register: civo_cluster_ls
+- name: "Get Networks"
+  ansible.builtin.uri:
+    url: "{{ civo_api_url }}/networks/?region={{ civo_region }}&label=Default"
+    body_format: json
+    return_content: yes
+    headers: 
+      Authorization: "bearer {{ civo_api_key }}"
+  register: civo_networks
 
-- name: "Set Civo Clusters Fact"
+#  - debug:
+#      var: civo_networks
+
+- name: "Set Network facts"
   set_fact: 
-      civo_clusters: "{{ civo_cluster_ls.stdout | from_json | json_query('[*].name') | list }}"
+    network_id: "{{ civo_networks | community.general.json_query(civo_network_query) | first | community.general.json_query('id')  }}"
 
-- name: "Create Civo Cluster"
-  ansible.builtin.command:
-    argv:
-     - civo
-     - k3s
-     - create
-     - "{{ civo_k3s_cluster_name }}"
-     - -r="Traefik"
-     - "--create-firewall='{{ civo_firewall_ports }}'"
-     - "--size='{{ civo_k3s_cluster_size }}'"
-     - "--nodes={{ civo_k3s_cluster_nodes }}"
-     - "--region={{ civo_region }}"
-     - "--version='{{ civo_kubernetes_version }}'"
-     - --wait
-  when: civo_clusters is defined and civo_k3s_cluster_name not in civo_clusters
+- name: "Get Clusters"
+  ansible.builtin.uri:
+    url: "{{ civo_api_url }}/kubernetes/clusters/?region={{ civo_region }}"
+    body_format: json
+    return_content: yes
+    headers: 
+      Authorization: "bearer {{ civo_api_key }}"
+  register: civo_clusters
 
+#  - debug: 
+#      msg: "{{ civo_clusters.json | community.general.json_query (list_query) }}"
+
+- name: "Check if cluster exists"
+  set_fact:
+    cluster_exists: "{{ civo_clusters.json | community.general.json_query (civo_clusters_list_query) | length == 1 }}"
+    
+#  - debug:
+#     var: cluster_exists
+
+#  - fail:
+#      msg: "check point"
+
+- name: "Create Cluster"
+  ansible.builtin.uri:
+    url: "{{ civo_api_url }}/kubernetes/clusters"
+    body:
+      name: "{{ civo_k3s_cluster_name }}"
+      applications: "-Traefik"
+      network_id: "{{ network_id }}"
+      firewall_rule: "{{ civo_firewall_rules }}"
+      kubernetes_version: "{{ civo_kubernetes_version }}"
+      num_target_nodes: "{{ civo_k3s_cluster_nodes }}"
+      region: "{{ civo_region }}"
+      target_nodes_size: "{{ civo_k3s_cluster_size }}"
+    body_format: json
+    return_content: yes
+    method: POST
+    headers: 
+      Authorization: "bearer {{ civo_api_key }}"
+  when: not cluster_exists
+  register: cluster_create_result
+
+#  - debug:
+#     var: cluster_create_result
+
+- name: "Wait for Cluster Creation"
+  ansible.builtin.uri:
+    url: "{{ civo_api_url }}/kubernetes/clusters/{{ cluster_create_result.json.id }}/?region={{ civo_region }}"
+    body_format: json
+    return_content: yes
+    headers: 
+      Authorization: "bearer {{ civo_api_key }}"
+  register: cluster_active_result
+  retries: 20
+  delay: 30
+  until: cluster_active_result.json is defined and cluster_active_result.json.status == 'ACTIVE'
+  when: not cluster_exists
+
+# - name: "Debug Cluster Create"
+#   debug:
+#   var: cluster_active_result
+      
 - name: "Ensure .kube config dir"
   file:
     state: directory
     path: "{{ ansible_env.HOME }}/.kube"
+  when: not cluster_exists
 
-- name: "Get civo cluster kubeconfig"
+- name: "Save kubeconfig"
+  ansible.builtin.copy:
+    dest: "{{ ansible_env.HOME }}/.kube/civo_{{ civo_k3s_cluster_name }}.kubeconfig"
+    content: |
+      {{ cluster_active_result.json.kubeconfig | from_yaml | to_nice_yaml(indent=2) }}
+  when: not cluster_exists
+
+- name: "Rename Cluster Context"
   ansible.builtin.command:
-    argv:
-     - civo
-     - k3s
-     - config
-     - "{{ civo_k3s_cluster_name }}"
-     - "--region={{ civo_region }}"
-     - "-ocustom=kubeconfig"
-     - "--local-path={{ ansible_env.HOME }}/.kube/{{ civo_k3s_cluster_name }}_kubeconfig"
-    creates: "{{ ansible_env.HOME }}/.kube/{{ civo_k3s_cluster_name }}_kubeconfig"
+     argv:
+       - kubectx
+       - "civo=kameshs-gloo-demos"
+  when: not cluster_exists
+  environment:
+    KUBECONFIG: "{{ ansible_env.HOME }}/.kube/civo_{{ civo_k3s_cluster_name }}.kubeconfig"
+

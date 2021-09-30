@@ -14,7 +14,7 @@
         - base
     - role: civo
       tags:
-       # - cloud
+        - cloud
         - civo
     - role: gcp
       tags:
@@ -65,6 +65,15 @@
         module: ansible.builtin.copy
         dest: "{{ work_dir }}/.kube/config"
         content: "{{ merged_kubeconfig.stdout | from_yaml | to_nice_yaml(indent=2) }}"
+      tags:
+        - work
+        - base
+    
+    - name: "Save Work .envrc"
+      local_action:
+        module: ansible.builtin.template
+        dest: "{{ playbook_dir }}/.envrc"
+        src: "{{ playbook_dir }}/.envrc.j2"
       tags:
         - work
         - base
