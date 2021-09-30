@@ -192,6 +192,20 @@
   loop_control:
     label: "{{ item }}"
 
+- name: "Create or Update VM Workload Namespace"
+  kubernetes.core.k8s:
+    state: present
+    context: "{{ k8s_context }}"
+    template:
+      path: 'istio/namespace.yaml.j2'
+
+- name: "Create or Update VM Workload ServiceAccount"
+  kubernetes.core.k8s:
+    state: present
+    context: "{{ k8s_context }}"
+    template:
+      path: 'istio/sa.yaml.j2'
+
 - name: "Create or Update VM Workload Service in Cluster"
   kubernetes.core.k8s:
     state: present

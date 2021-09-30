@@ -1,8 +1,0 @@
-namespace: vm-blue-green-canary
-
-generatorOptions:
-  disableNameSuffixHash: true
-
-resources:
-- namespace.yaml
-- sa.yaml

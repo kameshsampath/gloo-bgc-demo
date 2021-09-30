@@ -1,7 +1,8 @@
+#jinja2: lstrip_blocks: "True"
 kind: Namespace
 apiVersion: v1
 metadata:
-  name: vm-blue-green-canary
+  name: "{{ istio_vm_namespace }}"
   labels:
     istio-injection: enabled
 spec: {}
