@@ -63,7 +63,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#certifcate-request-failed" class="md-skip">
+        <a href="#tunnel-closed" class="md-skip">
           Skip to content
         </a>
       
@@ -364,6 +364,48 @@
     
   
   
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_9" type="checkbox" id="__nav_9" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_9">
+          Appendix
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Appendix" data-md-level="1">
+        <label class="md-nav__title" for="__nav_9">
+          <span class="md-nav__icon md-icon"></span>
+          Appendix
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ansible-roles/" class="md-nav__link">
+        Ansible Roles
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
     <li class="md-nav__item md-nav__item--active">
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
@@ -392,8 +434,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#certifcate-request-failed" class="md-nav__link">
-    Certifcate Request failed
+  <a href="#tunnel-closed" class="md-nav__link">
+    Tunnel Closed
   </a>
   
 </li>
@@ -402,6 +444,13 @@
   
 </nav>
       
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -430,8 +479,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#certifcate-request-failed" class="md-nav__link">
-    Certifcate Request failed
+  <a href="#tunnel-closed" class="md-nav__link">
+    Tunnel Closed
   </a>
   
 </li>
@@ -451,33 +500,12 @@
                 
                   <h1>Troubleshooting</h1>
                 
-                <h2 id="certifcate-request-failed">Certifcate Request failed<a class="headerlink" href="#certifcate-request-failed" title="Permanent link">&para;</a></h2>
-<p>When <code>CertificatRequest</code> fails, e.g.</p>
-<div class="highlight"><pre><span></span><code>kubectl get certificaterequests.cert-manager.io -n step-certificates-system <span class="si">${</span><span class="nv">FRUITS_UI_IP</span><span class="si">}</span>.nip.io -o json <span class="p">|</span> jq <span class="s1">&#39;.status.conditions[]&#39;</span>
+                <h2 id="tunnel-closed">Tunnel Closed<a class="headerlink" href="#tunnel-closed" title="Permanent link">&para;</a></h2>
+<p>The VPN tunnel goes inactive if there is no activity, whenever you see the Tunnel is inactive say you are not able to ping the Pods, try restarting the <code>strongswan</code> service and initiate the connection,</p>
+<div class="highlight"><pre><span></span><code>vagrant ssh -c <span class="s2">&quot;sudo systemctl restart strongswan&quot;</span>
 </code></pre></div>
-<p>If the command gives an output like,</p>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-  <span class="nt">&quot;lastTransitionTime&quot;</span><span class="p">:</span> <span class="s2">&quot;2021-09-02T04:19:17Z&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Certificate request has been approved by cert-manager.io&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;reason&quot;</span><span class="p">:</span> <span class="s2">&quot;cert-manager.io&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;True&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Approved&quot;</span>
-<span class="p">}</span>
-<span class="p">{</span>
-  <span class="nt">&quot;lastTransitionTime&quot;</span><span class="p">:</span> <span class="s2">&quot;2021-09-02T04:19:17Z&quot;</span><span class="p">,</span>
-<span class="hll">  <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Failed to sign certificate request: The request lacked necessary authorization to be completed. Please see the certificate authority logs for more info.&quot;</span><span class="p">,</span>
-</span><span class="hll">  <span class="nt">&quot;reason&quot;</span><span class="p">:</span> <span class="s2">&quot;Failed&quot;</span><span class="p">,</span>
-</span><span class="hll">  <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;False&quot;</span><span class="p">,</span>
-</span>  <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Ready&quot;</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><code>vagrant ssh -c <span class="s2">&quot;sudo swanctl initiate --child=home-gcp&quot;</span>
 </code></pre></div>
-<p>Check the <strong>certificate authority</strong> logs for messages in our case the CA <code>step-ca</code> and lets check its logs,</p>
-<div class="highlight"><pre><span></span><code>stern -n step-certificates-system step-certificates-0 -i <span class="s1">&#39;level=warning|error&#39;</span>
-</code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p><a href="https://github.com/wercker/stern">stern</a> is useful kubernetes log viewer</p>
-</div>
                 
                   
                 
@@ -499,7 +527,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../access-policies/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Access Policies" rel="prev">
+        <a href="../ansible-roles/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Ansible Roles" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -508,7 +536,7 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              Access Policies
+              Ansible Roles
             </div>
           </div>
         </a>

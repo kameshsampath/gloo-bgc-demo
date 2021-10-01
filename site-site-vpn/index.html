@@ -262,6 +262,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#create-vpn-resources" class="md-nav__link">
+    Create VPN Resources
+  </a>
+  
+    <nav class="md-nav" aria-label="Create VPN Resources">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ip-plan" class="md-nav__link">
+    IP Plan
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#connect-vm-to-google-cloud" class="md-nav__link">
+    Connect VM to Google Cloud
+  </a>
+  
+    <nav class="md-nav" aria-label="Connect VM to Google Cloud">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ipsec-service" class="md-nav__link">
+    IPSec Service
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipsec-service-configuration" class="md-nav__link">
+    IPSec Service Configuration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-status" class="md-nav__link">
+    Check Status
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-connectivity" class="md-nav__link">
+    Check Connectivity
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -398,10 +459,57 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_9" type="checkbox" id="__nav_9" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_9">
+          Appendix
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Appendix" data-md-level="1">
+        <label class="md-nav__title" for="__nav_9">
+          <span class="md-nav__icon md-icon"></span>
+          Appendix
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ansible-roles/" class="md-nav__link">
+        Ansible Roles
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../troubleshooting/" class="md-nav__link">
         Troubleshooting
       </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -436,6 +544,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#create-vpn-resources" class="md-nav__link">
+    Create VPN Resources
+  </a>
+  
+    <nav class="md-nav" aria-label="Create VPN Resources">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ip-plan" class="md-nav__link">
+    IP Plan
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#connect-vm-to-google-cloud" class="md-nav__link">
+    Connect VM to Google Cloud
+  </a>
+  
+    <nav class="md-nav" aria-label="Connect VM to Google Cloud">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ipsec-service" class="md-nav__link">
+    IPSec Service
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipsec-service-configuration" class="md-nav__link">
+    IPSec Service Configuration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-status" class="md-nav__link">
+    Check Status
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-connectivity" class="md-nav__link">
+    Check Connectivity
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -451,8 +620,267 @@
                 
                   <h1>Site to Site VPN</h1>
                 
-                <h2 id="demo-architecture">Demo Architecture<a class="headerlink" href="#demo-architecture" title="Permanent link">&para;</a></h2>
+                <p>One of the main goals of this demo is to integrate VM on-premise with public cloud using Istio.  To be able to integrate the VM with Istio on the cloud we need to have networking done between public cloud and on-premise. There are many ways to do setup the networking for the demo sake we will have use <a _target="blank" href="https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview">site-to-site <abbr title="Virtual Private Network">VPN</abbr></a> on GCP.</p>
+<p>Let&rsquo;s take stock of our inventory,</p>
+<ul>
+<li>We have setup Kubernetes Clusters on <abbr title="Amazon Web Services">AWS</abbr>/Civo/<abbr title="Google Kubernetes Engine">GKE</abbr></li>
+<li>Installed Istio on to <abbr title="Amazon Web Services">AWS</abbr>/<abbr title="Google Kubernetes Engine">GKE</abbr> clusters</li>
+<li>A linux VM provisioned via Vagrant.</li>
+</ul>
+<p>At the end of this chapter we would have,</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Created site-site <abbr title="Virtual Private Network">VPN</abbr> tunnel between GCP and your home network</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Configured VM with IpSec service to tunnel traffic</li>
+</ul>
+<h2 id="demo-architecture">Demo Architecture<a class="headerlink" href="#demo-architecture" title="Permanent link">&para;</a></h2>
 <p><img align="center" alt="Demo Architecture" src="../images/architecture.png" /></p>
+<h2 id="create-vpn-resources">Create <abbr title="Virtual Private Network">VPN</abbr> Resources<a class="headerlink" href="#create-vpn-resources" title="Permanent link">&para;</a></h2>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>It is highly recommended that you have <strong>static IP</strong> that will connect your Home network to GCP. Dynamic IP will work but then it might require to <abbr title="Virtual Private Network">VPN</abbr> re-run the configuration every time the IP changes.</p>
+</div>
+<p>When we set the <abbr title="Google Kubernetes Engine">GKE</abbr> we created the VPC and used it while setting up the <abbr title="Google Kubernetes Engine">GKE</abbr> as a <a _target="blank" href="https://cloud.google.com/kubernetes-engine/docs/concepts/alias-ips">VPC-native cluster</a>.</p>
+<h3 id="ip-plan">IP Plan<a class="headerlink" href="#ip-plan" title="Permanent link">&para;</a></h3>
+<p>The following section shows the IP plan of the <abbr title="Google Kubernetes Engine">GKE</abbr> ,</p>
+<ul>
+<li>
+<p>VPC Network CIDR - <mark class="critic"> 172.16.0.0/12 </mark></p>
+</li>
+<li>
+<p>Subnet Primary Address Range (Nodes) - <mark class="critic"> 172.16.0.0/28 </mark></p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code>Address:   172.16.0.0           10101100.00010000.00000000.0000 0000
+Netmask:   255.255.255.240 = 28 11111111.11111111.11111111.1111 0000
+Wildcard:  0.0.0.15             00000000.00000000.00000000.0000 1111
+=&gt;
+Network:   172.16.0.0/28        10101100.00010000.00000000.0000 0000
+HostMin:   172.16.0.1           10101100.00010000.00000000.0000 0001
+HostMax:   172.16.0.14          10101100.00010000.00000000.0000 1110
+Broadcast: 172.16.0.15          10101100.00010000.00000000.0000 1111
+Hosts/Net: 14                    Class B, Private Internet
+</code></pre></div>
+<ul>
+<li>Subnet Secondary Address Range (Pods) - <mark class="critic"> 172.17.0.0/16 </mark></li>
+</ul>
+<div class="highlight"><pre><span></span><code>Address:   172.17.0.0           10101100.00010001. 00000000.00000000
+Netmask:   255.255.0.0 = 16     11111111.11111111. 00000000.00000000
+Wildcard:  0.0.255.255          00000000.00000000. 11111111.11111111
+=&gt;
+Network:   172.17.0.0/16        10101100.00010001. 00000000.00000000
+HostMin:   172.17.0.1           10101100.00010001. 00000000.00000001
+HostMax:   172.17.255.254       10101100.00010001. 11111111.11111110
+Broadcast: 172.17.255.255       10101100.00010001. 11111111.11111111
+Hosts/Net: 65534                 Class B, Private Internet
+</code></pre></div>
+<ul>
+<li>Subnet Secondary Address Range (Services) - <mark class="critic"> 172.18.0.0/20 </mark></li>
+</ul>
+<div class="highlight"><pre><span></span><code>Address:   172.18.0.0           10101100.00010010.0000 0000.00000000
+Netmask:   255.255.240.0 = 20   11111111.11111111.1111 0000.00000000
+Wildcard:  0.0.15.255           00000000.00000000.0000 1111.11111111
+=&gt;
+Network:   172.18.0.0/20        10101100.00010010.0000 0000.00000000
+HostMin:   172.18.0.1           10101100.00010010.0000 0000.00000001
+HostMax:   172.18.15.254        10101100.00010010.0000 1111.11111110
+Broadcast: 172.18.15.255        10101100.00010010.0000 1111.11111111
+Hosts/Net: 4094                  Class B, Private Internet
+</code></pre></div>
+<p><img align="center" alt="GKE IP Plan" src="../images/ip_plan.png" /></p>
+<p>Running the following command will create the <abbr title="Virtual Private Network">VPN</abbr> on GCP and configure the site-to-site <abbr title="Virtual Private Network">VPN</abbr> using <a _target="blank" href="https:/strongswan.org">strongswan</a> using <abbr title="IP Security">IPSec</abbr>.</p>
+<div class="highlight"><pre><span></span><code>make create-tunnel
+</code></pre></div>
+<p>The successful Gateway and Tunnel creation should show the following resources in the GCP console,</p>
+<ul>
+<li>Cloud <abbr title="Virtual Private Network">VPN</abbr> Tunnel</li>
+</ul>
+<p>Cloud <abbr title="Virtual Private Network">VPN</abbr> Tunnel creates a <abbr title="Virtual Private Network">VPN</abbr> tunnel between your on-premise(home) network and Google Cloud. As you notice the tunnel&rsquo;s status is <em>First handshake</em> as we are yet to initate the connection from your VM which we will be doing in the next section.</p>
+<p><img align="center" alt="VPN Tunnel" src="../images/vpn_tunnel.png" /></p>
+<ul>
+<li><abbr title="Virtual Private Network">VPN</abbr> Gateway</li>
+</ul>
+<p>The <abbr title="Virtual Private Network">VPN</abbr> gateway helps routing the <abbr title="Virtual Private Network">VPN</abbr> traffic from our on-premise network into Google Cloud,</p>
+<p><img align="center" alt="VPN Gateway" src="../images/vpn_gateway.png" /></p>
+<h2 id="connect-vm-to-google-cloud">Connect VM to Google Cloud<a class="headerlink" href="#connect-vm-to-google-cloud" title="Permanent link">&para;</a></h2>
+<p>The setup done in the previous step would have enabled the <code>strongswan</code> systemd service on the vm let us check the status of the same,</p>
+<p>Open a new terminal and ssh into the Vagrant vm</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="nv">$TUTORIAL_HOME</span>
+</code></pre></div>
+<p>All the commands in this chapter will be executed inside the VM, so lets SSH into it,</p>
+<div class="highlight"><pre><span></span><code>vagrant ssh
+</code></pre></div>
+<h3 id="ipsec-service"><abbr title="IP Security">IPSec</abbr> Service<a class="headerlink" href="#ipsec-service" title="Permanent link">&para;</a></h3>
+<p>The <code>make create-tunnel</code> command would have enabled and started a systemd service called <strong>strongswan</strong>.  </p>
+<p>Run the following command to check the status of the <code>strongswan</code> service,</p>
+<div class="highlight"><pre><span></span><code>sudo systemctl status strongswan
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>● strongswan.service - strongSwan IPsec IKEv1/IKEv2 daemon using swanctl
+     Loaded: loaded <span class="o">(</span>/lib/systemd/system/strongswan.service<span class="p">;</span> enabled<span class="p">;</span> vendor preset: enabled<span class="o">)</span>
+     Active: active <span class="o">(</span>running<span class="o">)</span> since Fri <span class="m">2021</span>-10-01 <span class="m">13</span>:26:48 UTC<span class="p">;</span> 2s ago
+    Process: <span class="m">63691</span> <span class="nv">ExecStartPost</span><span class="o">=</span>/usr/sbin/swanctl --load-all --noprompt <span class="o">(</span><span class="nv">code</span><span class="o">=</span>exited, <span class="nv">status</span><span class="o">=</span><span class="m">0</span>/SUCCESS<span class="o">)</span>
+   Main PID: <span class="m">63658</span> <span class="o">(</span>charon-systemd<span class="o">)</span>
+     Status: <span class="s2">&quot;charon-systemd running, strongSwan 5.8.2, Linux 5.4.0-88-generic, x86_64&quot;</span>
+      Tasks: <span class="m">17</span> <span class="o">(</span>limit: <span class="m">4682</span><span class="o">)</span>
+     Memory: <span class="m">3</span>.1M
+     CGroup: /system.slice/strongswan.service
+             └─63658 /usr/sbin/charon-systemd
+
+Oct <span class="m">01</span> <span class="m">13</span>:26:50 ubuntu-focal charon-systemd<span class="o">[</span><span class="m">63658</span><span class="o">]</span>: selected peer config <span class="s1">&#39;gw-gw&#39;</span>
+Oct <span class="m">01</span> <span class="m">13</span>:26:50 ubuntu-focal charon-systemd<span class="o">[</span><span class="m">63658</span><span class="o">]</span>: authentication of <span class="s1">&#39;xx.xxx.xx.xxx&#39;</span> with pre-shared key successful
+Oct <span class="m">01</span> <span class="m">13</span>:26:50 ubuntu-focal charon-systemd<span class="o">[</span><span class="m">63658</span><span class="o">]</span>: authentication of <span class="s1">&#39;xx.xx.xxx.xx&#39;</span> <span class="o">(</span>myself<span class="o">)</span> with pre-shared key
+Oct <span class="m">01</span> <span class="m">13</span>:26:50 ubuntu-focal charon-systemd<span class="o">[</span><span class="m">63658</span><span class="o">]</span>: IKE_SA gw-gw<span class="o">[</span><span class="m">3</span><span class="o">]</span> established between <span class="m">192</span>.168.68.119<span class="o">[</span>xx.xx.xxx.xx<span class="o">]</span>...xx.xxx.xx.xxx<span class="o">[</span>xx.xxx.xx.xxx<span class="o">]</span>
+Oct <span class="m">01</span> <span class="m">13</span>:26:50 ubuntu-focal charon-systemd<span class="o">[</span><span class="m">63658</span><span class="o">]</span>: scheduling reauthentication <span class="k">in</span> 10593s
+Oct <span class="m">01</span> <span class="m">13</span>:26:50 ubuntu-focal charon-systemd<span class="o">[</span><span class="m">63658</span><span class="o">]</span>: maximum IKE_SA lifetime 11673s
+Oct <span class="m">01</span> <span class="m">13</span>:26:50 ubuntu-focal charon-systemd<span class="o">[</span><span class="m">63658</span><span class="o">]</span>: selected proposal: ESP:AES_GCM_16_256/NO_EXT_SEQ
+Oct <span class="m">01</span> <span class="m">13</span>:26:50 ubuntu-focal charon-systemd<span class="o">[</span><span class="m">63658</span><span class="o">]</span>: CHILD_SA home-gcp<span class="o">{</span><span class="m">2</span><span class="o">}</span> established with SPIs ceb36c53_i c82d0bb7_o and TS <span class="m">192</span>.168.0.0/16 <span class="o">===</span> <span class="m">172</span>.16.0.0/28 <span class="m">172</span>.&gt;
+Oct <span class="m">01</span> <span class="m">13</span>:26:50 ubuntu-focal charon-systemd<span class="o">[</span><span class="m">63658</span><span class="o">]</span>: generating IKE_AUTH response <span class="m">1</span> <span class="o">[</span> IDr AUTH SA TSi TSr N<span class="o">(</span>AUTH_LFT<span class="o">)</span> <span class="o">]</span>
+Oct <span class="m">01</span> <span class="m">13</span>:26:50 ubuntu-focal charon-systemd<span class="o">[</span><span class="m">63658</span><span class="o">]</span>: sending packet: from <span class="m">192</span>.168.68.119<span class="o">[</span><span class="m">4500</span><span class="o">]</span> to xx.xxx.xx.xxx<span class="o">[</span><span class="m">4500</span><span class="o">]</span> <span class="o">(</span><span class="m">269</span> bytes<span class="o">)</span>
+</code></pre></div>
+<p>The service status shows the connection has been successfully loaded, but not <em>established</em> yet.</p>
+<h3 id="ipsec-service-configuration"><abbr title="IP Security">IPSec</abbr> Service Configuration<a class="headerlink" href="#ipsec-service-configuration" title="Permanent link">&para;</a></h3>
+<p>The strongswan <abbr title="IP Security">IPSec</abbr> tunnel connection configuration done using the file <code>/etc/swanctl/conf.d/gcp-gloo-demos.conf</code>. For more details about the configuration please check the <a _target="blank" href="https://wiki.strongswan.org/projects/strongswan/wiki/Swanctlconf">strongswan docs</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">connections</span> {
+
+   <span class="nb">gw</span>-gw {
+
+    <span class="nb">local_addrs</span>  = <span class="m">192.168.68.119</span>
+    <span class="nb">remote_addrs</span> = xx.xxx.xxx.xxx
+
+    <span class="nb">local</span> {
+      <span class="nb">auth</span> = psk
+    <span class="err">}</span>
+
+    <span class="nb">remote</span> {
+      <span class="nb">auth</span> = psk
+    <span class="err">}</span>
+
+    <span class="nb">children</span> {
+
+         <span class="nb">home</span>-gcp {
+            <span class="nb">local_ts</span>  = <span class="m">192.168.0.0/16</span>
+            <span class="nb">remote_ts</span> = <span class="m">172.16.0.0/28</span>,172.17.0.0/16,172.18.0.0/20
+            <span class="nb">rekey_time</span> = <span class="m">5400</span>
+            <span class="nb">rekey_bytes</span> = <span class="m">500000000</span>
+            <span class="nb">rekey_packets</span> = <span class="m">1000000</span>
+            <span class="nb">esp_proposals</span> = aes256gcm16-sha512-modp8192
+            <span class="nb">start_action</span> = start
+            <span class="nb">dpd_action</span> = restart
+         <span class="err">}</span>
+    <span class="err">}</span>
+
+      <span class="nb">version</span> = <span class="m">2</span>
+      <span class="nb">mobike</span> = no
+      <span class="nb">reauth_time</span> = <span class="m">10800</span>
+      <span class="nb">proposals</span> = aes256gcm16-sha512-modp4096
+
+  <span class="err">}</span>
+
+<span class="err">}</span>
+
+<span class="nb">secrets</span> {
+   <span class="nb">ike</span>-1 {
+      <span class="nb">id</span>-1 = <span class="m">192.168.68.119</span>
+      <span class="nb">id</span>-2 = xx.xxx.xxx.xxx
+      <span class="nb">secret</span> = &lt;Generated IPSec Secret&gt;
+   <span class="err">}</span>
+<span class="err">}</span>
+</code></pre></div>
+<div class="admonition important">
+<p class="admonition-title">Points to Ponder</p>
+<ul>
+<li>
+<p>The <code>remote_ts</code> is mapped to the <a href="./#ip-plan"><abbr title="Google Kubernetes Engine">GKE</abbr> k8s subnets</a> that we had defined for Nodes, Pods and Service respectively. This will enable the VM to route the traffic to those subnets via the <abbr title="Virtual Private Network">VPN</abbr> gateway and <abbr title="Virtual Private Network">VPN</abbr> tunnel</p>
+</li>
+<li>
+<p>Its very important to have the Cipher<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> <em>proposals</em> and <em>esp_proposals</em> inline with whats supported by GCP IKE Ciphers<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>. </p>
+</li>
+<li>
+<p>Check the names <code>connections</code> &rarr; <em>gw-gw</em> , <code>children</code> &rarr; <em>home-gcp</em> and <abbr title="Internet Key Exchange v2">IKEV2</abbr><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup> <code>secret</code> &rarr; <em>ike-1</em> from the <code>gcp-gloo-demos.conf</code> configuration to  their statuses from the <code>strongswan</code> service logs. For more detailed logs use <code>sudo journalctl -xe -u strongswan</code></p>
+</li>
+</ul>
+</div>
+<h3 id="check-status">Check Status<a class="headerlink" href="#check-status" title="Permanent link">&para;</a></h3>
+<p>The status of tunnel can be checked on the VM using the <code>swanctl</code> utility,</p>
+<div class="highlight"><pre><span></span><code>sudo swantctl --list-sas
+</code></pre></div>
+<p>The command above lists the <abbr title="Security Associations">SA</abbr> as shown,</p>
+<div class="highlight"><pre><span></span><code>vagrant@ubuntu-focal:~$ sudo swanctl --list-sas
+gw-gw: #3, ESTABLISHED, IKEv2, 63c3d5bc28f7d6eb_i a80e425a5246e759_r*
+  local  &#39;xx.xxx.xx.xx&#39; @ 192.168.68.119[4500]
+  remote &#39;xx.xxx.xx.xx&#39; @ xx.xxx.xx.xx[4500]
+  AES_GCM_16-256/PRF_HMAC_SHA2_512/MODP_4096
+  established 194s ago, reauth in 9809s
+  home-gcp: #2, reqid 1, INSTALLED, TUNNEL-in-UDP, ESP:AES_GCM_16-256
+    installed 194s ago, rekeying in 4814s, expires in 5746s
+    in  c23db81e,   1205 bytes,     6 packets,   119s ago
+    out b4a96c26,    531 bytes,     8 packets,   119s ago
+    local  192.168.0.0/16
+    remote 172.16.0.0/28 172.17.0.0/16 172.18.0.0/20
+</code></pre></div>
+<p>When checking the Google Cloud Console it should show the <abbr title="Virtual Private Network">VPN</abbr> Tunnel status as <em>Established</em>,</p>
+<p><img align="center" alt="Tunnel Connected" src="../images/tunnel_conn_established.png" /></p>
+<h3 id="check-connectivity">Check Connectivity<a class="headerlink" href="#check-connectivity" title="Permanent link">&para;</a></h3>
+<p>Let us check the connections between <abbr title="Google Kubernetes Engine">GKE</abbr> and VM,</p>
+<div class="highlight"><pre><span></span><code>kubectl --context<span class="o">=</span>gke apply -f <span class="nv">$TUTORIAL_HOME</span>/extras/checks-and-tests.yaml
+</code></pre></div>
+<p>Ping from the pod,</p>
+<div class="highlight"><pre><span></span><code>kubectl --context<span class="o">=</span>gke <span class="nb">exec</span> -it <span class="k">$(</span>kubectl --context<span class="o">=</span>gke get pods -lapp<span class="o">=</span>network-utils -ojsonpath<span class="o">=</span><span class="s1">&#39;{.items[*].metadata.name}&#39;</span><span class="k">)</span> -- ping &lt;your VM public ip&gt;
+</code></pre></div>
+<p>The ping should successfull with the output like,</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># e.g kubectl --context=gke exec -it $(kubectl --context=gke get pods -lapp=network-utils -ojsonpath=&#39;{.items[*].metadata.name}&#39;) -- ping 192.168.68.119</span>
+PING <span class="m">192</span>.168.68.119 <span class="o">(</span><span class="m">192</span>.168.68.119<span class="o">)</span> <span class="m">56</span><span class="o">(</span><span class="m">84</span><span class="o">)</span> bytes of data.
+<span class="m">64</span> bytes from <span class="m">192</span>.168.68.119: <span class="nv">icmp_seq</span><span class="o">=</span><span class="m">1</span> <span class="nv">ttl</span><span class="o">=</span><span class="m">62</span> <span class="nv">time</span><span class="o">=</span><span class="m">32</span>.6 ms
+<span class="m">64</span> bytes from <span class="m">192</span>.168.68.119: <span class="nv">icmp_seq</span><span class="o">=</span><span class="m">2</span> <span class="nv">ttl</span><span class="o">=</span><span class="m">62</span> <span class="nv">time</span><span class="o">=</span><span class="m">34</span>.4 ms
+<span class="m">64</span> bytes from <span class="m">192</span>.168.68.119: <span class="nv">icmp_seq</span><span class="o">=</span><span class="m">3</span> <span class="nv">ttl</span><span class="o">=</span><span class="m">62</span> <span class="nv">time</span><span class="o">=</span><span class="m">117</span> ms
+</code></pre></div>
+<p>If tunnel was established successfully the following curl should return an HTML response as shown,</p>
+<div class="highlight"><pre><span></span><code>curl <span class="k">$(</span>kubectl --context<span class="o">=</span>gke get pods -lapp<span class="o">=</span>nginx -ojsonpath<span class="o">=</span><span class="s1">&#39;{.items[*].status.podIP}&#39;</span><span class="k">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Welcome to nginx!<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="nt">html</span> <span class="p">{</span> <span class="n">color-scheme</span><span class="p">:</span> <span class="n">light</span> <span class="n">dark</span><span class="p">;</span> <span class="p">}</span>
+<span class="nt">body</span> <span class="p">{</span> <span class="k">width</span><span class="p">:</span> <span class="mi">35</span><span class="kt">em</span><span class="p">;</span> <span class="k">margin</span><span class="p">:</span> <span class="mi">0</span> <span class="kc">auto</span><span class="p">;</span>
+<span class="k">font-family</span><span class="p">:</span> <span class="n">Tahoma</span><span class="p">,</span> <span class="n">Verdana</span><span class="p">,</span> <span class="n">Arial</span><span class="p">,</span> <span class="kc">sans-serif</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Welcome to nginx!<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>For online documentation and support please refer to
+<span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;http://nginx.org/&quot;</span><span class="p">&gt;</span>nginx.org<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>.<span class="p">&lt;</span><span class="nt">br</span><span class="p">/&gt;</span>
+Commercial support is available at
+<span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;http://nginx.com/&quot;</span><span class="p">&gt;</span>nginx.com<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;&lt;</span><span class="nt">em</span><span class="p">&gt;</span>Thank you for using nginx.<span class="p">&lt;/</span><span class="nt">em</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">When Tunnel is inactive</p>
+<p><img align="center" alt="Tunnel Connected" src="../images/tunnel_idle.png" /></p>
+<p>The <abbr title="Virtual Private Network">VPN</abbr> tunnel goes inactive if there is no activity for sometime, whenever you see the Tunnel is inactive say you are not able to ping the Pods, try restarting the <code>strongswan</code> service and initiate the connection,</p>
+<div class="highlight"><pre><span></span><code>vagrant ssh -c <span class="s2">&quot;sudo systemctl restart strongswan&quot;</span>
+</code></pre></div>
+</div>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>https://wiki.strongswan.org/projects/strongswan/wiki/IKEv2CipherSuites&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>https://cloud.google.com/network-connectivity/docs/vpn/concepts/supported-ike-ciphers&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>https://en.wikipedia.org/wiki/Internet_Key_Exchange&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
                 
                   
                 

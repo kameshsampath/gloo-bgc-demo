@@ -247,6 +247,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#ensure-poetry" class="md-nav__link">
+    Ensure Poetry
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -418,10 +425,57 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_9" type="checkbox" id="__nav_9" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_9">
+          Appendix
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Appendix" data-md-level="1">
+        <label class="md-nav__title" for="__nav_9">
+          <span class="md-nav__icon md-icon"></span>
+          Appendix
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ansible-roles/" class="md-nav__link">
+        Ansible Roles
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../troubleshooting/" class="md-nav__link">
         Troubleshooting
       </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -471,6 +525,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#ensure-poetry" class="md-nav__link">
+    Ensure Poetry
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -511,7 +572,7 @@
 </ul>
 </li>
 <li>
-<p>CIVO Cloud Account with Access Token</p>
+<p>CIVO Cloud Account with Access Token, if you dont have you can <a href="https://www.civo.com">sign up</a> .</p>
 </li>
 </ul>
 <h1 id="download-tools">Download Tools<a class="headerlink" href="#download-tools" title="Permanent link">&para;</a></h1>
@@ -594,6 +655,31 @@
 <p>For convinience, we will refer the clone demo sources folder as <code>$TUTORIAL_HOME</code>,</p>
 <div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">TUTORIAL_HOME</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$PWD</span><span class="s2">&quot;</span>
 </code></pre></div>
+<p>Navigate to the project home,</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="nv">$TUTORIAL_HOME</span>
+</code></pre></div>
+<h2 id="ensure-poetry">Ensure Poetry<a class="headerlink" href="#ensure-poetry" title="Permanent link">&para;</a></h2>
+<p>The project uses <a href="https://python-poetry.org">poetry</a> to setup Python3 virtual environment to run ansible scripts. You can use <code>pipx</code> to install poetry like,</p>
+<div class="highlight"><pre><span></span><code>pipx install poetry <span class="o">&amp;&amp;</span> pipx ensurepath
+</code></pre></div>
+<p>Lets ensure <code>poetry</code> is setup correctly, running the following command should return the version of the installed <code>poetry</code> utility.</p>
+<div class="highlight"><pre><span></span><code>poetry --version
+</code></pre></div>
+<p>Let us configure <code>poetry</code> to create the python3 virutalenv in the project directory <code>$TUTORIAL_HOME</code>,</p>
+<div class="highlight"><pre><span></span><code>poetry config  virtualenvs.in-project <span class="nb">true</span>
+</code></pre></div>
+<p>To create the virutal environment run the following command,</p>
+<div class="highlight"><pre><span></span><code>poetry install
+</code></pre></div>
+<p>The command will instal all the required python modules in the <code>$TUTORIAL_HOME/.venv</code>.</p>
+<p>Install the ansible roles and collections that will be used by the playbooks,</p>
+<div class="highlight"><pre><span></span><code>poetry run ansible-galaxy role install -r <span class="nv">$TUTORIAL_HOME</span>/requirements.yml
+poetry run ansible-galaxy collection install -r <span class="nv">$TUTORIAL_HOME</span>/requirements.yml
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>poetry run is shortcut to invoke the python3 modules from your virtualenv</p>
+</div>
                 
                   
                 
