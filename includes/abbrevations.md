@@ -9,3 +9,8 @@
 *[mTLS]: Mutual Transport Layer Security
 *[SSL]: Secure Sockets Layer
 *[CSR]: Certificate Signing Request
+*[VPN]: Virtual Private Network
+*[IPSec]: IP Security
+*[GKE]: Google Kubernetes Engine
+*[IKEV2]: Internet Key Exchange v2
+*[SA]: Security Associations

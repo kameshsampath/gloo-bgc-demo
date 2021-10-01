@@ -6,38 +6,14 @@ authors:
 date: 2021-09-03
 ---
 
-## Certifcate Request failed
+## Tunnel Closed
 
-When `CertificatRequest` fails, e.g.
-
-```bash
-kubectl get certificaterequests.cert-manager.io -n step-certificates-system ${FRUITS_UI_IP}.nip.io -o json | jq '.status.conditions[]'
-```
-
-If the command gives an output like,
-
-```json hl_lines="10-12"
-{
-  "lastTransitionTime": "2021-09-02T04:19:17Z",
-  "message": "Certificate request has been approved by cert-manager.io",
-  "reason": "cert-manager.io",
-  "status": "True",
-  "type": "Approved"
-}
-{
-  "lastTransitionTime": "2021-09-02T04:19:17Z",
-  "message": "Failed to sign certificate request: The request lacked necessary authorization to be completed. Please see the certificate authority logs for more info.",
-  "reason": "Failed",
-  "status": "False",
-  "type": "Ready"
-}
-```
-
-Check the **certificate authority** logs for messages in our case the CA `step-ca` and lets check its logs,
+The VPN tunnel goes inactive if there is no activity, whenever you see the Tunnel is inactive say you are not able to ping the Pods, try restarting the `strongswan` service and initiate the connection,
 
 ```bash
-stern -n step-certificates-system step-certificates-0 -i 'level=warning|error'
+vagrant ssh -c "sudo systemctl restart strongswan"
 ```
 
-!!! tip
-    [stern](https://github.com/wercker/stern) is useful kubernetes log viewer
+```bash
+vagrant ssh -c "sudo swanctl initiate --child=home-gcp"
+```

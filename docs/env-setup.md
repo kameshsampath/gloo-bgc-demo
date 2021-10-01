@@ -90,7 +90,10 @@ gloo_mesh:
 
 ## VM Setup
 
-We will use [Vagrant](http://vagrantup.com) to run and configure our workload VM.  The Workload VM also serves as our Ansible target host to run the ansible playbooks. The same VM will be reused for running our `blue-green-canary` microservice. 
+We will use [Vagrant](http://vagrantup.com) to run and configure our workload VM.  The Workload VM also serves as our Ansible target host to run the ansible playbooks. The same VM will be reused for running our `blue-green-canary` microservice.
+
+!!! important
+    Check the vagrant file `public_network` and set the names in the list to map to your local interface names.
 
 Lets bring up the the VM by running the following command,
 
