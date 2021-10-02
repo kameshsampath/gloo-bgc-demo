@@ -378,7 +378,7 @@
       
         <li class="md-nav__item">
   <a href="#ensure-environment" class="md-nav__link">
-    Ensure environment
+    Ensure Environment
   </a>
   
 </li>
@@ -391,23 +391,36 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#enable-ingress-traffic-via-istio" class="md-nav__link">
-    Enable Ingress Traffic via Istio
+  <a href="#enable-access" class="md-nav__link">
+    Enable Access
+  </a>
+  
+    <nav class="md-nav" aria-label="Enable Access">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ingress-traffic-via-istio" class="md-nav__link">
+    Ingress Traffic via Istio
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#allow-traffic-to-vm" class="md-nav__link">
     Allow Traffic to VM
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#access-service-from-vm" class="md-nav__link">
     Access service from VM
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -506,7 +519,7 @@
       
         <li class="md-nav__item">
   <a href="#ensure-environment" class="md-nav__link">
-    Ensure environment
+    Ensure Environment
   </a>
   
 </li>
@@ -519,23 +532,36 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#enable-ingress-traffic-via-istio" class="md-nav__link">
-    Enable Ingress Traffic via Istio
+  <a href="#enable-access" class="md-nav__link">
+    Enable Access
+  </a>
+  
+    <nav class="md-nav" aria-label="Enable Access">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ingress-traffic-via-istio" class="md-nav__link">
+    Ingress Traffic via Istio
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#allow-traffic-to-vm" class="md-nav__link">
     Allow Traffic to VM
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#access-service-from-vm" class="md-nav__link">
     Access service from VM
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -555,34 +581,38 @@
                   <h1>Access Policies</h1>
                 
                 <p>In this chapter we will create and apply access policies that will restrict access to services in Gloo Mesh Clusters and VM.</p>
-<h2 id="ensure-environment">Ensure environment<a class="headerlink" href="#ensure-environment" title="Permanent link">&para;</a></h2>
+<h2 id="ensure-environment">Ensure Environment<a class="headerlink" href="#ensure-environment" title="Permanent link">&para;</a></h2>
+<p>Navigate to Tutorial home</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="nv">$TUTORIAL_HOME</span>
+</code></pre></div>
 <p>Set cluster environment variables</p>
 <div class="highlight"><pre><span></span><code><span class="nb">source</span> <span class="nv">$TUTORIAL_HOME</span>/.envrc
 </code></pre></div>
-<p>Check if you are still in the <code>work/mgmt</code> folder,</p>
-<div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="nv">$TUTORIAL_HOME</span>/work/mgmt
-</code></pre></div>
 <h2 id="enable-global-access-policy">Enable Global Access Policy<a class="headerlink" href="#enable-global-access-policy" title="Permanent link">&para;</a></h2>
-<p>The Virtual Mesh that we crated in earlier as the <code>globalAccessPolicy</code> disabled,</p>
-<div class="highlight"><pre><span></span><code> kubectl get virtualmeshes.networking.mesh.gloo.solo.io -n gloo-mesh bgc-virtual-mesh -o json <span class="p">|</span> jq <span class="s1">&#39;.spec.globalAccessPolicy&#39;</span>
+<p>The Virtual Mesh that we crated in earlier as the <code>globalAccessPolicy</code> disabled, run the following command to verify the state of the same,</p>
+<div class="highlight"><pre><span></span><code> kubectl --context<span class="o">=</span><span class="s2">&quot;</span><span class="nv">$MGMT</span><span class="s2">&quot;</span> get virtualmeshes.networking.mesh.gloo.solo.io -n gloo-mesh bgc-virtual-mesh -o json <span class="p">|</span> jq <span class="s1">&#39;.spec.globalAccessPolicy&#39;</span>
 </code></pre></div>
-<p>The command should return <strong>DISABLED</strong></p>
-<p>Now lets enable the <code>globalAccessPolicy</code>,</p>
+<p>Now lets enable the <code>globalAccessPolicy</code> by running the following command,</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/17_toggle_mesh_access_policy.sh
+</code></pre></div>
+<p>As soon as the <code>globalAccessPolicy</code> is enabled you should see no traffic.</p>
+<p>Now running the following command again should return a response <strong>ENABLED</strong>,</p>
+<div class="highlight"><pre><span></span><code> kubectl --context<span class="o">=</span><span class="s2">&quot;</span><span class="nv">$MGMT</span><span class="s2">&quot;</span> get virtualmeshes.networking.mesh.gloo.solo.io -n gloo-mesh bgc-virtual-mesh -o json <span class="p">|</span> jq <span class="s1">&#39;.spec.globalAccessPolicy&#39;</span>
 </code></pre></div>
 <p>Lets verify if we are able to access the service,</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/call_bgc_service.sh <span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span><span class="s2">&quot;</span>
 </code></pre></div>
 <p>The command should show an output like:</p>
-<div class="highlight"><pre><span></span><code>###################################################
-
-Polling Service URL 35.244.63.221/api
-
-###################################################
-RBAC: access denied
+<div class="highlight"><pre><span></span><code>RBAC: access denied
 </code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Refreshing the browser should also return <code>RBAC: acccess denied</code> as shown</p>
+<p><img align="center" alt="RBAC Access Denied" src="../images/rbac_access_denied.png" /></p>
+</div>
 <p>By default the moment we enable <code>globalAccessPolicy</code> the Gloo Mesh create allowNone with out any access policy associated with the resource, hence you the <code>RBAC: access denied</code> as output when calling the service.</p>
-<h2 id="enable-ingress-traffic-via-istio">Enable Ingress Traffic via Istio<a class="headerlink" href="#enable-ingress-traffic-via-istio" title="Permanent link">&para;</a></h2>
+<h2 id="enable-access">Enable Access<a class="headerlink" href="#enable-access" title="Permanent link">&para;</a></h2>
+<h3 id="ingress-traffic-via-istio">Ingress Traffic via Istio<a class="headerlink" href="#ingress-traffic-via-istio" title="Permanent link">&para;</a></h3>
 <p>Let us now allow the traffic via Istio Ingress Gateway,</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/18_enable_access_via_ingress.sh
 </code></pre></div>
@@ -641,22 +671,26 @@ Polling Service URL <span class="m">35</span>.244.63.221/api
     <span class="s2">&quot;userAgent&quot;</span>: <span class="s2">&quot;HTTPie/2.5.0&quot;</span>
 <span class="o">}</span>
 </code></pre></div>
-<p>As you noticed the command shows one <code>RBAC: access denied</code>, that is from the VM Canary service. What we did right now is allowing traffic from the Gloo Mesh Clusters and the traffic from and to vm is still blocked.</p>
-<h2 id="allow-traffic-to-vm">Allow Traffic to VM<a class="headerlink" href="#allow-traffic-to-vm" title="Permanent link">&para;</a></h2>
-<p>Let us now apply the Access policy that will allow the traffic to the VM,</p>
-<p>Let us now allow the traffic via Istio Ingress Gateway,</p>
+<p>As you noticed the command shows one <code>RBAC: access denied</code>, that is from the VM Canary service.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+</div>
+<p>If you are using the browser then you might see as shown, which is related to no Access to VM.
+   <img align="center" alt="VM RBAC" src="../images/no_access_to_vm.png" /></p>
+<p>Checking the Istio logs on the VM will show <code>rbac_access_denied_matched_policy</code>,</p>
+<div class="highlight"><pre><span></span><code>vagrant ssh -c <span class="s2">&quot;sudo tail -f /var/log/istio/istio.log&quot;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>[2021-10-02T05:39:53.720Z] &quot;GET /api HTTP/1.1&quot; 403 - rbac_access_denied_matched_policy[none] - &quot;-&quot; 0 19 0 - &quot;172.17.0.1&quot; &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15&quot; &quot;91dfed15-3288-469b-ad93-38a5a6af10f3&quot; &quot;34.93.158.36&quot; &quot;-&quot; inbound|8080|| - 192.168.68.119:8080 172.17.0.1:0 outbound_.8080_.version-canary_.blue-green-canary.vm-blue-green-canary.svc.cluster.local -
+</code></pre></div>
+<h3 id="allow-traffic-to-vm">Allow Traffic to VM<a class="headerlink" href="#allow-traffic-to-vm" title="Permanent link">&para;</a></h3>
+<p>What we did right now is allowing traffic from the Gloo Mesh Clusters and the traffic from and to vm is still blocked. Now let us now apply the Access policy that will allow the traffic to the VM,</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/19_enable_access_to_vm.sh
 </code></pre></div>
-<p>Let us try polling the service,</p>
+<p>Let us try polling the service agian or you could refresh the browser,</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/poll_bgc_service.sh <span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span><span class="s2">&quot;</span>
 </code></pre></div>
-<p>The command should now include the output from the <em>Canary(VM)</em> service as well,</p>
-<div class="highlight"><pre><span></span><code><span class="c1">###################################################</span>
-
-Polling Service URL <span class="m">35</span>.244.63.221/api
-
-<span class="c1">###################################################</span>
-<span class="o">{</span>
+<p>The command should now include the output from the <em>canary(VM)</em> version of service as well,</p>
+<div class="highlight"><pre><span></span><code><span class="o">{</span>
     <span class="s2">&quot;color&quot;</span>: <span class="s2">&quot;green&quot;</span>,
     <span class="s2">&quot;count&quot;</span>: <span class="m">2175</span>,
     <span class="s2">&quot;greeting&quot;</span>: <span class="s2">&quot;Bonjour 👋🏽&quot;</span>,
@@ -664,7 +698,6 @@ Polling Service URL <span class="m">35</span>.244.63.221/api
     <span class="s2">&quot;textColor&quot;</span>: <span class="s2">&quot;whitesmoke&quot;</span>,
     <span class="s2">&quot;userAgent&quot;</span>: <span class="s2">&quot;HTTPie/2.5.0&quot;</span>
 <span class="o">}</span>
-
 
 
 <span class="o">{</span>
@@ -687,7 +720,7 @@ Polling Service URL <span class="m">35</span>.244.63.221/api
     <span class="s2">&quot;userAgent&quot;</span>: <span class="s2">&quot;HTTPie/2.5.0&quot;</span>
 <span class="o">}</span>
 </code></pre></div>
-<h2 id="access-service-from-vm">Access service from VM<a class="headerlink" href="#access-service-from-vm" title="Permanent link">&para;</a></h2>
+<h3 id="access-service-from-vm">Access service from VM<a class="headerlink" href="#access-service-from-vm" title="Permanent link">&para;</a></h3>
 <p>Let us now check if we are able to access the service from the VM,</p>
 <div class="highlight"><pre><span></span><code>vagrant ssh -c <span class="s2">&quot;http blue-green-canary.blue-green-canary.svc.cluster.local:8080/api&quot;</span>
 </code></pre></div>
@@ -705,26 +738,27 @@ RBAC: access denied
 <div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/20_enable_access_from_vm.sh
 </code></pre></div>
 <p>Now trying again to access the service from VM should show a successful response,</p>
-<div class="highlight"><pre><span></span><code>$ vagrant ssh -c <span class="s2">&quot;http blue-green-canary.blue-green-canary.svc.cluster.local:8080/api&quot;</span>
-HTTP/1.1 <span class="m">200</span> OK
-content-length: <span class="m">129</span>
-content-type: application/json<span class="p">;</span> <span class="nv">charset</span><span class="o">=</span>utf-8
-date: Thu, <span class="m">23</span> Sep <span class="m">2021</span> <span class="m">16</span>:32:22 GMT
-etag: <span class="s2">&quot;81-44uxFMXdXGKizzXNw4AXYnD7xj0&quot;</span>
+<div class="highlight"><pre><span></span><code>vagrant ssh -c <span class="s2">&quot;http blue-green-canary.blue-green-canary.svc.cluster.local:8080/api&quot;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>HTTP/1.1 200 OK
+content-length: 129
+content-type: application/json; charset=utf-8
+date: Thu, 23 Sep 2021 16:32:22 GMT
+etag: &quot;81-44uxFMXdXGKizzXNw4AXYnD7xj0&quot;
 server: envoy
 vary: Accept-Encoding
-x-envoy-upstream-service-time: <span class="m">285</span>
+x-envoy-upstream-service-time: 285
 
-<span class="o">{</span>
-    <span class="s2">&quot;color&quot;</span>: <span class="s2">&quot;yellow&quot;</span>,
-    <span class="s2">&quot;count&quot;</span>: <span class="m">198</span>,
-    <span class="s2">&quot;greeting&quot;</span>: <span class="s2">&quot;Hola ✋🏽&quot;</span>,
-    <span class="s2">&quot;pod&quot;</span>: <span class="s2">&quot;vm-192.168.68.114&quot;</span>,
-    <span class="s2">&quot;textColor&quot;</span>: <span class="s2">&quot;black&quot;</span>,
-    <span class="s2">&quot;userAgent&quot;</span>: <span class="s2">&quot;HTTPie/2.5.0&quot;</span>
-<span class="o">}</span>
+{
+    &quot;color&quot;: &quot;yellow&quot;,
+    &quot;count&quot;: 198,
+    &quot;greeting&quot;: &quot;Hola ✋🏽&quot;,
+    &quot;pod&quot;: &quot;vm-192.168.68.114&quot;,
+    &quot;textColor&quot;: &quot;black&quot;,
+    &quot;userAgent&quot;: &quot;HTTPie/2.5.0&quot;
+}
 </code></pre></div>
-<p>Volià! We have successfully enabled the Access Policies on our Gloo Mesh cluster.</p>
+<p>Volià! We have successfully enabled the Access Policies on our Gloo Mesh cluster enabling traffic via Ingress to services on the Cluster and VM.</p>
                 
                   
                 
