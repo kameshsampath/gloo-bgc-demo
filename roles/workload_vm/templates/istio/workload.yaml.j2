@@ -1,0 +1,17 @@
+apiVersion: discovery.mesh.gloo.solo.io/v1
+kind: Workload
+metadata:
+  name: "{{ istio_vm_app }}-{{ istio_vm_namespace }}-{{ istio_cluster }}"
+  namespace: gloo-mesh
+spec:
+  kubernetes:
+    controller:
+      clusterName: {{ istio_cluster }}
+      name: {{ istio_vm_app }}
+      namespace: {{ istio_vm_namespace }}
+    podLabels:
+      app: blue-green-canary
+    serviceAccountName: {{ istio_vm_namespace }}
+  mesh:
+    name: "istiod-istio-system-{{ istio_cluster }}"
+    namespace: gloo-mesh

@@ -21,18 +21,10 @@
     dest: "/root/.vimrc"
     mode: 0644
 
-- name: "Create Kubeconfig folder"
-  file:
-    state: directory
-    path: "{{ ansible_env.HOME }}/.kube"
-    mode: "0744"
-
-- name: "Copy kubeconfig"
-  become: yes
-  copy:
-    src: "{{ playbook_dir }}/work/.kube/config"
-    dest: "{{ ansible_env.HOME }}/.kube/config"
-    mode: "0744"
+- name: "Set Service IP Facts"
+  set_fact:
+    # making sure not to choose the default virutal box NAT IP
+    istio_svc_ip: "{{ ansible_all_ipv4_addresses[1] }}"
 
 - name: "Configure DNS"
   include: dns.yml

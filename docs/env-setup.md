@@ -271,13 +271,19 @@ NAME                                           GATEWAYS             HOSTS       
 virtualservice.networking.istio.io/istiod-vs   ["istiod-gateway"]   ["istiod.istio-system.svc.cluster.local"]   31m
 ```
 
-## Ensure Environment
+## Install Gloo Mesh
+
+### Ensure Enviroment
 
 Make sure you have the Gloo Mesh Gateway Enterprise License Key before proceeding to install. Export the license key to variable,
 
 ```shell
 export GLOO_MESH_GATEWAY_LICENSE_KEY=<your Gloo Mesh Gateway EE License Key>
 ```
+
+Set the required environment variables,
+
+---8<--- "includes/env.md"
 
 ## Download meshctl
 
@@ -388,15 +394,3 @@ Management Configuration
 
 🟢 Gloo Mesh Networking Configuration Resources
 ```
-
-## Mesh Dashboard
-
-We will us the Gloo Mesh Dashboard to verify our registered clusters,
-
-```bash
-kubectl --context=$MGMT port-forward -n gloo-mesh  deployment/dashboard 8090:8090
-```
-
-You can then open the [dashboard](http://localhost:8090){_target=blank} in your browser which will open a page as shown:
-
-![Gloo Mesh Dashboard](./images/mesh_dashboard.png)

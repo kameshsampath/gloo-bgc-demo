@@ -2,6 +2,8 @@ site_name: 'Gloo Blue Green Canary Demo'
 site_url: https://kameshsampath.github.com/gloo-bgc-demo
 theme:
   name: material
+  font:
+    text: Red Hat Display
   features:
     - content.code.annotate
     - content.tabs.link
@@ -16,8 +18,8 @@ nav:
   - 'Overview': "index.md"
   - 'Tools and Sources': "tools-and-sources.md"
   - 'Environment Setup': "env-setup.md"
-  - 'Site to Site VPN': "site-site-vpn.md"
-  - "Mesh": "mesh.md"
+  - 'Site to Site VPN': "site-to-site-vpn.md"
+  - "Setup Gloo Mesh": "mesh.md"
   - "Deploy Microservices":
       - "Deploy Blue": "deploy-blue.md"
       - "Deploy Green": "deploy-green.md"

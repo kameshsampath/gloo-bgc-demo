@@ -62,7 +62,7 @@ deploy-istio:
 	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "istio" playbook.yml $(EXTRA_ARGS)
 
 workload-run:
-	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,workload,app,istio" playbook.yml $(EXTRA_ARGS)
+	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,workload,app" playbook.yml $(EXTRA_ARGS)
 
 vm-up:
 	@$(POETRY_COMMAND) run vagrant up

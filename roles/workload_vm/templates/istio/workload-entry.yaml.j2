@@ -6,7 +6,7 @@ metadata:
   namespace: "{{ istio_vm_namespace }}"
 spec:
   network: "{{ istio_cluster_network }}"
-  address: "{{ ansible_default_ipv4.address  | ansible.netcommon.ipv4('address')}}"
+  address: "{{ istio_svc_ip}}"
   labels:
     app: "{{ istio_vm_app }}"
     version: canary

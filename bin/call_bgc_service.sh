@@ -15,5 +15,5 @@ printf "\n###################################################\n"
 printf "\nCalling Service URL %s/api \n" "$SVC_URL"
 printf "\n###################################################\n"
 
-http --body "$SVC_URL/api"
+http --body "http://$SVC_URL/api"
 

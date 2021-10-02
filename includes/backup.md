@@ -1,3 +1,12 @@
+
+## Deploy httpbin
+
+The httpin application will be used to for checking various features of Gloo Mesh that you will be done in upcoming sections,
+
+```bash
+kubectl --context="${CLUSTER1}"  apply -f $TUTORIAL_HOME/extras/httpbin.yaml
+```
+
 ### Start Tunnel
 
 The tunnel is by default is not started automatically, to start the tunnel run the following command,
