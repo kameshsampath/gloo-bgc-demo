@@ -32,8 +32,8 @@
       
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
-        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Red+Hat+Display:300,400,400i,700%7C&display=fallback">
+        <style>:root{--md-text-font-family:"Red Hat Display";--md-code-font-family:""}</style>
       
     
     
@@ -227,7 +227,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../site-site-vpn/" class="md-nav__link">
+      <a href="../site-to-site-vpn/" class="md-nav__link">
         Site to Site VPN
       </a>
     </li>
@@ -243,7 +243,7 @@
   
     <li class="md-nav__item">
       <a href="../mesh/" class="md-nav__link">
-        Mesh
+        Setup Gloo Mesh
       </a>
     </li>
   
@@ -363,7 +363,14 @@
       
         <li class="md-nav__item">
   <a href="#ensure-environment" class="md-nav__link">
-    Ensure environment
+    Ensure Environment
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#delete-existing-test-gateway" class="md-nav__link">
+    Delete Existing Test Gateway
   </a>
   
 </li>
@@ -372,6 +379,39 @@
   <a href="#gloo-mesh-gateway" class="md-nav__link">
     Gloo Mesh Gateway
   </a>
+  
+    <nav class="md-nav" aria-label="Gloo Mesh Gateway">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploy-virtual-gateway" class="md-nav__link">
+    Deploy Virtual Gateway
+  </a>
+  
+    <nav class="md-nav" aria-label="Deploy Virtual Gateway">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cluster1" class="md-nav__link">
+    CLUSTER1
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster2" class="md-nav__link">
+    CLUSTER2
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -384,16 +424,70 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#cluster-1" class="md-nav__link">
-    Cluster -1
+  <a href="#cluster1_1" class="md-nav__link">
+    Cluster1
+  </a>
+  
+    <nav class="md-nav" aria-label="Cluster1">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#call-service" class="md-nav__link">
+    Call Service
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#cluster-2" class="md-nav__link">
-    Cluster- 2
+  <a href="#poll-service" class="md-nav__link">
+    Poll Service
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-browser" class="md-nav__link">
+    Use Browser
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster2_1" class="md-nav__link">
+    Cluster2
+  </a>
+  
+    <nav class="md-nav" aria-label="Cluster2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#call-service_1" class="md-nav__link">
+    Call Service
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#poll-service_1" class="md-nav__link">
+    Poll Service
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-browser_1" class="md-nav__link">
+    Use Browser
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -553,7 +647,14 @@
       
         <li class="md-nav__item">
   <a href="#ensure-environment" class="md-nav__link">
-    Ensure environment
+    Ensure Environment
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#delete-existing-test-gateway" class="md-nav__link">
+    Delete Existing Test Gateway
   </a>
   
 </li>
@@ -562,6 +663,39 @@
   <a href="#gloo-mesh-gateway" class="md-nav__link">
     Gloo Mesh Gateway
   </a>
+  
+    <nav class="md-nav" aria-label="Gloo Mesh Gateway">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploy-virtual-gateway" class="md-nav__link">
+    Deploy Virtual Gateway
+  </a>
+  
+    <nav class="md-nav" aria-label="Deploy Virtual Gateway">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cluster1" class="md-nav__link">
+    CLUSTER1
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster2" class="md-nav__link">
+    CLUSTER2
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -574,16 +708,70 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#cluster-1" class="md-nav__link">
-    Cluster -1
+  <a href="#cluster1_1" class="md-nav__link">
+    Cluster1
+  </a>
+  
+    <nav class="md-nav" aria-label="Cluster1">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#call-service" class="md-nav__link">
+    Call Service
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#cluster-2" class="md-nav__link">
-    Cluster- 2
+  <a href="#poll-service" class="md-nav__link">
+    Poll Service
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-browser" class="md-nav__link">
+    Use Browser
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster2_1" class="md-nav__link">
+    Cluster2
+  </a>
+  
+    <nav class="md-nav" aria-label="Cluster2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#call-service_1" class="md-nav__link">
+    Call Service
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#poll-service_1" class="md-nav__link">
+    Poll Service
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-browser_1" class="md-nav__link">
+    Use Browser
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -654,77 +842,128 @@
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Create TrafficPolicy to distribute traffic</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Integrated VM Workload with Mesh</li>
 </ul>
-<h2 id="ensure-environment">Ensure environment<a class="headerlink" href="#ensure-environment" title="Permanent link">&para;</a></h2>
+<h2 id="ensure-environment">Ensure Environment<a class="headerlink" href="#ensure-environment" title="Permanent link">&para;</a></h2>
+<p>Navigate to Tutorial home</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="nv">$TUTORIAL_HOME</span>
+</code></pre></div>
 <p>Set cluster environment variables</p>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">MGMT</span><span class="o">=</span><span class="k">$(</span><span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/mgmt/kubeconfig <span class="o">&amp;&amp;</span> kubectl config get-contexts -o name <span class="p">|</span> tr -d <span class="s1">&#39;\n\r&#39;</span><span class="k">)</span>
-<span class="nb">export</span> <span class="nv">CLUSTER1</span><span class="o">=</span><span class="k">$(</span><span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/cluster-1/kubeconfig <span class="o">&amp;&amp;</span> kubectl config get-contexts -o name <span class="p">|</span> tr -d <span class="s1">&#39;\n\r&#39;</span><span class="k">)</span>
-<span class="nb">export</span> <span class="nv">CLUSTER2</span><span class="o">=</span><span class="k">$(</span><span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/cluster-2/kubeconfig <span class="o">&amp;&amp;</span> kubectl config get-contexts -o name <span class="p">|</span> tr -d <span class="s1">&#39;\n\r&#39;</span><span class="k">)</span>
+<div class="highlight"><pre><span></span><code><span class="nb">source</span> <span class="nv">$TUTORIAL_HOME</span>/.envrc
 </code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-</div>
-<p>It will be a nice convinience to have a merged kubeconfig to easier context switch. To merge kube config run the following command,</p>
-<div class="highlight"><pre><span></span><code>   mkdir -p <span class="nv">$TUTORIAL_HOME</span>/work/.kube
-   <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/mgmt/kubeconfig:<span class="nv">$TUTORIAL_HOME</span>/work/cluster-1/kubeconfig:<span class="nv">$TUTORIAL_HOME</span>/work/cluster-2/kubeconfig<span class="p">;</span> kubectl config view --flatten &gt; <span class="nv">$TUTORIAL_HOME</span>/work/.kube/config
-   <span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/.kube/config
+<h2 id="delete-existing-test-gateway">Delete Existing Test Gateway<a class="headerlink" href="#delete-existing-test-gateway" title="Permanent link">&para;</a></h2>
+<p>As we will be configuring the services to use the Gloo Mesh <code>VirtualGateway</code> we will delete the existing Istio test gateways from both the workload clusterst,</p>
+<div class="highlight"><pre><span></span><code>kubectl --context<span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span><span class="s2">&quot;</span> delete <span class="se">\</span>
+  -n blue-green-canary <span class="se">\</span>
+  -k <span class="s2">&quot;</span><span class="nv">$TUTORIAL_HOME</span><span class="s2">/demo-app/config/istio&quot;</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="nv">$TUTORIAL_HOME</span>/work/mgmt
+<div class="highlight"><pre><span></span><code>kubectl --context<span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER2</span><span class="si">}</span><span class="s2">&quot;</span> delete <span class="se">\</span>
+  -n blue-green-canary <span class="se">\</span>
+  -k <span class="s2">&quot;</span><span class="nv">$TUTORIAL_HOME</span><span class="s2">/demo-app/config/istio&quot;</span>
+</code></pre></div>
+<p>Let us query the VirtualService(<code>vs</code>) and Gateways(<code>gw</code>) from the workload clusters and check our stocks,</p>
+<div class="highlight"><pre><span></span><code>kubectl --context<span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span><span class="s2">&quot;</span> get vs,gw -n istio-system
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>NAME                                           GATEWAYS             HOSTS                                       AGE
+virtualservice.networking.istio.io/istiod-vs   [&quot;istiod-gateway&quot;]   [&quot;istiod.istio-system.svc.cluster.local&quot;]   35h
+
+NAME                                                                               AGE
+gateway.networking.istio.io/cross-network-gateway                                  35h
+gateway.networking.istio.io/istio-ingressgateway-istio-system-cluster1-gloo-mesh   14h
+gateway.networking.istio.io/istiod-gateway                                         35h
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kubectl --context<span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER2</span><span class="si">}</span><span class="s2">&quot;</span> get vs,gw -n istio-system
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>NAME                                           GATEWAYS             HOSTS                                       AGE
+virtualservice.networking.istio.io/istiod-vs   [&quot;istiod-gateway&quot;]   [&quot;istiod.istio-system.svc.cluster.local&quot;]   35h
+
+NAME                                                                               AGE
+gateway.networking.istio.io/cross-network-gateway                                  35h
+gateway.networking.istio.io/istio-ingressgateway-istio-system-cluster2-gloo-mesh   14h
+gateway.networking.istio.io/istiod-gateway                                         35h
 </code></pre></div>
 <h2 id="gloo-mesh-gateway">Gloo Mesh Gateway<a class="headerlink" href="#gloo-mesh-gateway" title="Permanent link">&para;</a></h2>
-<p>We will create Virtual Gateway, Host and RouteTable to route requests to the servies across the mesh cluster.</p>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>If you have installed the test gateway and virtual service, make sure to delete from the clusters before proceeding further</p>
+<p>Let us now create <code>VirtualGateway</code>, <code>VirtualHost</code> and  <code>RouteTable</code> to route to enable traffic routing to the <code>blue-green-canary</code> service across the <code>VirtualMesh</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code>VirtualMesh</code> includes the on-premise VM</p>
 </div>
+<h3 id="deploy-virtual-gateway">Deploy Virtual Gateway<a class="headerlink" href="#deploy-virtual-gateway" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/7_deploy_gateway.sh
 </code></pre></div>
-<p>Let us verify if Gateway and Virtual Services are created on both the clusters that are part of the mesh,</p>
+<p>Let us verify if <code>Gateway</code> and <code>VirtualService</code> are created on both the workload clusters,</p>
+<h4 id="cluster1">CLUSTER1<a class="headerlink" href="#cluster1" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code>kubectl --context<span class="o">=</span><span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span> get gw,vs -A 
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>kubectl --context<span class="o">=</span><span class="si">${</span><span class="nv">CLUSTER2</span><span class="si">}</span> get gw,vs -A 
-</code></pre></div>
-<p>Both the commands should return an output like,</p>
 <div class="highlight"><pre><span></span><code>NAMESPACE      NAME                                                                               AGE
-<mark class="critic"> istio-system   gateway.networking.istio.io/bgc-virtualgateway-17072781039916753854                42s </mark>
-istio-system   gateway.networking.istio.io/cross-network-gateway                                  5d12h
-istio-system   gateway.networking.istio.io/istio-ingressgateway-istio-system-cluster1-gloo-mesh   16h
-istio-system   gateway.networking.istio.io/istiod-gateway                                         5d12h
+<mark class="critic">istio-system   gateway.networking.istio.io/bgc-virtualgateway-17072781039916753854 </mark>               5s
+istio-system   gateway.networking.istio.io/cross-network-gateway                                  35h
+istio-system   gateway.networking.istio.io/istio-ingressgateway-istio-system-cluster1-gloo-mesh   14h
+istio-system   gateway.networking.istio.io/istiod-gateway                                         35h
 
 NAMESPACE      NAME                                                           GATEWAYS                                                   HOSTS                                       AGE
-<mark class="critic"> gloo-mesh      virtualservice.networking.istio.io/bgc-virtualhost-gloo-mesh   [&quot;istio-system/bgc-virtualgateway-17072781039916753854&quot;]   [&quot;*&quot;]                                       42s </mark>
-istio-system   virtualservice.networking.istio.io/istiod-vs                   [&quot;istiod-gateway&quot;]                                         [&quot;istiod.istio-system.svc.cluster.local&quot;]   37h
+<mark class="critic">gloo-mesh      virtualservice.networking.istio.io/bgc-virtualhost-gloo-mesh   [&quot;istio-system/bgc-virtualgateway-17072781039916753854&quot;]   [&quot;*&quot;]</mark>                                       5s
+istio-system   virtualservice.networking.istio.io/istiod-vs                   [&quot;istiod-gateway&quot;]                                         [&quot;istiod.istio-system.svc.cluster.local&quot;]   35h
+</code></pre></div>
+<h4 id="cluster2">CLUSTER2<a class="headerlink" href="#cluster2" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>kubectl --context<span class="o">=</span><span class="si">${</span><span class="nv">CLUSTER2</span><span class="si">}</span> get gw,vs -A 
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>NAMESPACE      NAME                                                                               AGE
+<mark class="critic">istio-system   gateway.networking.istio.io/bgc-virtualgateway-9692221184781295762   </mark>              47s
+istio-system   gateway.networking.istio.io/cross-network-gateway                                  35h
+istio-system   gateway.networking.istio.io/istio-ingressgateway-istio-system-cluster2-gloo-mesh   14h
+istio-system   gateway.networking.istio.io/istiod-gateway                                         35h
+
+NAMESPACE      NAME                                                           GATEWAYS                                                  HOSTS                                       AGE
+<mark class="critic">gloo-mesh      virtualservice.networking.istio.io/bgc-virtualhost-gloo-mesh   [&quot;istio-system/bgc-virtualgateway-9692221184781295762&quot;]   [&quot;*&quot;]</mark>                                       47s
+istio-system   virtualservice.networking.istio.io/istiod-vs                   [&quot;istiod-gateway&quot;]                                        [&quot;istiod.istio-system.svc.cluster.local&quot;]   35h
 </code></pre></div>
 <h2 id="calling-service">Calling Service<a class="headerlink" href="#calling-service" title="Permanent link">&para;</a></h2>
-<h3 id="cluster-1">Cluster -1<a class="headerlink" href="#cluster-1" title="Permanent link">&para;</a></h3>
+<h3 id="cluster1_1">Cluster1<a class="headerlink" href="#cluster1_1" title="Permanent link">&para;</a></h3>
 <p>Retrive the Istio Ingress Gateway url to access the application,</p>
 <div class="highlight"><pre><span></span><code><span class="nv">SVC_GW_CLUSTER1</span><span class="o">=</span><span class="k">$(</span>kubectl --context <span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span> -n istio-system get svc istio-ingressgateway -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.status.loadBalancer.ingress[0].*}&#39;</span><span class="k">)</span>
 </code></pre></div>
-<p>Open the URL in the browser <code>open http://$SVC_GW_CLUSTER1</code>.</p>
-<p>Or</p>
-<p>Poll the service using the script,</p>
+<h4 id="call-service">Call Service<a class="headerlink" href="#call-service" title="Permanent link">&para;</a></h4>
+<p>Call the service using the script,</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/call_bgc_service.sh <span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span><span class="s2">&quot;</span>
 </code></pre></div>
-<h3 id="cluster-2">Cluster- 2<a class="headerlink" href="#cluster-2" title="Permanent link">&para;</a></h3>
+<h4 id="poll-service">Poll Service<a class="headerlink" href="#poll-service" title="Permanent link">&para;</a></h4>
+<p>Poll the service using the script,</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/poll_bgc_service.sh <span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+<h4 id="use-browser">Use Browser<a class="headerlink" href="#use-browser" title="Permanent link">&para;</a></h4>
+<p>Open the URL in the browser <code>open http://$SVC_GW_CLUSTER1</code>.</p>
+<h3 id="cluster2_1">Cluster2<a class="headerlink" href="#cluster2_1" title="Permanent link">&para;</a></h3>
 <p>Retrive the Istio Ingress Gateway url to access the application,</p>
 <div class="highlight"><pre><span></span><code><span class="nv">SVC_GW_CLUSTER2</span><span class="o">=</span><span class="k">$(</span>kubectl --context <span class="si">${</span><span class="nv">CLUSTER2</span><span class="si">}</span> -n istio-system get svc istio-ingressgateway -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.status.loadBalancer.ingress[0].*}&#39;</span><span class="k">)</span>
 </code></pre></div>
-<p>Open the URL in the browser <code>open http://$SVC_GW_CLUSTER2</code>.</p>
-<p>Or</p>
-<p>Poll the service using the script,</p>
+<h4 id="call-service_1">Call Service<a class="headerlink" href="#call-service_1" title="Permanent link">&para;</a></h4>
+<p>Call the service using the script,</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/call_bgc_service.sh <span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER2</span><span class="si">}</span><span class="s2">&quot;</span>
 </code></pre></div>
+<h4 id="poll-service_1">Poll Service<a class="headerlink" href="#poll-service_1" title="Permanent link">&para;</a></h4>
+<p>Poll the service using the script,</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/poll_bgc_service.sh <span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER2</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+<h4 id="use-browser_1">Use Browser<a class="headerlink" href="#use-browser_1" title="Permanent link">&para;</a></h4>
+<p>Open the URL in the browser <code>open http://$SVC_GW_CLUSTER2</code>.</p>
+<p>As you have observed the <code>blue-green-canary</code> service is by default configured to return the response from version <code>blue</code>.</p>
 <h2 id="traffic-policy">Traffic Policy<a class="headerlink" href="#traffic-policy" title="Permanent link">&para;</a></h2>
 <p>As we have unified the mesh we are good to distribute traffic amongst them. As part of the next section we will apply various traffic policies to distribute traffic amongst the <code>blue</code>, <code>green</code> and <code>canary</code> services.</p>
+<p>Before we try the traffic shifting, open the service in the browser,</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/browse_bgc_service.sh <span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+<p><img align="center" alt="All Blue" src="../images/all_blue.png" /></p>
 <h3 id="green">Green<a class="headerlink" href="#green" title="Permanent link">&para;</a></h3>
 <p>As we already have traffic sent to <em>blue</em>, let use try sending all the traffic to <em>green</em></p>
 <div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/8_green.sh
 </code></pre></div>
 <p>Now if you try to call the service via browser or cli as <a href="./#calling-service">described</a> it should return response from <em>green</em> service.</p>
+<p><img align="center" alt="All Blue" src="../images/all_green.png" /></p>
 <h3 id="canary">Canary<a class="headerlink" href="#canary" title="Permanent link">&para;</a></h3>
 <p>Let us now try sending all the traffic to <em>canary</em> service on the VM,</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/9_canary.sh
 </code></pre></div>
-<p>Now if you try to call the service via browser or cli as <a href="./#calling-service">described</a> it should return response from <em>canary</em> service.</p>
+<p>Now if you try to call the service via browser or cli as <a href="./#calling-service">described</a> it should return response from <em>canary</em> service that is deployed in on-premise VM.</p>
+<p><img align="center" alt="All Blue" src="../images/all_canary.png" /></p>
 <h3 id="blue-green">Blue &larr; &rarr; Green<a class="headerlink" href="#blue-green" title="Permanent link">&para;</a></h3>
 <p>Let&rsquo;s try to split the traffic between <em>blue</em>(<code>50%</code>) and <em>green</em>(<code>50%</code>),</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/11_blue-green.sh
@@ -735,6 +974,7 @@ istio-system   virtualservice.networking.istio.io/istiod-vs                   [&
 <div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/12_blue-green-canary.sh
 </code></pre></div>
 <p>If you try check your browser you should see almost equal traffic to <em>blue</em> and <em>green</em> and few requests to <em>canary</em>.</p>
+<p>Now we checked the traffic distribution amongst revsions that are deployed on Istio clusters and VM. In the next chapter lets us apply access policies to restrict who and from where we can acess the service.</p>
                 
                   
                 

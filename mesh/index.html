@@ -32,8 +32,8 @@
       
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
-        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Red+Hat+Display:300,400,400i,700%7C&display=fallback">
+        <style>:root{--md-text-font-family:"Red Hat Display";--md-code-font-family:""}</style>
       
     
     
@@ -63,7 +63,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#ensure-environment" class="md-skip">
+        <a href="#pre-requsites-and-assumptions" class="md-skip">
           Skip to content
         </a>
       
@@ -227,7 +227,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../site-site-vpn/" class="md-nav__link">
+      <a href="../site-to-site-vpn/" class="md-nav__link">
         Site to Site VPN
       </a>
     </li>
@@ -250,12 +250,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Mesh
+          Setup Gloo Mesh
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Mesh
+        Setup Gloo Mesh
       </a>
       
         
@@ -269,6 +269,13 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pre-requsites-and-assumptions" class="md-nav__link">
+    Pre-requsites and Assumptions
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#ensure-environment" class="md-nav__link">
@@ -307,6 +314,13 @@
         <li class="md-nav__item">
   <a href="#virtual-mesh" class="md-nav__link">
     Virtual Mesh
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gloo-mesh-dashboard" class="md-nav__link">
+    Gloo Mesh Dashboard
   </a>
   
 </li>
@@ -511,6 +525,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#pre-requsites-and-assumptions" class="md-nav__link">
+    Pre-requsites and Assumptions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#ensure-environment" class="md-nav__link">
     Ensure environment
   </a>
@@ -551,6 +572,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#gloo-mesh-dashboard" class="md-nav__link">
+    Gloo Mesh Dashboard
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -564,33 +592,33 @@
               
                 
                 
-                  <h1>Mesh</h1>
+                  <h1>Setup Gloo Mesh</h1>
                 
                 <p>At the end of this chapter you would have,</p>
 <ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Created Virtual Mesh to connect Cluster-1 and Cluster-2</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Created Virtual Mesh to connect <code>$CLUSTER1(gke)</code> and <code>$CLUSTER1(eks)</code></li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Applied Access Policies</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Create TrafficPolicy to distribute traffic</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Integrated VM Workload with Mesh</li>
 </ul>
+<h2 id="pre-requsites-and-assumptions">Pre-requsites and Assumptions<a class="headerlink" href="#pre-requsites-and-assumptions" title="Permanent link">&para;</a></h2>
+<p>This chapter assumes that you have done the following if not please vist the earlier chapters to compelte the requriements,</p>
+<ul>
+<li><a href="../env-setup/#vm-setup">Setup VM</a></li>
+<li><a href="../env-setup/#kubernetes-setup">Created Kubernetes Clusters on <code>$CLUSTER1(gke)</code>, <code>$CLUSTER1(eks)</code> and <code>$MGMT(civo)</code></a></li>
+<li><a href="../env-setup/#deploy-istio">Deployed Istio on Workload Clusters</a></li>
+<li><a href="../env-setup/#install-gloo-mesh">Installed Gloo Mesh and Registered the clusters</a></li>
+<li><a href="../site-to-site-vpn/">Created <abbr title="Virtual Private Network">VPN</abbr> Tunnel in GCP</a></li>
+</ul>
 <h2 id="ensure-environment">Ensure environment<a class="headerlink" href="#ensure-environment" title="Permanent link">&para;</a></h2>
+<p>Navigate to Tutorial home</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="nv">$TUTORIAL_HOME</span>
+</code></pre></div>
 <p>Set cluster environment variables</p>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">MGMT</span><span class="o">=</span><span class="k">$(</span><span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/mgmt/kubeconfig <span class="o">&amp;&amp;</span> kubectl config get-contexts -o name <span class="p">|</span> tr -d <span class="s1">&#39;\n\r&#39;</span><span class="k">)</span>
-<span class="nb">export</span> <span class="nv">CLUSTER1</span><span class="o">=</span><span class="k">$(</span><span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/cluster-1/kubeconfig <span class="o">&amp;&amp;</span> kubectl config get-contexts -o name <span class="p">|</span> tr -d <span class="s1">&#39;\n\r&#39;</span><span class="k">)</span>
-<span class="nb">export</span> <span class="nv">CLUSTER2</span><span class="o">=</span><span class="k">$(</span><span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/cluster-2/kubeconfig <span class="o">&amp;&amp;</span> kubectl config get-contexts -o name <span class="p">|</span> tr -d <span class="s1">&#39;\n\r&#39;</span><span class="k">)</span>
-</code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-</div>
-<p>It will be a nice convinience to have a merged kubeconfig to easier context switch. To merge kube config run the following command,</p>
-<div class="highlight"><pre><span></span><code>   mkdir -p <span class="nv">$TUTORIAL_HOME</span>/work/.kube
-   <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/mgmt/kubeconfig:<span class="nv">$TUTORIAL_HOME</span>/work/cluster-1/kubeconfig:<span class="nv">$TUTORIAL_HOME</span>/work/cluster-2/kubeconfig<span class="p">;</span> kubectl config view --flatten &gt; <span class="nv">$TUTORIAL_HOME</span>/work/.kube/config
-   <span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/.kube/config
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="nv">$TUTORIAL_HOME</span>/work/mgmt
+<div class="highlight"><pre><span></span><code><span class="nb">source</span> <span class="nv">$TUTORIAL_HOME</span>/.envrc
 </code></pre></div>
 <h2 id="enable-peerauthentication">Enable PeerAuthentication<a class="headerlink" href="#enable-peerauthentication" title="Permanent link">&para;</a></h2>
-<p>Let us configure Istio <code>PeerAuthentication</code> in <code>$CLUSTER1</code> and <code>$CLUSTER2</code>. <code>PeerAuthentication</code> enable the <abbr title="Mutual Transport Layer Security">mTLS</abbr> between service mesh services and will help in unifying the ROOT CA between heterogenous service meshes and make the service across each other to be treated as on mesh. <mark class="critic"> TODO better explanation </mark>,</p>
+<p>Let us configure Istio <code>PeerAuthentication</code> in <code>$CLUSTER1</code> and <code>$CLUSTER2</code>. <code>PeerAuthentication</code> enable the <abbr title="Mutual Transport Layer Security">mTLS</abbr> between service mesh services and will help in unifying the ROOT CA between heterogenous service meshes. This common ROOT CA enables the services across the meshes to trust each other.</p>
 <h3 id="cluster-1">Cluster 1<a class="headerlink" href="#cluster-1" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>kubectl --context<span class="o">=</span><span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span> apply -f <span class="nv">$TUTORIAL_HOME</span>/mesh-files/peer-auth.yaml
 </code></pre></div>
@@ -598,9 +626,20 @@
 <div class="highlight"><pre><span></span><code>kubectl --context<span class="o">=</span><span class="si">${</span><span class="nv">CLUSTER2</span><span class="si">}</span> apply -f <span class="nv">$TUTORIAL_HOME</span>/mesh-files/peer-auth.yaml
 </code></pre></div>
 <h2 id="virtual-mesh">Virtual Mesh<a class="headerlink" href="#virtual-mesh" title="Permanent link">&para;</a></h2>
-<p>Virtual Mesh allows seamless communication between meshes,</p>
+<p>Having enabled <code>mTLS</code> on <code>$CLUSTER1</code> and <code>$CLUSTER2</code>, we can now unify the service meshes using Gloo Mesh&rsquo;s <em>VirtualMesh</em>,</p>
 <div class="highlight"><pre><span></span><code>kubectl --context<span class="o">=</span><span class="si">${</span><span class="nv">MGMT</span><span class="si">}</span> apply -f <span class="nv">$TUTORIAL_HOME</span>/mesh-files/bgc-virtual-mesh.yaml
 </code></pre></div>
+<h2 id="gloo-mesh-dashboard">Gloo Mesh Dashboard<a class="headerlink" href="#gloo-mesh-dashboard" title="Permanent link">&para;</a></h2>
+<p>We can use Gloo Mesh Dashboard to verify our registered clusters and mesh details,</p>
+<p>Open a new terminal and run the following command,</p>
+<div class="highlight"><pre><span></span><code><span class="nb">source</span> <span class="nv">$TUTORIAL_HOME</span>/.envrc
+kubectl --context<span class="o">=</span><span class="nv">$MGMT</span> port-forward -n gloo-mesh  deployment/dashboard <span class="m">8090</span>:8090
+</code></pre></div>
+<p>You can then open the <a _target="blank" href="http://localhost:8090">dashboard</a> in your browser which will open a page as shown:</p>
+<p><img alt="Gloo Mesh Dashboard" src="../images/mesh_dashboard.png" /></p>
+<p>If you navigate to the <em>Debug</em> tab you could see the <code>bgc-virtual-mesh</code> that we created with cluster1 and cluster2 Istio servicemeshes,</p>
+<p><img alt="Virtual Mesh" src="../images/virtual_mesh.png" /></p>
+<p>Now we are all set to deploy the demo applications on these clusters.</p>
                 
                   
                 
@@ -622,7 +661,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../site-site-vpn/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Site to Site VPN" rel="prev">
+        <a href="../site-to-site-vpn/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Site to Site VPN" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>

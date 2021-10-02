@@ -32,8 +32,8 @@
       
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
-        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Red+Hat+Display:300,400,400i,700%7C&display=fallback">
+        <style>:root{--md-text-font-family:"Red Hat Display";--md-code-font-family:""}</style>
       
     
     
@@ -227,7 +227,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../site-site-vpn/" class="md-nav__link">
+      <a href="../site-to-site-vpn/" class="md-nav__link">
         Site to Site VPN
       </a>
     </li>
@@ -243,7 +243,7 @@
   
     <li class="md-nav__item">
       <a href="../mesh/" class="md-nav__link">
-        Mesh
+        Setup Gloo Mesh
       </a>
     </li>
   
@@ -328,16 +328,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#deploy-httpbin" class="md-nav__link">
-    Deploy httpbin
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#create-gateway-and-virtual-service" class="md-nav__link">
     Create Gateway and Virtual Service
   </a>
+  
+    <nav class="md-nav" aria-label="Create Gateway and Virtual Service">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#check-the-service" class="md-nav__link">
+    Check the Service
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -514,16 +520,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#deploy-httpbin" class="md-nav__link">
-    Deploy httpbin
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#create-gateway-and-virtual-service" class="md-nav__link">
     Create Gateway and Virtual Service
   </a>
+  
+    <nav class="md-nav" aria-label="Create Gateway and Virtual Service">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#check-the-service" class="md-nav__link">
+    Check the Service
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -543,14 +555,26 @@
                   <h1>Deploy Blue</h1>
                 
                 <h2 id="ensure-environment">Ensure environment<a class="headerlink" href="#ensure-environment" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="nv">$TUTORIAL_HOME</span>/work/mgmt
+<p>Navigate to Tutorial home</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="nv">$TUTORIAL_HOME</span>
+</code></pre></div>
+<p>Set cluster environment variables</p>
+<div class="highlight"><pre><span></span><code><span class="nb">source</span> <span class="nv">$TUTORIAL_HOME</span>/.envrc
 </code></pre></div>
 <h2 id="deploy-blue-application">Deploy Blue Application<a class="headerlink" href="#deploy-blue-application" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/2_deploy_blue.sh <span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span><span class="s2">&quot;</span>
 </code></pre></div>
-<h2 id="deploy-httpbin">Deploy httpbin<a class="headerlink" href="#deploy-httpbin" title="Permanent link">&para;</a></h2>
-<p>The httpin application will be used to for checking various features of Gloo Mesh that you will be done in upcoming sections,</p>
-<div class="highlight"><pre><span></span><code>kubectl --context<span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span><span class="s2">&quot;</span>  apply -f <span class="nv">$TUTORIAL_HOME</span>/extras/httpbin.yaml
+<p>Wait for the <code>blue-green-canary</code> deployment to be running,</p>
+<div class="highlight"><pre><span></span><code>kubectl --context<span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span><span class="s2">&quot;</span> -n blue-green-canary rollout status deploy/blue
+</code></pre></div>
+<p>Let us ensure we got the services and deployments ready,</p>
+<div class="highlight"><pre><span></span><code>kubectl --context<span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span><span class="s2">&quot;</span> -n blue-green-canary get pods,svc
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>NAME                         READY   STATUS    RESTARTS   AGE
+pod/green-5c798c7c9d-n4knk   2/2     Running   0          16s
+
+NAME                        TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/blue-green-canary   ClusterIP   10.100.145.63   &lt;none&gt;        8080/TCP   16s
 </code></pre></div>
 <h2 id="create-gateway-and-virtual-service">Create Gateway and Virtual Service<a class="headerlink" href="#create-gateway-and-virtual-service" title="Permanent link">&para;</a></h2>
 <p>We need to create the Gateway and Virtual service for Blue-Green-Canary application. The gateway and virtual service will allow the application to be accessed via Istio Ingress Gateway,</p>
@@ -559,10 +583,19 @@
 <p>Retrive the Istio Ingress Gateway url to access the application,</p>
 <div class="highlight"><pre><span></span><code><span class="nv">SVC_GW_CLUSTER1</span><span class="o">=</span><span class="k">$(</span>kubectl --context <span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span> -n istio-system get svc istio-ingressgateway -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.status.loadBalancer.ingress[0].*}&#39;</span><span class="k">)</span>
 </code></pre></div>
-<p>Open the URL in the browser <code>open http://$SVC_GW_CLUSTER1</code>.</p>
-<p>Or</p>
-<p>Poll the service using the script,</p>
+<h3 id="check-the-service">Check the Service<a class="headerlink" href="#check-the-service" title="Permanent link">&para;</a></h3>
+<p>Call the service to check if its working,</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/call_bgc_service.sh <span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+<p>The command should return an output like,</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;greeting&quot;</span><span class="p">:</span> <span class="s2">&quot;Namaste 🙏🏽&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;pod&quot;</span><span class="p">:</span> <span class="s2">&quot;blue-6bd6f6bf89-2c6c9&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;textColor&quot;</span><span class="p">:</span> <span class="s2">&quot;whitesmoke&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;userAgent&quot;</span><span class="p">:</span> <span class="s2">&quot;HTTPie/2.5.0&quot;</span>
+<span class="p">}</span>
 </code></pre></div>
                 
                   
@@ -585,7 +618,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../mesh/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Mesh" rel="prev">
+        <a href="../mesh/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Setup Gloo Mesh" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -594,7 +627,7 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              Mesh
+              Setup Gloo Mesh
             </div>
           </div>
         </a>

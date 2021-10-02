@@ -32,8 +32,8 @@
       
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
-        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Red+Hat+Display:300,400,400i,700%7C&display=fallback">
+        <style>:root{--md-text-font-family:"Red Hat Display";--md-code-font-family:""}</style>
       
     
     
@@ -63,7 +63,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#deploy-green-application" class="md-skip">
+        <a href="#ensure-environment" class="md-skip">
           Skip to content
         </a>
       
@@ -227,7 +227,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../site-site-vpn/" class="md-nav__link">
+      <a href="../site-to-site-vpn/" class="md-nav__link">
         Site to Site VPN
       </a>
     </li>
@@ -243,7 +243,7 @@
   
     <li class="md-nav__item">
       <a href="../mesh/" class="md-nav__link">
-        Mesh
+        Setup Gloo Mesh
       </a>
     </li>
   
@@ -328,15 +328,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#deploy-green-application" class="md-nav__link">
-    Deploy Green Application
+  <a href="#ensure-environment" class="md-nav__link">
+    Ensure environment
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#deploy-httpbin" class="md-nav__link">
-    Deploy httpbin
+  <a href="#deploy-green-application" class="md-nav__link">
+    Deploy Green Application
   </a>
   
 </li>
@@ -350,15 +350,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#cluster-1" class="md-nav__link">
-    Cluster -1
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cluster-2" class="md-nav__link">
-    Cluster- 2
+  <a href="#check-the-service" class="md-nav__link">
+    Check the Service
   </a>
   
 </li>
@@ -513,15 +506,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#deploy-green-application" class="md-nav__link">
-    Deploy Green Application
+  <a href="#ensure-environment" class="md-nav__link">
+    Ensure environment
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#deploy-httpbin" class="md-nav__link">
-    Deploy httpbin
+  <a href="#deploy-green-application" class="md-nav__link">
+    Deploy Green Application
   </a>
   
 </li>
@@ -535,15 +528,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#cluster-1" class="md-nav__link">
-    Cluster -1
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cluster-2" class="md-nav__link">
-    Cluster- 2
+  <a href="#check-the-service" class="md-nav__link">
+    Check the Service
   </a>
   
 </li>
@@ -568,38 +554,45 @@
                 
                   <h1>Deploy Green</h1>
                 
-                <p>Navigate to $CLUSTER2 work folder</p>
-<div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="nv">$TUTORIAL_HOME</span>/work/mgmt
+                <h2 id="ensure-environment">Ensure environment<a class="headerlink" href="#ensure-environment" title="Permanent link">&para;</a></h2>
+<p>Navigate to Tutorial home</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="nv">$TUTORIAL_HOME</span>
+</code></pre></div>
+<p>Set cluster environment variables</p>
+<div class="highlight"><pre><span></span><code><span class="nb">source</span> <span class="nv">$TUTORIAL_HOME</span>/.envrc
 </code></pre></div>
 <h2 id="deploy-green-application">Deploy Green Application<a class="headerlink" href="#deploy-green-application" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/3_deploy_green.sh <span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER2</span><span class="si">}</span><span class="s2">&quot;</span>
 </code></pre></div>
-<h2 id="deploy-httpbin">Deploy httpbin<a class="headerlink" href="#deploy-httpbin" title="Permanent link">&para;</a></h2>
-<p>The httpin application will be used to for checking various features of Gloo Mesh that you will be done in upcoming sections,</p>
-<div class="highlight"><pre><span></span><code>kubectl --context<span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER2</span><span class="si">}</span><span class="s2">&quot;</span>  apply -f <span class="nv">$TUTORIAL_HOME</span>/extras/httpbin.yaml
+<p>Wait for the <code>blue-green-canary</code> deployment to be running,</p>
+<div class="highlight"><pre><span></span><code>kubectl --context<span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER2</span><span class="si">}</span><span class="s2">&quot;</span> -n blue-green-canary rollout status deploy/green
+</code></pre></div>
+<p>Let us ensure we got the services and deployments ready,</p>
+<div class="highlight"><pre><span></span><code>kubectl --context<span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER2</span><span class="si">}</span><span class="s2">&quot;</span> -n blue-green-canary get pods,svc
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>NAME                        READY   STATUS    RESTARTS   AGE
+pod/green-6bd6f6bf89-2c6c9   2/2     Running   0          3m5s
+
+NAME                        TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/blue-green-canary   ClusterIP   172.18.10.239   &lt;none&gt;        8080/TCP   3m6s
 </code></pre></div>
 <h2 id="create-gateway-and-virtual-service">Create Gateway and Virtual Service<a class="headerlink" href="#create-gateway-and-virtual-service" title="Permanent link">&para;</a></h2>
 <p>We need to create the Gateway and Virtual service for Blue-Green-Canary application. The gateway and virtual service will allow the application to be accessed via Istio Ingress Gateway,</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/test_gateway.sh <span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER2</span><span class="si">}</span><span class="s2">&quot;</span>
 </code></pre></div>
-<p>And now when call or poll the service you should see traffic distributed among the the blue and green,</p>
-<h3 id="cluster-1">Cluster -1<a class="headerlink" href="#cluster-1" title="Permanent link">&para;</a></h3>
-<p>Retrive the Istio Ingress Gateway url to access the application,</p>
-<div class="highlight"><pre><span></span><code><span class="nv">SVC_GW_CLUSTER1</span><span class="o">=</span><span class="k">$(</span>kubectl --context <span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span> -n istio-system get svc istio-ingressgateway -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.status.loadBalancer.ingress[0].*}&#39;</span><span class="k">)</span>
-</code></pre></div>
-<p>Open the URL in the browser <code>open http://$SVC_GW_CLUSTER1</code>.</p>
-<p>Or</p>
-<p>Poll the service using the script,</p>
-<div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/call_bgc_service.sh <span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER1</span><span class="si">}</span><span class="s2">&quot;</span>
-</code></pre></div>
-<h3 id="cluster-2">Cluster- 2<a class="headerlink" href="#cluster-2" title="Permanent link">&para;</a></h3>
-<p>Retrive the Istio Ingress Gateway url to access the application,</p>
-<div class="highlight"><pre><span></span><code><span class="nv">SVC_GW_CLUSTER2</span><span class="o">=</span><span class="k">$(</span>kubectl --context <span class="si">${</span><span class="nv">CLUSTER2</span><span class="si">}</span> -n istio-system get svc istio-ingressgateway -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.status.loadBalancer.ingress[0].*}&#39;</span><span class="k">)</span>
-</code></pre></div>
-<p>Open the URL in the browser <code>open http://$SVC_GW_CLUSTER2</code>.</p>
-<p>Or</p>
-<p>Poll the service using the script,</p>
+<h3 id="check-the-service">Check the Service<a class="headerlink" href="#check-the-service" title="Permanent link">&para;</a></h3>
+<p>Call the service to check if its working,</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$TUTORIAL_HOME</span>/bin/call_bgc_service.sh <span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLUSTER2</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+<p>The command should return an output like,</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;green&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;greeting&quot;</span><span class="p">:</span> <span class="s2">&quot;Bonjour 👋🏽&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;pod&quot;</span><span class="p">:</span> <span class="s2">&quot;green-5c798c7c9d-n4knk&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;textColor&quot;</span><span class="p">:</span> <span class="s2">&quot;whitesmoke&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;userAgent&quot;</span><span class="p">:</span> <span class="s2">&quot;HTTPie/2.5.0&quot;</span>
+<span class="p">}</span>
 </code></pre></div>
                 
                   

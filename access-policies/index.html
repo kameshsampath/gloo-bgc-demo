@@ -32,8 +32,8 @@
       
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
-        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Red+Hat+Display:300,400,400i,700%7C&display=fallback">
+        <style>:root{--md-text-font-family:"Red Hat Display";--md-code-font-family:""}</style>
       
     
     
@@ -227,7 +227,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../site-site-vpn/" class="md-nav__link">
+      <a href="../site-to-site-vpn/" class="md-nav__link">
         Site to Site VPN
       </a>
     </li>
@@ -243,7 +243,7 @@
   
     <li class="md-nav__item">
       <a href="../mesh/" class="md-nav__link">
-        Mesh
+        Setup Gloo Mesh
       </a>
     </li>
   
@@ -557,17 +557,7 @@
                 <p>In this chapter we will create and apply access policies that will restrict access to services in Gloo Mesh Clusters and VM.</p>
 <h2 id="ensure-environment">Ensure environment<a class="headerlink" href="#ensure-environment" title="Permanent link">&para;</a></h2>
 <p>Set cluster environment variables</p>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">MGMT</span><span class="o">=</span><span class="k">$(</span><span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/mgmt/kubeconfig <span class="o">&amp;&amp;</span> kubectl config get-contexts -o name <span class="p">|</span> tr -d <span class="s1">&#39;\n\r&#39;</span><span class="k">)</span>
-<span class="nb">export</span> <span class="nv">CLUSTER1</span><span class="o">=</span><span class="k">$(</span><span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/cluster-1/kubeconfig <span class="o">&amp;&amp;</span> kubectl config get-contexts -o name <span class="p">|</span> tr -d <span class="s1">&#39;\n\r&#39;</span><span class="k">)</span>
-<span class="nb">export</span> <span class="nv">CLUSTER2</span><span class="o">=</span><span class="k">$(</span><span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/cluster-2/kubeconfig <span class="o">&amp;&amp;</span> kubectl config get-contexts -o name <span class="p">|</span> tr -d <span class="s1">&#39;\n\r&#39;</span><span class="k">)</span>
-</code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-</div>
-<p>It will be a nice convinience to have a merged kubeconfig to easier context switch. To merge kube config run the following command,</p>
-<div class="highlight"><pre><span></span><code>   mkdir -p <span class="nv">$TUTORIAL_HOME</span>/work/.kube
-   <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/mgmt/kubeconfig:<span class="nv">$TUTORIAL_HOME</span>/work/cluster-1/kubeconfig:<span class="nv">$TUTORIAL_HOME</span>/work/cluster-2/kubeconfig<span class="p">;</span> kubectl config view --flatten &gt; <span class="nv">$TUTORIAL_HOME</span>/work/.kube/config
-   <span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$TUTORIAL_HOME</span>/work/.kube/config
+<div class="highlight"><pre><span></span><code><span class="nb">source</span> <span class="nv">$TUTORIAL_HOME</span>/.envrc
 </code></pre></div>
 <p>Check if you are still in the <code>work/mgmt</code> folder,</p>
 <div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="nv">$TUTORIAL_HOME</span>/work/mgmt
