@@ -7,7 +7,7 @@ source "$SCRIPT_DIR/currentEnv.sh"
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR/helpers.sh"
 
-CURRENT_ACCESS_POLICY=$(kubectl get virtualmeshes.networking.mesh.gloo.solo.io -n gloo-mesh bgc-virtual-mesh -o json | jq  -r '.spec.globalAccessPolicy')
+CURRENT_ACCESS_POLICY=$(kubectl --context="$MGMT" get virtualmeshes.networking.mesh.gloo.solo.io -n gloo-mesh bgc-virtual-mesh -o json | jq  -r '.spec.globalAccessPolicy')
 
 if [ "ENABLED" == "$CURRENT_ACCESS_POLICY" ];
 then
