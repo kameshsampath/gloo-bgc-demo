@@ -133,7 +133,7 @@ With `globalAccessPolicy` disabled in the virtual mesh, calling a Istio service 
 vagrant ssh -c "http blue-green-canary.blue-green-canary.svc.cluster.local:8080/api"
 ```
 
-```text
+```json
 HTTP/1.1 200 OK
 content-length: 137
 content-type: application/json; charset=utf-8
@@ -158,16 +158,14 @@ x-envoy-upstream-service-time: 179
 We should also be able to access the VM from the cluster as shown,
 
 ```bash
-kubectl --context="$CLUSTER1" exec -c network-utils -it $(kubectl --context="$CLUSTER1" get pods -lapp=network-utils --no-headers | awk '{print $1}')  -- http blue-green-canary.vm-blue-green-canary.svc.cluster.local:8080/api
+NETWORK_UTILS_POD=$(kubectl --context="$CLUSTER1" get pods -lapp=network-utils --no-headers | awk '{print $1}')
+printf "\nUsing pod %s \n" $NETWORK_UTILS_POD
+kubectl --context="$CLUSTER1" exec -c network-utils -it $NETWORK_UTILS_POD -- http blue-green-canary.vm-blue-green-canary.svc.cluster.local:8080/api
 ```
 
 The command should show an output like,
 
 ```json
-{"greeting":"Hola ✋🏽","count":1,"pod":"vm-192.168.68.114","color":"yellow","textColor":"black","userAgent":"curl/7.78.0"}
-```
-
-```text
 HTTP/1.1 200 OK
 content-length: 127
 content-type: application/json; charset=utf-8
