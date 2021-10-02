@@ -16,7 +16,6 @@ Check the [HTML documentation](https://kameshsampath.github.io/gloo-hybrid-cloud
 
 ![Demo Architecture](docs/images/architecture.png)
 
-
 ## License
 
-[Apache v2](./LICENSE)
+[GPL v3](./LICENSE)
