@@ -9,14 +9,14 @@
       
       
       
-        <link rel="canonical" href="https://kameshsampath.github.com/gloo-bgc-demo/ansible-roles/">
+        <link rel="canonical" href="https://kameshsampath.github.com/gloo-bgc-demo/clean-up/">
       
       <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.3.0">
     
     
       
-        <title>Ansible Roles - Gloo Blue Green Canary Demo</title>
+        <title>Envrionment Cleanup - Gloo Blue Green Canary Demo</title>
       
     
     
@@ -62,6 +62,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#ensure-environment" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -90,7 +95,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Ansible Roles
+              Envrionment Cleanup
             
           </span>
         </div>
@@ -356,11 +361,61 @@
 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../clean-up/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Clean Up
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Clean Up
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ensure-environment" class="md-nav__link">
+    Ensure Environment
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloud-clean-up" class="md-nav__link">
+    Cloud Clean up
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#destroy-vagrant-vm" class="md-nav__link">
+    Destroy Vagrant VM
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -371,14 +426,12 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10" type="checkbox" id="__nav_10" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10" type="checkbox" id="__nav_10" >
       
       
       
@@ -399,19 +452,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../ansible-roles/" class="md-nav__link">
         Ansible Roles
       </a>
-      
     </li>
   
 
@@ -444,19 +489,78 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ensure-environment" class="md-nav__link">
+    Ensure Environment
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloud-clean-up" class="md-nav__link">
+    Cloud Clean up
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#destroy-vagrant-vm" class="md-nav__link">
+    Destroy Vagrant VM
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
               
                 
                 
-                  <h1>Ansible Roles</h1>
+                  <h1>Clean Up</h1>
                 
-                <ul>
-<li>Kamesh Sampath
-date: 2021-09-30</li>
+                <p>At the end of this chapter you would have,</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Delete the Cloud resources on Civo, AWS, GCP</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Delete the Vagrant VM</li>
 </ul>
-<hr />
+<h2 id="ensure-environment">Ensure Environment<a class="headerlink" href="#ensure-environment" title="Permanent link">&para;</a></h2>
+<p>Navigate to Tutorial home</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="nv">$TUTORIAL_HOME</span>
+</code></pre></div>
+<p>Set cluster environment variables</p>
+<div class="highlight"><pre><span></span><code><span class="nb">source</span> <span class="nv">$TUTORIAL_HOME</span>/.envrc
+</code></pre></div>
+<h2 id="cloud-clean-up">Cloud Clean up<a class="headerlink" href="#cloud-clean-up" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>make clean-up
+</code></pre></div>
+<h2 id="destroy-vagrant-vm">Destroy Vagrant VM<a class="headerlink" href="#destroy-vagrant-vm" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>make vm-destroy
+</code></pre></div>
+                
+                  
                 
               
               
@@ -476,7 +580,7 @@ date: 2021-09-30</li>
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../clean-up/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Clean Up" rel="prev">
+        <a href="../access-policies/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Access Policies" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -485,20 +589,20 @@ date: 2021-09-30</li>
               <span class="md-footer__direction">
                 Previous
               </span>
-              Clean Up
+              Access Policies
             </div>
           </div>
         </a>
       
       
         
-        <a href="../troubleshooting/" class="md-footer__link md-footer__link--next" aria-label="Next: Troubleshooting" rel="next">
+        <a href="../ansible-roles/" class="md-footer__link md-footer__link--next" aria-label="Next: Ansible Roles" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Troubleshooting
+              Ansible Roles
             </div>
           </div>
           <div class="md-footer__button md-icon">
