@@ -2,6 +2,9 @@
 
   vars_files:
     - .local.vars.yml
+
+  vars:
+    work_dir: "{{ playbook_dir }}"
     
   # Make sure to leave the deletion variables at role level to have higher precedence than .local.vars.yml
   roles:
@@ -23,3 +26,13 @@
         aws_delete_vpc: yes
         eks_create: no
         eks_delete: yes
+  
+  tasks:
+
+    - name: "Remove kubeconfigs"
+      local_action:
+        module: ansible.builtin.file
+        dest: "{{ item }}"
+        state: absent
+      with_fileglob:
+        - "{{ work_dir }}/.kube/*config"

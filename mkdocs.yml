@@ -26,10 +26,11 @@ nav:
       - "Deploy Canary": "deploy-canary.md"
   - "Traffic Management": "traffic.md"
   - "Access Policies": "access-policies.md"
+  - "Clean Up": "clean-up.md"
   - "Appendix":
     - "Ansible Roles": "ansible-roles.md"
     - "Troubleshooting": "troubleshooting.md"
-
+  
 markdown_extensions:
   - toc:
       baselevel: 1

@@ -32,8 +32,8 @@ base-run:
 cloud-run:
 	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) --tags "base,cloud" playbook.yml  $(EXTRA_ARGS)
 
-cloud-clean:
-	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) cloud_clean.yml  $(EXTRA_ARGS)
+clean-up:
+	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) cleanup.yml  $(EXTRA_ARGS)
 
 cloud-civo-run:
 	@$(POETRY_COMMAND) run ansible-playbook --tags "base,civo" --vault-password-file=$(VAULT_FILE) playbook.yml $(EXTRA_ARGS)
@@ -69,6 +69,7 @@ vm-up:
 
 vm-destroy:
 	vagrant destroy --force
+	rm -rf $(TUTORIAL_HOME)/.vagrant
 
 test:
 	@$(POETRY_COMMAND) run ansible-playbook --vault-password-file=$(VAULT_FILE) test.yml  $(EXTRA_ARGS)
