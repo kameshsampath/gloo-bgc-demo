@@ -113,6 +113,8 @@
   environment:
     KUBECONFIG: "{{ ansible_env.HOME }}/.kube/config"
     GOOGLE_APPLICATION_CREDENTIALS: "{{ gcp_cred_file }}"
+  vars:
+    istio_cluster: "{{ item.key }}"
   loop: "{{ gloo_mesh | dict2items}}"
   loop_control:
     label: "{{ item.key }}"
