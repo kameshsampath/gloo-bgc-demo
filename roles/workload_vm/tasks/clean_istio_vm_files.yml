@@ -3,10 +3,12 @@
   service:
     name: istio
     state: stopped
+  ignore_errors: yes
 
 - name: "Kill Envoy"
   become: yes
   shell: "/usr/local/bin/killEnvoy.sh"
+  ignore_errors: yes
 
 - name: "Remove the root certificate root-cert.pem"
   become: yes

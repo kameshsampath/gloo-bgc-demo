@@ -1,4 +1,4 @@
-istio_version: "1.10.4"
+istio_version: "1.10.6"
 kubeconfig_json_query: "files[*].path"
 
 istio_kubernetes_contexts:

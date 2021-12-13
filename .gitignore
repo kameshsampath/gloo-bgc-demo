@@ -70,3 +70,4 @@ local.gcp.conf
 # todo remove later
 edge-files
 !.envrc.j2
+bin/kubectl

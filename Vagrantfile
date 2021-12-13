@@ -6,10 +6,6 @@ Vagrant.configure("2") do |config|
   config.vm.box = "#{ ENV['VAGRANT_BOX'] || 'fedora/34-cloud-base' }"
 
   config.vm.network "public_network",
-     bridge: [
-       "en0: Wi-Fi (Wireless)",
-       "en7: Belkin USB-C LAN"
-     ],
      use_dhcp_assigned_default_route: true
  
   

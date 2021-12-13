@@ -1,4 +1,4 @@
-istio_version: "1.10.4"
+istio_version: "1.10.6"
 coredns_version: "1.8.4"
 coredns_config_dir: /etc/coredns
 dns_enabled: yes

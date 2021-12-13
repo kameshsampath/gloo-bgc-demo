@@ -1,7 +1,5 @@
 SHELL := bash
 CURRENT_DIR = $(shell pwd)
-ENV_FILE := $(CURRENT_DIR)/.envrc
-include ${ENV_FILE}
 POETRY_COMMAND := $(shell which poetry)
 .PHONY:	clean	lint	edit-vars	rekey-vars	run	encrypt-vars	view-vars	base-run	cloud-run	cloud-civo-run	cloud-gcp-run	cloud-aws-run	app-run	istio-run	istio-run	workload-run	vm-up	vm-destroy	test	cloud-clean
 

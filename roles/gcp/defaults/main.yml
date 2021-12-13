@@ -14,8 +14,8 @@ gke_create: yes
 gke_delete: no
 gke_cluster_name: kameshs-gloo-demos
 gke_node_count: 3
-gke_kubernetes_version: 1.21.4-gke.301
-gke_release_channel: RAPID
+gke_kubernetes_version: 1.21.5-gke.1302
+gke_release_channel: REGULAR
 gke_cluster_json_query: "resources[?name == '{{ gke_cluster_name }}']"
 
 # VPN

@@ -30,7 +30,7 @@ export CLOUDSDK_COMPUTE_ZONE={{ gke_cluster_location }}
 export GKE_CLUSTER_NAME={{ gke_cluster_name }}
 
 # Istio
-export ISTIO_HOME="$TUTORIAL_HOME/istio-1.10.4"
+export ISTIO_HOME="$TUTORIAL_HOME/istio-{{ istio_version }}"
 
 # VM and Istio 
 export VM_APP={{ istio_vm_app }}
@@ -47,3 +47,6 @@ export VAULT_FILE=.password_file
 export VAGRANT_DEFAULT_PROVIDER=virtualbox
 # tested with ubuntu/focal64, fedora/34-cloud-base
 export VAGRANT_BOX=ubuntu/focal64
+
+PATH_add "${TUTORIAL_HOME}/bin"
+PATH_add "${ISTIO_HOME}/bin"

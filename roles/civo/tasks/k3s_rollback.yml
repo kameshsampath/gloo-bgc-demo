@@ -27,14 +27,17 @@
     return_content: yes
     headers: 
       Authorization: "bearer {{ civo_api_key }}"
+    status_code:
+     - 200
+     - 301
   when: cluster_exists and civo_cluster_id is defined
   register: cluster_delete
 
 # - debug:
 #     var: cluster_delete
 
-- name: "Remove Kubeconfig"
-  file: 
-    dest: "{{ ansible_env.HOME }}/.kube/civo_{{ civo_k3s_cluster_name }}.kubeconfig"
-    state: absent
-  when: cluster_exists and cluster_delete.json.result == 'success'
+# - name: "Remove Kubeconfig"
+#   file: 
+#     dest: "{{ work_dir }}/.kube/civo_{{ civo_k3s_cluster_name }}.kubeconfig"
+#     state: absent
+#   when: cluster_exists and cluster_delete.json.result == 'success'
